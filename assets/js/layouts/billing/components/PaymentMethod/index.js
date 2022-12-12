@@ -38,7 +38,13 @@ function PaymentMethod() {
 
   return (
     <Card id="delete-account">
-      <MDBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
+      <MDBox
+        pt={2}
+        px={2}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+      >
         <MDTypography variant="h6" fontWeight="medium">
           Payment Method
         </MDTypography>
@@ -61,11 +67,21 @@ function PaymentMethod() {
                   `${borderWidth[1]} solid ${borderColor}`,
               }}
             >
-              <MDBox component="img" src={masterCardLogo} alt="master card" width="10%" mr={2} />
+              <MDBox
+                component="img"
+                src={masterCardLogo}
+                alt="master card"
+                width="10%"
+                mr={2}
+              />
               <MDTypography variant="h6" fontWeight="medium">
                 ****&nbsp;&nbsp;****&nbsp;&nbsp;****&nbsp;&nbsp;7852
               </MDTypography>
-              <MDBox ml="auto" lineHeight={0} color={darkMode ? "white" : "dark"}>
+              <MDBox
+                ml="auto"
+                lineHeight={0}
+                color={darkMode ? "white" : "dark"}
+              >
                 <Tooltip title="Edit Card" placement="top">
                   <Icon sx={{ cursor: "pointer" }} fontSize="small">
                     edit
@@ -86,11 +102,21 @@ function PaymentMethod() {
                   `${borderWidth[1]} solid ${borderColor}`,
               }}
             >
-              <MDBox component="img" src={visaLogo} alt="master card" width="10%" mr={2} />
+              <MDBox
+                component="img"
+                src={visaLogo}
+                alt="master card"
+                width="10%"
+                mr={2}
+              />
               <MDTypography variant="h6" fontWeight="medium">
                 ****&nbsp;&nbsp;****&nbsp;&nbsp;****&nbsp;&nbsp;5248
               </MDTypography>
-              <MDBox ml="auto" lineHeight={0} color={darkMode ? "white" : "dark"}>
+              <MDBox
+                ml="auto"
+                lineHeight={0}
+                color={darkMode ? "white" : "dark"}
+              >
                 <Tooltip title="Edit Card" placement="top">
                   <Icon sx={{ cursor: "pointer" }} fontSize="small">
                     edit

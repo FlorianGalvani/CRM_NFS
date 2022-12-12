@@ -15,7 +15,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React,{ forwardRef } from "react";
+import React, { forwardRef } from "react";
 
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
@@ -24,10 +24,32 @@ import PropTypes from "prop-types";
 import MDBadgeRoot from "components/MDBadge/MDBadgeRoot";
 
 const MDBadge = forwardRef(
-  ({ color, variant, size, circular, indicator, border, container, children, ...rest }, ref) => (
+  (
+    {
+      color,
+      variant,
+      size,
+      circular,
+      indicator,
+      border,
+      container,
+      children,
+      ...rest
+    },
+    ref
+  ) => (
     <MDBadgeRoot
       {...rest}
-      ownerState={{ color, variant, size, circular, indicator, border, container, children }}
+      ownerState={{
+        color,
+        variant,
+        size,
+        circular,
+        indicator,
+        border,
+        container,
+        children,
+      }}
       ref={ref}
       color="default"
     >

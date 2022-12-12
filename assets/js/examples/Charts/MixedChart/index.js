@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React,{ useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 
 // porp-types is a library for typechecking of props
 import PropTypes from "prop-types";
@@ -76,7 +76,9 @@ function MixedChart({ icon, title, description, height, chart }) {
             maxBarThickness: 6,
             backgroundColor: gradientChartLine(
               chartRef.current.children[0],
-              colors[dataset.color] ? colors[dataset.color || "dark"].main : colors.dark.main
+              colors[dataset.color]
+                ? colors[dataset.color || "dark"].main
+                : colors.dark.main
             ),
           };
 

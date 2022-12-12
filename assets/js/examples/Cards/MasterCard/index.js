@@ -45,7 +45,11 @@ function MasterCard({ color, number, holder, expires }) {
 
   return (
     <Card
-      sx={({ palette: { gradients }, functions: { linearGradient }, boxShadows: { xl } }) => ({
+      sx={({
+        palette: { gradients },
+        functions: { linearGradient },
+        boxShadows: { xl },
+      }) => ({
         background: gradients[color]
           ? linearGradient(gradients[color].main, gradients[color].state)
           : linearGradient(gradients.dark.main, gradients.dark.state),
@@ -69,13 +73,28 @@ function MasterCard({ color, number, holder, expires }) {
         <MDBox color="white" p={1} lineHeight={0} display="inline-block">
           <Icon fontSize="default">wifi</Icon>
         </MDBox>
-        <MDTypography variant="h5" color="white" fontWeight="medium" sx={{ mt: 3, mb: 5, pb: 1 }}>
-          {num1}&nbsp;&nbsp;&nbsp;{num2}&nbsp;&nbsp;&nbsp;{num3}&nbsp;&nbsp;&nbsp;{num4}
+        <MDTypography
+          variant="h5"
+          color="white"
+          fontWeight="medium"
+          sx={{ mt: 3, mb: 5, pb: 1 }}
+        >
+          {num1}&nbsp;&nbsp;&nbsp;{num2}&nbsp;&nbsp;&nbsp;{num3}
+          &nbsp;&nbsp;&nbsp;{num4}
         </MDTypography>
-        <MDBox display="flex" justifyContent="space-between" alignItems="center">
+        <MDBox
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <MDBox display="flex" alignItems="center">
             <MDBox mr={3} lineHeight={1}>
-              <MDTypography variant="button" color="white" fontWeight="regular" opacity={0.8}>
+              <MDTypography
+                variant="button"
+                color="white"
+                fontWeight="regular"
+                opacity={0.8}
+              >
                 Card Holder
               </MDTypography>
               <MDTypography
@@ -88,7 +107,12 @@ function MasterCard({ color, number, holder, expires }) {
               </MDTypography>
             </MDBox>
             <MDBox lineHeight={1}>
-              <MDTypography variant="button" color="white" fontWeight="regular" opacity={0.8}>
+              <MDTypography
+                variant="button"
+                color="white"
+                fontWeight="regular"
+                opacity={0.8}
+              >
                 Expires
               </MDTypography>
               <MDTypography variant="h6" color="white" fontWeight="medium">
@@ -97,7 +121,13 @@ function MasterCard({ color, number, holder, expires }) {
             </MDBox>
           </MDBox>
           <MDBox display="flex" justifyContent="flex-end" width="20%">
-            <MDBox component="img" src={masterCardLogo} alt="master card" width="60%" mt={1} />
+            <MDBox
+              component="img"
+              src={masterCardLogo}
+              alt="master card"
+              width="60%"
+              mt={1}
+            />
           </MDBox>
         </MDBox>
       </MDBox>
@@ -112,7 +142,15 @@ MasterCard.defaultProps = {
 
 // Typechecking props for the MasterCard
 MasterCard.propTypes = {
-  color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
+  color: PropTypes.oneOf([
+    "primary",
+    "secondary",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "dark",
+  ]),
   number: PropTypes.number.isRequired,
   holder: PropTypes.string.isRequired,
   expires: PropTypes.string.isRequired,

@@ -37,7 +37,6 @@ Coded by www.creative-tim.com
 
 import React from "react";
 
-
 // Material Dashboard 2 React layouts
 import Dashboard from "./layouts/dashboard";
 import Tables from "./layouts/tables";

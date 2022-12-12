@@ -37,7 +37,13 @@ export default function data() {
   const Project = ({ image, name }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
       <MDAvatar src={image} name={name} size="sm" variant="rounded" />
-      <MDTypography display="block" variant="button" fontWeight="medium" ml={1} lineHeight={1}>
+      <MDTypography
+        display="block"
+        variant="button"
+        fontWeight="medium"
+        ml={1}
+        lineHeight={1}
+      >
         {name}
       </MDTypography>
     </MDBox>
@@ -67,12 +73,24 @@ export default function data() {
       {
         project: <Project image={LogoAsana} name="Asana" />,
         budget: (
-          <MDTypography component="a" href="#" variant="button" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="button"
+            color="text"
+            fontWeight="medium"
+          >
             $2,500
           </MDTypography>
         ),
         status: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="caption"
+            color="text"
+            fontWeight="medium"
+          >
             working
           </MDTypography>
         ),
@@ -86,12 +104,24 @@ export default function data() {
       {
         project: <Project image={logoGithub} name="Github" />,
         budget: (
-          <MDTypography component="a" href="#" variant="button" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="button"
+            color="text"
+            fontWeight="medium"
+          >
             $5,000
           </MDTypography>
         ),
         status: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="caption"
+            color="text"
+            fontWeight="medium"
+          >
             done
           </MDTypography>
         ),
@@ -105,12 +135,24 @@ export default function data() {
       {
         project: <Project image={logoAtlassian} name="Atlassian" />,
         budget: (
-          <MDTypography component="a" href="#" variant="button" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="button"
+            color="text"
+            fontWeight="medium"
+          >
             $3,400
           </MDTypography>
         ),
         status: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="caption"
+            color="text"
+            fontWeight="medium"
+          >
             canceled
           </MDTypography>
         ),
@@ -124,12 +166,24 @@ export default function data() {
       {
         project: <Project image={logoSpotify} name="Spotify" />,
         budget: (
-          <MDTypography component="a" href="#" variant="button" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="button"
+            color="text"
+            fontWeight="medium"
+          >
             $14,000
           </MDTypography>
         ),
         status: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="caption"
+            color="text"
+            fontWeight="medium"
+          >
             working
           </MDTypography>
         ),
@@ -143,12 +197,24 @@ export default function data() {
       {
         project: <Project image={logoSlack} name="Slack" />,
         budget: (
-          <MDTypography component="a" href="#" variant="button" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="button"
+            color="text"
+            fontWeight="medium"
+          >
             $1,000
           </MDTypography>
         ),
         status: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="caption"
+            color="text"
+            fontWeight="medium"
+          >
             canceled
           </MDTypography>
         ),
@@ -162,12 +228,24 @@ export default function data() {
       {
         project: <Project image={logoInvesion} name="Invesion" />,
         budget: (
-          <MDTypography component="a" href="#" variant="button" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="button"
+            color="text"
+            fontWeight="medium"
+          >
             $2,300
           </MDTypography>
         ),
         status: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          <MDTypography
+            component="a"
+            href="#"
+            variant="caption"
+            color="text"
+            fontWeight="medium"
+          >
             done
           </MDTypography>
         ),

@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React,{ forwardRef, createContext, useContext, useMemo } from "react";
+import React, { forwardRef, createContext, useContext, useMemo } from "react";
 
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
@@ -33,7 +33,10 @@ const MDPagination = forwardRef(
     const context = useContext(Context);
     const paginationSize = context ? context.size : null;
 
-    const value = useMemo(() => ({ variant, color, size }), [variant, color, size]);
+    const value = useMemo(
+      () => ({ variant, color, size }),
+      [variant, color, size]
+    );
 
     return (
       <Context.Provider value={value}>

@@ -118,12 +118,22 @@ Coded by www.creative-tim.com
         ),
         إكمال: (
           <MDBox width="8rem" textAlign="left">
-            <MDProgress value={60} color="info" variant="gradient" label={false} />
+            <MDProgress
+              value={60}
+              color="info"
+              variant="gradient"
+              label={false}
+            />
           </MDBox>
         ),
       },
       {
-        المشروع: <Company image={logoAtlassian} name="أضف مسار التقدم إلى التطبيق الداخلي" />,
+        المشروع: (
+          <Company
+            image={logoAtlassian}
+            name="أضف مسار التقدم إلى التطبيق الداخلي"
+          />
+        ),
         أعضاء: (
           <MDBox display="flex" py={1}>
             {avatars([
@@ -139,12 +149,19 @@ Coded by www.creative-tim.com
         ),
         إكمال: (
           <MDBox width="8rem" textAlign="left">
-            <MDProgress value={10} color="info" variant="gradient" label={false} />
+            <MDProgress
+              value={10}
+              color="info"
+              variant="gradient"
+              label={false}
+            />
           </MDBox>
         ),
       },
       {
-        المشروع: <Company image={logoSlack} name="إصلاح أخطاء النظام الأساسي" />,
+        المشروع: (
+          <Company image={logoSlack} name="إصلاح أخطاء النظام الأساسي" />
+        ),
         أعضاء: (
           <MDBox display="flex" py={1}>
             {avatars([
@@ -160,12 +177,22 @@ Coded by www.creative-tim.com
         ),
         إكمال: (
           <MDBox width="8rem" textAlign="left">
-            <MDProgress value={100} color="success" variant="gradient" label={false} />
+            <MDProgress
+              value={100}
+              color="success"
+              variant="gradient"
+              label={false}
+            />
           </MDBox>
         ),
       },
       {
-        المشروع: <Company image={logoSpotify} name="إطلاق تطبيق الهاتف المحمول الخاص بنا" />,
+        المشروع: (
+          <Company
+            image={logoSpotify}
+            name="إطلاق تطبيق الهاتف المحمول الخاص بنا"
+          />
+        ),
         أعضاء: (
           <MDBox display="flex" py={1}>
             {avatars([
@@ -183,7 +210,12 @@ Coded by www.creative-tim.com
         ),
         إكمال: (
           <MDBox width="8rem" textAlign="left">
-            <MDProgress value={100} color="success" variant="gradient" label={false} />
+            <MDProgress
+              value={100}
+              color="success"
+              variant="gradient"
+              label={false}
+            />
           </MDBox>
         ),
       },
@@ -201,12 +233,22 @@ Coded by www.creative-tim.com
         ),
         إكمال: (
           <MDBox width="8rem" textAlign="left">
-            <MDProgress value={25} color="info" variant="gradient" label={false} />
+            <MDProgress
+              value={25}
+              color="info"
+              variant="gradient"
+              label={false}
+            />
           </MDBox>
         ),
       },
       {
-        المشروع: <Company image={logoInvesion} name="إعادة تصميم متجر جديد على الإنترنت" />,
+        المشروع: (
+          <Company
+            image={logoInvesion}
+            name="إعادة تصميم متجر جديد على الإنترنت"
+          />
+        ),
         أعضاء: (
           <MDBox display="flex" py={1}>
             {avatars([
@@ -222,7 +264,12 @@ Coded by www.creative-tim.com
         ),
         إكمال: (
           <MDBox width="8rem" textAlign="left">
-            <MDProgress value={40} color="info" variant="gradient" label={false} />
+            <MDProgress
+              value={40}
+              color="info"
+              variant="gradient"
+              label={false}
+            />
           </MDBox>
         ),
       },

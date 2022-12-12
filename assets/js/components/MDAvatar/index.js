@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React,{ forwardRef } from "react";
+import React, { forwardRef } from "react";
 
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
@@ -47,7 +47,16 @@ MDAvatar.propTypes = {
     "dark",
   ]),
   size: PropTypes.oneOf(["xs", "sm", "md", "lg", "xl", "xxl"]),
-  shadow: PropTypes.oneOf(["none", "xs", "sm", "md", "lg", "xl", "xxl", "inset"]),
+  shadow: PropTypes.oneOf([
+    "none",
+    "xs",
+    "sm",
+    "md",
+    "lg",
+    "xl",
+    "xxl",
+    "inset",
+  ]),
 };
 
 export default MDAvatar;

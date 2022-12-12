@@ -36,7 +36,8 @@ function Breadcrumbs({ icon, title, route, light }) {
       <MuiBreadcrumbs
         sx={{
           "& .MuiBreadcrumbs-separator": {
-            color: ({ palette: { white, grey } }) => (light ? white.main : grey[600]),
+            color: ({ palette: { white, grey } }) =>
+              light ? white.main : grey[600],
           },
         }}
       >

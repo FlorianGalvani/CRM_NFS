@@ -15,7 +15,6 @@ Coded by www.creative-tim.com
 
 import React from "react";
 
-
 // prop-types is library for typechecking of props
 import PropTypes from "prop-types";
 
@@ -48,7 +47,11 @@ function DefaultInfoCard({ color, icon, title, description, value }) {
         </MDBox>
       </MDBox>
       <MDBox pb={2} px={2} textAlign="center" lineHeight={1.25}>
-        <MDTypography variant="h6" fontWeight="medium" textTransform="capitalize">
+        <MDTypography
+          variant="h6"
+          fontWeight="medium"
+          textTransform="capitalize"
+        >
           {title}
         </MDTypography>
         {description && (
@@ -76,7 +79,15 @@ DefaultInfoCard.defaultProps = {
 
 // Typechecking props for the DefaultInfoCard
 DefaultInfoCard.propTypes = {
-  color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
+  color: PropTypes.oneOf([
+    "primary",
+    "secondary",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "dark",
+  ]),
   icon: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string,

@@ -21,8 +21,9 @@ import App from "./App";
 // Material Dashboard 2 React Context Provider
 import { MaterialUIControllerProvider } from "context";
 
-const container = document.getElementById("app");
+const container = document.getElementById("root");
 const root = createRoot(container); // createRoot(container!) if you use TypeScript
+
 root.render(
   <BrowserRouter>
     <MaterialUIControllerProvider>

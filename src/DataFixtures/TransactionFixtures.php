@@ -52,23 +52,6 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
 
         $manager->flush();
     }
-    private function createTransaction(array $data): Transaction
-    {
-        $entity = new Transaction();
-
-        $propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
-            ->disableExceptionOnInvalidPropertyPath()
-            ->getPropertyAccessor();
-
-        foreach ($data as $key => $value) {
-            if ($propertyAccessor->isWritable($entity, $key)) {
-                $propertyAccessor->setValue($entity, $key, $value);
-            }
-        }
-
-        return $entity;
-    }
-
 
     private function getData(): iterable
     {

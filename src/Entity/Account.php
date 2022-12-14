@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Repository\AccountRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -42,6 +43,12 @@ class Account implements DatedInterface
      * @Groups({"account_read"})
      */
     private ?string $type = null;
+
+    /**
+     * @ORM\Column(length=255)
+     * @Groups({"account_read"})
+     */
+    private ?string $name = null;
 
     /**
      * @ORM\Column(length=255)
@@ -99,6 +106,22 @@ class Account implements DatedInterface
         $this->type = $type;
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string|null $name
+     */
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
     }
 
     public function getAccountStatus(): ?string

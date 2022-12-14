@@ -25,7 +25,7 @@ class Prospect implements DatedInterface
     private ?int $id = null;
 
     /**
-     * @ORM\ManyToOne(inversedBy="propsects")
+     * @ORM\ManyToOne(inversedBy="prospects")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"prospect_read"})
      */

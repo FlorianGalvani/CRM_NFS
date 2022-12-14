@@ -63,20 +63,22 @@ class Account implements DatedInterface
     private Collection $prospects;
 
     /**
-     * @ORM\OneToMany(mappedBy="commercial", targetEntity=Account::class, orphanRemoval=true)
+     * @ORM\OneToMany(mappedBy="commercial", targetEntity=Account::class, orphanRemoval=true, cascade={"persist", "remove"})
      * @Groups({"account_read"})
      */
     private Collection $customers;
 
     /**
-     * @ORM\ManyToOne(inversedBy="customers")
-     * @Groups({"prospect_read"})
+     * @ORM\ManyToOne(inversedBy="customers", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"account_read"})
      */
     private ?Account $commercial = null;
 
     public function __construct()
     {
         $this->prospects = new ArrayCollection();
+        $this->customers = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
@@ -170,8 +172,8 @@ class Account implements DatedInterface
 
     public function addCustomer(Account $customer): self
     {
-        if (!$this->prospects->contains($customer)) {
-            $this->prospects->add($customer);
+        if (!$this->customers->contains($customer)) {
+            $this->customers->add($customer);
             $customer->setCommercial($this);
         }
 
@@ -180,7 +182,7 @@ class Account implements DatedInterface
 
     public function removeCustomer(Account $customer): self
     {
-        if ($this->prospects->removeElement($customer)) {
+        if ($this->customers->removeElement($customer)) {
             // set the owning side to null (unless already changed)
             if ($customer->getCommercial() === $this) {
                 $customer->setCommercial(null);

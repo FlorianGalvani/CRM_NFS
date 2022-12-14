@@ -55,6 +55,18 @@ class Account implements DatedInterface
      */
     private Collection $prospects;
 
+    /**
+     * @ORM\OneToMany(mappedBy="commercial", targetEntity=Account::class, orphanRemoval=true)
+     * @Groups({"account_read"})
+     */
+    private Collection $customers;
+
+    /**
+     * @ORM\ManyToOne(inversedBy="customers")
+     * @Groups({"prospect_read"})
+     */
+    private ?Account $commercial = null;
+
     public function __construct()
     {
         $this->prospects = new ArrayCollection();
@@ -130,4 +142,51 @@ class Account implements DatedInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection
+     */
+    public function getCustomers(): Collection
+    {
+        return $this->customers;
+    }
+
+    public function addCustomer(Account $customer): self
+    {
+        if (!$this->prospects->contains($customer)) {
+            $this->prospects->add($customer);
+            $customer->setCommercial($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomer(Account $customer): self
+    {
+        if ($this->prospects->removeElement($customer)) {
+            // set the owning side to null (unless already changed)
+            if ($customer->getCommercial() === $this) {
+                $customer->setCommercial(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Account|null
+     */
+    public function getCommercial(): ?Account
+    {
+        return $this->commercial;
+    }
+
+    /**
+     * @param Account|null $commercial
+     */
+    public function setCommercial(?Account $commercial): void
+    {
+        $this->commercial = $commercial;
+    }
+
 }

@@ -3,28 +3,25 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
-//use App\Entity\Account\Account;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
-//use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use App\DataFixtures\Faker\Factory;
 
 final class UserFixtures extends Fixture implements FixtureGroupInterface
 {
-    public const MICHEL_ADMIN = 'michel+admin@lobol.fr';
-    public const MICHEL_COMMERCIAL = 'michel+commercial@lobol.fr';
-    public const MICHEL_CUSTOMER = 'michel+customer@lobol.fr';
+    public const MICHEL_ADMIN = 'michel+admin@nfs.school';
+    public const MICHEL_COMMERCIAL = 'michel+commercial@nfs.school';
+    public const MICHEL_CUSTOMER = 'michel+customer@nfs.school';
     
     private $fakerFactory;
     private $userPasswordHasher;
 
-    public function __construct(UserPasswordHasherInterface $userPasswordHasher, Factory $fakerFactory)
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
     {
-        $this->fakerFactory = $fakerFactory;
+        $this->fakerFactory = \Faker\Factory::create('fr_FR');
         $this->userPasswordHasher = $userPasswordHasher;
     }
 
@@ -120,7 +117,7 @@ final class UserFixtures extends Fixture implements FixtureGroupInterface
 
     private function getData(): iterable
     {
-        $faker = $this->fakerFactory->create(crc32(self::class));
+        $faker = $this->fakerFactory;
         $slugger = new AsciiSlugger('fr');
 
         for ($i = 0; $i < 100; ++$i) {

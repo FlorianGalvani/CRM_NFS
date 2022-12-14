@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\DataFixtures\UserFixtures;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
@@ -12,15 +11,14 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use App\DataFixtures\Faker\Factory;
 
 final class AccountFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
 {
     private $fakerFactory;
 
-    public function __construct(Factory $fakerFactory)
+    public function __construct()
     {
-        $this->fakerFactory = $fakerFactory;
+        $this->fakerFactory = \Faker\Factory::create('fr_FR');
     }
 
     public static function getGroups(): array
@@ -145,7 +143,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
 
     private function getData(): iterable
     {
-        $faker = $this->fakerFactory->create(crc32(self::class));
+        $faker = $this->fakerFactory;
 
         for ($i = 0; $i < 100; ++$i) {
             switch($i % 5) {

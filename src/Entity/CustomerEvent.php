@@ -2,6 +2,11 @@
 
 namespace App\Entity;
 
+use App\Repository\CustomerEventRepository;
+use App\Entity\Common\DatedInterface;
+use App\Entity\Common\DatedTrait;
+use App\Entity\Common\IdInterface;
+use App\Entity\Common\IdTrait;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -12,17 +17,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      normalizationContext={"groups"={"customer_events_read"}}
  * )
  */
-class CustomerEvent implements DatedInterface
+class CustomerEvent implements DatedInterface, IdInterface
 {
     use DatedTrait;
-
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"customer_events_read"})
-     */
-    private ?int $id = null;
+    use IdTrait;
 
     /**
      * @ORM\ManyToOne(targetEntity=Account::class)
@@ -44,11 +42,6 @@ class CustomerEvent implements DatedInterface
 
     public function __construct()
     {
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getCustomer(): Account

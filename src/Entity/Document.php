@@ -2,7 +2,11 @@
 
 namespace App\Entity;
 
-
+use App\Repository\DocumentRepository;
+use App\Entity\Common\DatedInterface;
+use App\Entity\Common\DatedTrait;
+use App\Entity\Common\IdInterface;
+use App\Entity\Common\IdTrait;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -13,17 +17,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      normalizationContext={"groups"={"document_read"}}
  * )
  */
-class Document implements DatedInterface
+class Document implements DatedInterface, IdInterface
 {
     use DatedTrait;
-
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"document_read"})
-     */
-    private ?int $id = null;
+    use IdTrait;
 
     /**
      * @ORM\ManyToOne
@@ -56,11 +53,6 @@ class Document implements DatedInterface
      * @Groups({"document_read"})
      */
     private ?string $fileExtension = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getAccount(): ?Account
     {

@@ -2,9 +2,13 @@
 
 namespace App\Entity;
 
+use App\Repository\AccountRepository;
+use App\Entity\Common\DatedInterface;
+use App\Entity\Common\DatedTrait;
+use App\Entity\Common\IdInterface;
+use App\Entity\Common\IdTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Repository\AccountRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -15,22 +19,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      normalizationContext={"groups"={"account_read"}}
  * )
  */
-class Account implements DatedInterface
+class Account implements DatedInterface, IdInterface
 {
     use DatedTrait;
+    use IdTrait;
 
     public const ACCOUNT_STATUS_PENDING = 'pending';
     public const ACCOUNT_STATUS_ACTIVE = 'active';
     public const ACCOUNT_STATUS_DISABLED = 'disabled';
     public const ACCOUNT_STATUS_DELETED = 'deleted';
-
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"account_read"})
-     */
-    private ?int $id = null;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\User", mappedBy="account")
@@ -77,11 +74,6 @@ class Account implements DatedInterface
     public function __construct()
     {
         $this->prospects = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getUser(): ?User

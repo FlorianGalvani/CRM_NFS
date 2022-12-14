@@ -2,13 +2,18 @@
 
 namespace App\Entity;
 
+use App\Repository\UserRepository;
+use App\Entity\Common\DatedInterface;
+use App\Entity\Common\DatedTrait;
+use App\Entity\Common\IdInterface;
+use App\Entity\Common\IdTrait;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -17,17 +22,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * )
  * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedInterface, IdInterface
 {
     use DatedTrait;
-
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"users_read"})
-     */
-    private $id = null;
+    use IdTrait;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
@@ -91,11 +89,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
 
     public function __construct() {
         $this->createdAt = new \DateTime();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getEmail(): ?string

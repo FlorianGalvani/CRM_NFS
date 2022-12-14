@@ -2,6 +2,11 @@
 
 namespace App\Entity;
 
+use App\Repository\ProspectRepository;
+use App\Entity\Common\DatedInterface;
+use App\Entity\Common\DatedTrait;
+use App\Entity\Common\IdInterface;
+use App\Entity\Common\IdTrait;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -12,17 +17,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      normalizationContext={"groups"={"prospect_read"}}
  * )
  */
-class Prospect implements DatedInterface
+class Prospect implements DatedInterface, IdInterface
 {
     use DatedTrait;
-
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"prospect_read"})
-     */
-    private ?int $id = null;
+    use IdTrait;
 
     /**
      * @ORM\ManyToOne(inversedBy="propsects")
@@ -54,11 +52,6 @@ class Prospect implements DatedInterface
      * @Groups({"prospect_read"})
      */
     private ?string $phone = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getCommercial(): ?Account
     {

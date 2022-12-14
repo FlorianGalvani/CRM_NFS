@@ -36,7 +36,7 @@ class Account implements DatedInterface
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"account_read"})
      */
-    private ?User $user = null;
+    private ?User $user;
 
     /**
      * @ORM\Column(length=255)
@@ -59,6 +59,7 @@ class Account implements DatedInterface
     public function __construct()
     {
         $this->prospects = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -69,13 +70,6 @@ class Account implements DatedInterface
     public function getUser(): ?User
     {
         return $this->user;
-    }
-
-    public function setUser(User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     public function getType(): ?string

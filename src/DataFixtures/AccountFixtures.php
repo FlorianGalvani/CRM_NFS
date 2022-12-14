@@ -9,18 +9,10 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Generator;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 final class AccountFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
 {
-    private $fakerFactory;
-
-    public function __construct()
-    {
-        $this->fakerFactory = \Faker\Factory::create('fr_FR');
-    }
-
     public static function getGroups(): array
     {
         return ['account'];
@@ -59,6 +51,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
     }
     public function load(ObjectManager $manager): void
     {
+        $accounts = [];
         // Michel(s)
         foreach ($this->getMichelData() as $data) {
             $entity = $this->createAccount($data);
@@ -66,14 +59,22 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             /** @var User $user */
             $user = $this->getReference(UserFixtures::getUserMichelReference($data['user_id']));
             $user->setAccount($entity);
-//            $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
             $this->addReference(self::getAccountMichelReference($user->getEmail()), $entity);
+            array_push($accounts, $entity);
+            if($entity->getType() === AccountType::CUSTOMER) {
+                foreach($accounts as $account) {
+                    if($account->getType() === AccountType::COMMERCIAL) {
+                        $account->addCustomer($entity);
+                    }
+                }
+            }
         }
 
         // 100
         $i = 0;
         $iCommercial = 0;
         $iIndividual = 0;
+        $iAdmin = 0;
         foreach ($this->getData() as $data) {
             $entity = $this->createAccount($data);
             $manager->persist($entity);
@@ -83,22 +84,26 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             $this->addReference(self::getAccountReference((string) $i), $entity);
             switch ($entity->getType()) {
                 case AccountType::COMMERCIAL:
+                    $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $this->addReference(self::getAccountCommercialReference((string) $iCommercial), $entity);
                     ++$iCommercial;
                     break;
                 case AccountType::CUSTOMER:
-//                    $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
+                    $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $this->addReference(self::getAccountCustomerReference((string) $iIndividual), $entity);
+                    $commercial = $this->getReference(self::getAccountCommercialReference((string) $iCommercial-1));
+                    $commercial->addCustomer($entity);
                     ++$iIndividual;
                     break;
                 case AccountType::ADMIN:
-//                    $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
+                    $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $user->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
-                    $this->addReference(self::getAccountAdminReference((string) $iIndividual), $entity);
-                    ++$iIndividual;
+                    $this->addReference(self::getAccountAdminReference((string) $iAdmin), $entity);
+                    ++$iAdmin;
                     break;
             }
             ++$i;
+            array_push($accounts, $entity);
         }
 
         $manager->flush();
@@ -127,39 +132,39 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
         yield [
             'user_id' => UserFixtures::MICHEL_ADMIN,
             'type' => AccountType::ADMIN,
+            'name' => 'Michel Admin',
             'createdAt' => new \DateTime('2019-03-21'),
         ];
         yield [
             'user_id' => UserFixtures::MICHEL_COMMERCIAL,
             'type' => AccountType::COMMERCIAL,
+            'name' => 'Michel Commercial',
             'createdAt' => new \DateTime('2019-03-21'),
         ];
         yield [
             'user_id' => UserFixtures::MICHEL_CUSTOMER,
             'type' => AccountType::CUSTOMER,
+            'name' => 'Michel Customer',
             'createdAt' => new \DateTime('2019-03-21'),
         ];
     }
 
     private function getData(): iterable
     {
-        $faker = $this->fakerFactory;
-
-        for ($i = 0; $i < 100; ++$i) {
+        for ($i = 0; $i < 99; ++$i) {
             switch($i % 5) {
                 case 0:
-                    yield $this->getAdminData($faker, $i);
+                    yield $this->getCommercialData($i);
                     break;
-                case 3:
-                    yield $this->getCommercialData($faker, $i);
+                default:
+                    yield $this->getCustomerData($i);
                     break;
-                case 1 | 2 | 4:
-                    yield $this->getCustomerData($faker, $i);
             }
         }
+        yield $this->getAdminData($i);
     }
 
-    private function getCommercialData(Generator $faker, int $i): array
+    private function getCommercialData(int $i): array
     {
         $data = [
             'user_id' => $i,
@@ -169,7 +174,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
         return $data;
     }
 
-    private function getCustomerData(Generator $faker, int $i): array
+    private function getCustomerData(int $i): array
     {
         $data = [
             'user_id' => $i,
@@ -179,7 +184,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
         return $data;
     }
 
-    private function getAdminData(Generator $faker, int $i): array
+    private function getAdminData(int $i): array
     {
         $data = [
             'user_id' => $i,

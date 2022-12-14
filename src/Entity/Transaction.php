@@ -3,6 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\TransactionRepository;
+use App\Entity\Common\DatedInterface;
+use App\Entity\Common\DatedTrait;
+use App\Entity\Common\IdInterface;
+use App\Entity\Common\IdTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,17 +19,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      normalizationContext={"groups"={"transaction_read"}}
  * )
  */
-class Transaction implements DatedInterface
+class Transaction implements DatedInterface, IdInterface
 {
     use DatedTrait;
+    use IdTrait;
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"transaction_read"})
-     */
-    private ?int $id = null;
+    public const TRANSACTION_QUOTATION_REQUESTED = 'quotation_requested';
+    public const TRANSACTION_QUOTATION_SENT = 'quotation_sent';
+    public const TRANSACTION_STATUS_PAYMENT_INTENT = 'payment_intent';
+    public const TRANSACTION_STATUS_PAYMENT_SUCCESS = 'payment_success';
+    public const TRANSACTION_STATUS_PAYMENT_FAILURE = 'payment_failure';
+    public const TRANSACTION_STATUS_PAYMENT_ABANDONED = 'payment_abandoned';
 
     /**
      * @ORM\ManyToOne
@@ -33,6 +37,12 @@ class Transaction implements DatedInterface
      * @Groups({"transaction_read"})
      */
     private ?Account $customer = null;
+
+    /**
+     * @ORM\Column(length=255)
+     * @Groups({"transaction_read"})
+     */
+    private ?string $label = null;
 
     /**
      * @ORM\Column(length=255)
@@ -69,11 +79,6 @@ class Transaction implements DatedInterface
         $this->documents = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getCustomer(): ?Account
     {
         return $this->customer;
@@ -97,6 +102,23 @@ class Transaction implements DatedInterface
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    /**
+     * @param string|null $label
+     */
+    public function setLabel(?string $label): void
+    {
+        $this->label = $label;
+    }
+
 
     public function getAmount(): ?float
     {

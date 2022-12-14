@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20221214213828 extends AbstractMigration
+final class Version20221214215426 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -30,8 +30,8 @@ final class Version20221214213828 extends AbstractMigration
         $this->addSql('ALTER TABLE account ADD CONSTRAINT FK_7D3656A47854071C FOREIGN KEY (commercial_id) REFERENCES account (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE customer_event ADD CONSTRAINT FK_F59B7F9C9395C3F3 FOREIGN KEY (customer_id) REFERENCES account (id)');
         $this->addSql('ALTER TABLE customer_event ADD CONSTRAINT FK_F59B7F9C7854071C FOREIGN KEY (commercial_id) REFERENCES account (id)');
-        $this->addSql('ALTER TABLE document ADD CONSTRAINT FK_D8698A769B6B5FBA FOREIGN KEY (account_id) REFERENCES account (id)');
-        $this->addSql('ALTER TABLE document ADD CONSTRAINT FK_D8698A762FC0CB0F FOREIGN KEY (transaction_id) REFERENCES transaction (id)');
+        $this->addSql('ALTER TABLE document ADD CONSTRAINT FK_D8698A769B6B5FBA FOREIGN KEY (account_id) REFERENCES account (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE document ADD CONSTRAINT FK_D8698A762FC0CB0F FOREIGN KEY (transaction_id) REFERENCES transaction (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE prospect ADD CONSTRAINT FK_C9CE8C7D7854071C FOREIGN KEY (commercial_id) REFERENCES account (id)');
         $this->addSql('ALTER TABLE transaction ADD CONSTRAINT FK_723705D19395C3F3 FOREIGN KEY (customer_id) REFERENCES account (id)');
         $this->addSql('ALTER TABLE transaction ADD CONSTRAINT FK_723705D1F1899B00 FOREIGN KEY (transaction_quotation_id) REFERENCES document (id) ON DELETE CASCADE');

@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Document;
 use App\Entity\Transaction;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -47,10 +48,37 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
             }
             $manager->persist($entity);
             $this->addReference(self::getTransactionReference((string) $i), $entity);
+
+            $quotation = $this->createDocument($entity);
+            $quotation->setType(Document::TRANSACTION_DOCUMENT_QUOTATION);
+            $manager->persist($quotation);
+
+            $invoice = $this->createDocument($entity);
+            $invoice->setType(Document::TRANSACTION_DOCUMENT_INVOICE);
+            $manager->persist($invoice);
+
+            $entity->setTransactionQuotation($quotation);
+            $entity->setTransactionInvoice($invoice);
+
             ++$i;
         }
 
         $manager->flush();
+    }
+
+    private function createDocument(Transaction $entity): Document
+    {
+        $faker = $this->fakerFactory;
+        $invoiceDate = $faker->dateTimeBetween('+60 days', '+85 days');
+
+        $document = new Document();
+
+        $document->setAccount($entity->getCustomer());
+        $document->setTransaction($entity);
+        $document->setFileExtension($faker->randomElement(['dot', 'pdf', 'png', 'jpg']));
+        $document->setFileName('doc-'.$invoiceDate->format('d-m-Y'));
+
+        return $document;
     }
 
     private function getData(): iterable

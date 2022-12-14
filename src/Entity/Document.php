@@ -22,14 +22,19 @@ class Document implements DatedInterface, IdInterface
     use DatedTrait;
     use IdTrait;
 
+    const TRANSACTION_DOCUMENT_QUOTATION = 'devis';
+    const TRANSACTION_DOCUMENT_INVOICE = 'facture';
+
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */
     private ?Account $account = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Transaction", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Transaction", fetch="EAGER", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */
     private ?Transaction $transaction = null;
@@ -51,6 +56,10 @@ class Document implements DatedInterface, IdInterface
      * @Groups({"document_read"})
      */
     private ?string $fileExtension = null;
+
+    public function __construct() {
+        $this->createdAt = new \DateTime();
+    }
 
     public function getAccount(): ?Account
     {

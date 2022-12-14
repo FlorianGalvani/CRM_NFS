@@ -69,14 +69,22 @@ class Transaction implements DatedInterface, IdInterface
     private ?string $paymentStatus = null;
 
     /**
-     * @ORM\OneToMany(mappedBy="transaction", targetEntity=Document::class, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity=Document::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"transaction_read"})
      */
-    private Collection $documents;
+    private ?Document $transactionQuotation;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Document::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"transaction_read"})
+     */
+    private ?Document $transactionInvoice;
 
     public function __construct()
     {
-        $this->documents = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     public function getCustomer(): ?Account
@@ -157,32 +165,35 @@ class Transaction implements DatedInterface, IdInterface
     }
 
     /**
-     * @return Collection<int, Document>
+     * @return Document|null
      */
-    public function getDocuments(): Collection
+    public function getTransactionQuotation(): ?Document
     {
-        return $this->documents;
+        return $this->transactionQuotation;
     }
 
-    public function addDocument(Document $document): self
+    /**
+     * @param Document|null $transactionQuotation
+     */
+    public function setTransactionQuotation(?Document $transactionQuotation): void
     {
-        if (!$this->documents->contains($document)) {
-            $this->documents->add($document);
-            $document->setTransaction($this);
-        }
-
-        return $this;
+        $this->transactionQuotation = $transactionQuotation;
     }
 
-    public function removeDocument(Document $document): self
+    /**
+     * @return Document|null
+     */
+    public function getTransactionInvoice(): ?Document
     {
-        if ($this->documents->removeElement($document)) {
-            // set the owning side to null (unless already changed)
-            if ($document->getTransaction() === $this) {
-                $document->setTransaction(null);
-            }
-        }
-
-        return $this;
+        return $this->transactionInvoice;
     }
+
+    /**
+     * @param Document|null $transactionInvoice
+     */
+    public function setTransactionInvoice(?Document $transactionInvoice): void
+    {
+        $this->transactionInvoice = $transactionInvoice;
+    }
+
 }

@@ -23,15 +23,13 @@ class Document implements DatedInterface, IdInterface
     use IdTrait;
 
     /**
-     * @ORM\ManyToOne
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER")
      * @Groups({"document_read"})
      */
     private ?Account $account = null;
 
     /**
-     * @ORM\ManyToOne(inversedBy="documents")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Transaction", fetch="EAGER")
      * @Groups({"document_read"})
      */
     private ?Transaction $transaction = null;

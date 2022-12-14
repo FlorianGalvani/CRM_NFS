@@ -18,6 +18,11 @@ class Account implements DatedInterface
 {
     use DatedTrait;
 
+    public const ACCOUNT_STATUS_PENDING = 'pending';
+    public const ACCOUNT_STATUS_ACTIVE = 'active';
+    public const ACCOUNT_STATUS_DISABLED = 'disabled';
+    public const ACCOUNT_STATUS_DELETED = 'deleted';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -43,7 +48,7 @@ class Account implements DatedInterface
      * @ORM\Column(length=255)
      * @Groups({"account_read"})
      */
-    private ?string $registrationStatus = null;
+    private ?string $accountStatus = null;
 
     /**
      * @ORM\OneToMany(mappedBy="commercial", targetEntity=Prospect::class, orphanRemoval=true)
@@ -85,14 +90,14 @@ class Account implements DatedInterface
         return $this;
     }
 
-    public function getRegistrationStatus(): ?string
+    public function getAccountStatus(): ?string
     {
-        return $this->registrationStatus;
+        return $this->accountStatus;
     }
 
-    public function setRegistrationStatus(string $registrationStatus): self
+    public function setAccountStatus(string $accountStatus): self
     {
-        $this->registrationStatus = $registrationStatus;
+        $this->accountStatus = $accountStatus;
 
         return $this;
     }

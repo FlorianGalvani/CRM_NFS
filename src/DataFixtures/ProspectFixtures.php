@@ -25,11 +25,6 @@ final class ProspectFixtures extends Fixture implements DependentFixtureInterfac
         ];
     }
 
-    public static function getProspectReference(string $key): string
-    {
-        return Prospect::class . '_' . $key;
-    }
-
     public function load(ObjectManager $manager): void
     {
         $i = 0;
@@ -38,7 +33,6 @@ final class ProspectFixtures extends Fixture implements DependentFixtureInterfac
             $manager->persist($entity);
             $commercial = $this->getReference(AccountFixtures::getAccountCommercialReference((string) $i));
             $entity->setCommercial($commercial);
-            $this->addReference(self::getProspectReference((string) $i), $entity);
             ++$i;
         }
 

@@ -84,7 +84,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     private ?string $password = null;
 
     /**
-     * @ORM\OneToOne(mappedBy="user", cascade={"persist", "remove"})
+     * @ORM\OneToOne(inversedBy="user", cascade={"persist", "remove"})
      * @Groups({"users_read"})
      */
     private ?Account $account = null;

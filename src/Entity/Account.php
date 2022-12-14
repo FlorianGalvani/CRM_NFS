@@ -32,8 +32,7 @@ class Account implements DatedInterface
     private ?int $id = null;
 
     /**
-     * @ORM\OneToOne(inversedBy="type", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="App\Entity\User", mappedBy="account")
      * @Groups({"account_read"})
      */
     private ?User $user;

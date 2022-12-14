@@ -54,6 +54,11 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
     {
         return Account::class . '_CUSTOMER_' . $key;
     }
+
+    public static function getAccountAdminReference(string $key): string
+    {
+        return Account::class . '_ADMIN_' . $key;
+    }
     public function load(ObjectManager $manager): void
     {
         // Michel(s)
@@ -86,6 +91,12 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                 case AccountType::CUSTOMER:
 //                    $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $this->addReference(self::getAccountCustomerReference((string) $iIndividual), $entity);
+                    ++$iIndividual;
+                    break;
+                case AccountType::ADMIN:
+//                    $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
+                    $user->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
+                    $this->addReference(self::getAccountAdminReference((string) $iIndividual), $entity);
                     ++$iIndividual;
                     break;
             }

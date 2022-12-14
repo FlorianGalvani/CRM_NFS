@@ -103,6 +103,7 @@ final class UserFixtures extends Fixture implements FixtureGroupInterface
             'plainPassword' => self::MICHEL_COMMERCIAL,
             'firstname' => "Michel",
             'lastname' => "Commercial",
+            'roles' => ['ROLE_USER'],
             'phone' => '0000000000',
             'address' => '10 Rue du Général Sarrail, 76000 Rouen'
         ];
@@ -111,6 +112,7 @@ final class UserFixtures extends Fixture implements FixtureGroupInterface
             'plainPassword' => self::MICHEL_CUSTOMER,
             'firstname' => "Michel",
             'lastname' => "Customer",
+            'roles' => ['ROLE_USER'],
             'phone' => '0000000000',
             'address' => '10 Rue du Général Sarrail, 76000 Rouen'
         ];
@@ -121,7 +123,7 @@ final class UserFixtures extends Fixture implements FixtureGroupInterface
         $faker = $this->fakerFactory->create(crc32(self::class));
         $slugger = new AsciiSlugger('fr');
 
-        for ($i = 0; $i < 200; ++$i) {
+        for ($i = 0; $i < 100; ++$i) {
             $firstname = $faker->firstname();
             $lastname = $faker->lastname();
             $phone = $faker->phoneNumber();
@@ -148,7 +150,8 @@ final class UserFixtures extends Fixture implements FixtureGroupInterface
                 'password' => $faker->password(),
                 'email' => $email,
                 'phone' => $phone,
-                'address' => $address
+                'address' => $address,
+                'roles' => ['ROLE_USER'],
             ];
             yield $data;
         }

@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // react-router-dom components
 
@@ -41,17 +42,19 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 import { useForm } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
 import axios from "axios";
-import { response } from "express";
-
+// Utils
+import { Cookie } from "utils/index";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -61,25 +64,29 @@ function Basic() {
     password: Yup.string().max(255).required("Le mot de passe est requis"),
   });
 
-  const { register, handleSubmit, formState:{ errors } } = useForm({
-    resolver: yupResolver(validationSchema)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
   });
 
   const onSubmit = (data) => {
-    console.log(data);
-
     axios
-      .post('http://localhost:8000/api/login_check', data)
+      .post("http://localhost:8000/api/login_check", data)
       .then((response) => {
         if (response.status === 200) {
-          document.cookie = 'token=' + response.data.token
-          console.log(response.data);
+          document.cookie = "token=" + response.data.token;
+          document.cookie = "role=" + response.data.role;
+          if (Cookie.getCookie("token") !== undefined) {
+              navigate("/dashboard");
+          }
         }
       })
       .catch((error) => {
         console.log(error);
       });
-
   };
 
   return (
@@ -140,10 +147,20 @@ function Basic() {
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form" onSubmit={handleSubmit(onSubmit)}>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth {...register("email")} />
+              <MDInput
+                type="email"
+                label="Email"
+                fullWidth
+                {...register("email")}
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Mot de passe" fullWidth {...register("password")} />
+              <MDInput
+                type="password"
+                label="Mot de passe"
+                fullWidth
+                {...register("password")}
+              />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -154,7 +171,7 @@ function Basic() {
                 onClick={handleSetRememberMe}
                 sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
               >
-                &nbsp;&nbsp;Se souvenir de moi
+                &nbsp;Se souvenir de moi
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
@@ -162,7 +179,6 @@ function Basic() {
                 se connecter
               </MDButton>
             </MDBox>
-
           </MDBox>
         </MDBox>
       </Card>

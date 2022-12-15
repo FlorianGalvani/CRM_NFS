@@ -14,6 +14,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * @ORM\Table("`transaction`")
  * @ORM\Entity(repositoryClass=TransactionRepository::class)
  * @ApiResource(
  *      normalizationContext={"groups"={"transaction_read"}}

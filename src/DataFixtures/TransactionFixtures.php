@@ -87,7 +87,7 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
             $createdAt = $faker->dateTimeBetween('+60 days', '+90 days');
             $invoiceDate = $faker->dateTimeBetween('+60 days', '+85 days');
             yield [
-                'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UserFixtures::MICHEL_CUSTOMER)),
+                'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
                 'amount' => $faker->numberBetween(200, 250),
                 'paymentStatus' => Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS,
                 'stripePaymentIntentId' => 'pi_'.$stipePaymentId,

@@ -12,6 +12,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * @ORM\Table("`customer_event`")
  * @ORM\Entity(repositoryClass=CustomerEventRepository::class)
  * @ApiResource(
  *      normalizationContext={"groups"={"customer_events_read"}}

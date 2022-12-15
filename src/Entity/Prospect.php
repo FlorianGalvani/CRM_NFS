@@ -12,6 +12,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * @ORM\Table("`prospect`")
  * @ORM\Entity(repositoryClass=ProspectRepository::class)
  * @ApiResource(
  *      normalizationContext={"groups"={"prospect_read"}}

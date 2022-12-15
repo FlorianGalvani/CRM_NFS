@@ -29,12 +29,6 @@ class CustomerEvent implements DatedInterface, IdInterface
     private Account $customer;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Account::class)
-     * @Groups({"customer_events_read"})
-     */
-    private Account $commercial;
-
-    /**
      * @ORM\Column(nullable=true)
      * @Groups({"customer_events_read"})
      */
@@ -42,6 +36,7 @@ class CustomerEvent implements DatedInterface, IdInterface
 
     public function __construct()
     {
+        $this->createdAt = new \DateTime();
     }
 
     public function getCustomer(): Account
@@ -52,17 +47,6 @@ class CustomerEvent implements DatedInterface, IdInterface
     public function setCustomer(Account $customer): self
     {
         $this->customer = $customer;
-
-        return $this;
-    }
-    public function getCommercial(): Account
-    {
-        return $this->commercial;
-    }
-
-    public function setCommercial(Account $commercial): self
-    {
-        $this->commercial = $commercial;
 
         return $this;
     }

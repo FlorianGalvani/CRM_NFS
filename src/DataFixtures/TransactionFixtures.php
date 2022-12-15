@@ -26,11 +26,6 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
         ];
     }
 
-    public static function getTransactionReference(string $key): string
-    {
-        return Transaction::class . '_' . $key;
-    }
-
     public function load(ObjectManager $manager): void
     {
         $i = 0;
@@ -47,7 +42,6 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
                 }
             }
             $manager->persist($entity);
-            $this->addReference(self::getTransactionReference((string) $i), $entity);
 
             $quotation = $this->createDocument($entity);
             $quotation->setType(Document::TRANSACTION_DOCUMENT_QUOTATION);

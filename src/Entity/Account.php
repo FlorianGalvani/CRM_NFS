@@ -66,7 +66,7 @@ class Account implements DatedInterface, IdInterface
     private $customers;
 
     /**
-     * @ORM\ManyToOne(inversedBy="customers", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(inversedBy="customers", targetEntity=Account::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"account_read"})
      */

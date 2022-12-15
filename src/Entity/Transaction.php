@@ -32,7 +32,7 @@ class Transaction implements DatedInterface, IdInterface
     public const TRANSACTION_STATUS_PAYMENT_ABANDONED = 'payment_abandoned';
 
     /**
-     * @ORM\ManyToOne
+     * @ORM\ManyToOne(targetEntity=Account::class)
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"transaction_read"})
      */

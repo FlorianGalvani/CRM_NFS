@@ -23,7 +23,7 @@ class Prospect implements DatedInterface, IdInterface
     use IdTrait;
 
     /**
-     * @ORM\ManyToOne(inversedBy="prospects")
+     * @ORM\ManyToOne(inversedBy="prospects", targetEntity=Account::class)
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"prospect_read"})
      */

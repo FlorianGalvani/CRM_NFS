@@ -10,12 +10,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
-final class UserFixtures extends Fixture implements FixtureGroupInterface
+final class UsersFixtures extends Fixture implements FixtureGroupInterface
 {
     public const MICHEL_ADMIN = 'michel+admin@nfs.school';
     public const MICHEL_COMMERCIAL = 'michel+commercial@nfs.school';
     public const MICHEL_CUSTOMER = 'michel+customer@nfs.school';
-    
+
     private $fakerFactory;
     private $userPasswordHasher;
 

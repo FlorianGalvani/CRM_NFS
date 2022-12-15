@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -37,8 +38,16 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 
+// Utils
+import { Cookie } from "utils/index";
+
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
+
+  const navigate = useNavigate();
+  if (Cookie.getCookie("token") === undefined) {
+    navigate("/authentication/sign-in");
+  }
 
   return (
     <DashboardLayout>

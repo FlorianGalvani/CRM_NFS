@@ -55,6 +55,9 @@ function Basic() {
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const navigate = useNavigate();
+  if (Cookie.getCookie("token") !== undefined) {
+    navigate("/dashboard");
+  }
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -80,7 +83,7 @@ function Basic() {
           document.cookie = "token=" + response.data.token;
           document.cookie = "role=" + response.data.role;
           if (Cookie.getCookie("token") !== undefined) {
-              navigate("/dashboard");
+            navigate("/dashboard");
           }
         }
       })

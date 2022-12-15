@@ -37,6 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
 
     /**
      * @ORM\Column
+     * @Groups({"users_read"})
      */
     private array $roles = [];
 
@@ -66,11 +67,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
 
     /**
      * @ORM\Column
+     * @Groups({"users_read"})
      */
     private ?string $phone = null;
 
     /**
      * @ORM\Column
+     * @Groups({"users_read"})
      */
     private ?string $address = null;
 

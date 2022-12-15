@@ -40,10 +40,47 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
+import { useForm } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from "yup";
+
+import axios from "axios";
+import { response } from "express";
+
+
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const validationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("L'email doit être valide")
+      .max(180, "L'email doit être inférieur à 180 caractères")
+      .required("L'email est requis"),
+    password: Yup.string().max(255).required("Le mot de passe est requis"),
+  });
+
+  const { register, handleSubmit, formState:{ errors } } = useForm({
+    resolver: yupResolver(validationSchema)
+  });
+
+  const onSubmit = (data) => {
+    console.log(data);
+
+    axios
+      .post('http://localhost:8000/api/login_check', data)
+      .then((response) => {
+        if (response.status === 200) {
+          document.cookie = 'token=' + response.data.token
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+  };
 
   return (
     <BasicLayout image={bgImage}>
@@ -101,12 +138,12 @@ function Basic() {
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" role="form" onSubmit={handleSubmit(onSubmit)}>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
+              <MDInput type="email" label="Email" fullWidth {...register("email")} />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Mot de passe" fullWidth />
+              <MDInput type="password" label="Mot de passe" fullWidth {...register("password")} />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -121,10 +158,11 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
+              <MDButton type="submit" variant="gradient" color="info" fullWidth>
                 se connecter
               </MDButton>
             </MDBox>
+
           </MDBox>
         </MDBox>
       </Card>

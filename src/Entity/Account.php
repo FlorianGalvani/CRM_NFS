@@ -33,50 +33,50 @@ class Account implements DatedInterface, IdInterface
      * @ORM\OneToOne(targetEntity="App\Entity\User", mappedBy="account")
      * @Groups({"account_read"})
      */
-    private ?User $user;
+    private $user;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"account_read"})
      */
-    private ?string $type = null;
+    private $type = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"account_read"})
      */
-    private ?string $name = null;
+    private $name = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"account_read"})
      */
-    private ?string $accountStatus = null;
+    private $accountStatus = null;
 
     /**
      * @ORM\OneToMany(mappedBy="commercial", targetEntity=Prospect::class, orphanRemoval=true)
      * @Groups({"account_read"})
      */
-    private Collection $prospects;
+    private $prospects;
 
     /**
      * @ORM\OneToMany(mappedBy="commercial", targetEntity=Account::class, orphanRemoval=true, cascade={"persist", "remove"})
      * @Groups({"account_read"})
      */
-    private Collection $customers;
+    private $customers;
 
     /**
      * @ORM\ManyToOne(inversedBy="customers", cascade={"persist", "remove"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"account_read"})
      */
-    private ?Account $commercial = null;
+    private $commercial = null;
 
     /**
      * @ORM\OneToMany(mappedBy="customer", targetEntity=CustomerEvent::class, orphanRemoval=true, cascade={"persist", "remove"})
      * @Groups({"account_read"})
      */
-    private Collection $events;
+    private $events;
 
     public function __construct()
     {

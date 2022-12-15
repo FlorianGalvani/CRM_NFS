@@ -27,31 +27,31 @@ class Prospect implements DatedInterface, IdInterface
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"prospect_read"})
      */
-    private ?Account $commercial = null;
+    private $commercial = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"prospect_read"})
      */
-    private ?string $firstname = null;
+    private $firstname = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"prospect_read"})
      */
-    private ?string $lastname = null;
+    private $lastname = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"prospect_read"})
      */
-    private ?string $email = null;
+    private $email = null;
 
     /**
      * @ORM\Column(length=255, nullable=true)
      * @Groups({"prospect_read"})
      */
-    private ?string $phone = null;
+    private $phone = null;
 
     public function __construct() {
         $this->createdAt = new \DateTime();

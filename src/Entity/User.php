@@ -33,13 +33,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
      * @Assert\NotBlank(message="L'adresse email de l'utilisateur est obligatoire")
      * @Assert\Email(message="Le format de l'adresse email doit être valide")
      */
-    private ?string $email = null;
+    private $email = null;
 
     /**
      * @ORM\Column
      * @Groups({"users_read"})
      */
-    private array $roles = [];
+    private $roles = [];
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -51,7 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
      *  max=255, maxMessage="Le prénom doit faire entre 3 et 255 caractères"
      * )
      */
-    private ?string $firstname = null;
+    private $firstname = null;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -63,32 +63,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
      *  max=255, maxMessage="Le nom doit faire entre 3 et 255 caractères"
      * )
      */
-    private ?string $lastname = null;
+    private $lastname = null;
 
     /**
      * @ORM\Column
      * @Groups({"users_read"})
      */
-    private ?string $phone = null;
+    private $phone = null;
 
     /**
      * @ORM\Column
      * @Groups({"users_read"})
      */
-    private ?string $address = null;
+    private $address = null;
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Le mot de passe est obligatoire")
      */
-    private ?string $password = null;
+    private $password = null;
 
     /**
      * @ORM\OneToOne(inversedBy="user", cascade={"persist", "remove"})
      * @Groups({"users_read"})
      */
-    private ?Account $account = null;
+    private $account = null;
 
     public function __construct() {
         $this->createdAt = new \DateTime();

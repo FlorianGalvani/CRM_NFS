@@ -26,13 +26,13 @@ class CustomerEvent implements DatedInterface, IdInterface
      * @ORM\ManyToOne(targetEntity=Account::class)
      * @Groups({"customer_events_read"})
      */
-    private Account $customer;
+    private $customer;
 
     /**
      * @ORM\Column(nullable=true)
      * @Groups({"customer_events_read"})
      */
-    private array $events = [];
+    private $events = [];
 
     public function __construct()
     {

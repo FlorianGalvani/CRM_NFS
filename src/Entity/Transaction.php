@@ -36,51 +36,51 @@ class Transaction implements DatedInterface, IdInterface
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"transaction_read"})
      */
-    private ?Account $customer = null;
+    private $customer = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"transaction_read"})
      */
-    private ?string $label = null;
+    private $label = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"transaction_read"})
      */
-    private ?string $type = null;
+    private $type = null;
 
     /**
      * @ORM\Column
      * @Groups({"transaction_read"})
      */
-    private ?float $amount = null;
+    private $amount = null;
 
     /**
      * @ORM\Column(length=255, nullable=true)
      * @Groups({"transaction_read"})
      */
-    private ?string $stripePaymentIntentId = null;
+    private $stripePaymentIntentId = null;
 
     /**
      * @ORM\Column(length=255, nullable=true)
      * @Groups({"transaction_read"})
      */
-    private ?string $paymentStatus = null;
+    private $paymentStatus = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Document::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"transaction_read"})
      */
-    private ?Document $transactionQuotation;
+    private $transactionQuotation;
 
     /**
      * @ORM\ManyToOne(targetEntity=Document::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"transaction_read"})
      */
-    private ?Document $transactionInvoice;
+    private $transactionInvoice;
 
     public function __construct()
     {

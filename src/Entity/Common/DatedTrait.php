@@ -9,23 +9,21 @@ trait DatedTrait
     /**
      * @ORM\Column(type="datetime")
      */
-    protected ?\DateTime $createdAt;
+    protected $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected ?\DateTime $updatedAt = null;
+    protected $updatedAt = null;
 
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTime $updatedAt): self
+    public function setUpdatedAt(?\DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
-
-        return $this;
     }
 
     public function getCreatedAt(): ?\DateTime
@@ -33,10 +31,8 @@ trait DatedTrait
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTime $createdAt): self
+    public function setCreatedAt(?\DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
-
-        return $this;
     }
 }

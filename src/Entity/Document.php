@@ -30,32 +30,32 @@ class Document implements DatedInterface, IdInterface
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */
-    private ?Account $account = null;
+    private $account = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Transaction", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */
-    private ?Transaction $transaction = null;
+    private $transaction = null;
 
     /**
      * @ORM\Column(nullable=true)
      * @Groups({"document_read"})
      */
-    private ?string $type = null;
+    private $type = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"document_read"})
      */
-    private ?string $fileName = null;
+    private $fileName = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"document_read"})
      */
-    private ?string $fileExtension = null;
+    private $fileExtension = null;
 
     public function __construct() {
         $this->createdAt = new \DateTime();

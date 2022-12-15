@@ -32,7 +32,7 @@ class CustomerEvent implements DatedInterface, IdInterface
      * @ORM\Column(nullable=true)
      * @Groups({"customer_events_read"})
      */
-    private $events = [];
+    private array $events = [];
 
     public function __construct()
     {

@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
      * @ORM\Column
      * @Groups({"users_read"})
      */
-    private $roles = [];
+    private ?array $roles = [];
 
     /**
      * @ORM\Column(type="string", length=255)

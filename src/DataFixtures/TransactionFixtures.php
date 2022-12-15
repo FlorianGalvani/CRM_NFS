@@ -79,6 +79,9 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = $this->fakerFactory;
 
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        $stipePaymentId = substr( str_shuffle( $chars ), 0, 24 );
+
         // Michel customer
         for ($i = 0; $i < 5; ++$i) {
             $createdAt = $faker->dateTimeBetween('+60 days', '+90 days');
@@ -87,7 +90,7 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
                 'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UserFixtures::MICHEL_CUSTOMER)),
                 'amount' => $faker->numberBetween(200, 250),
                 'paymentStatus' => Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS,
-                'stripePaymentIntentId' => 'pi_'.$faker->regexify('[0-9]{1}[A-Z]{1}[0-9]{2}[A-Z]{8}[0-9]{1}[A-Z]{2}[0-9]{2}[A-Z]{7}'),
+                'stripePaymentIntentId' => 'pi_'.$stipePaymentId,
                 'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
                 'label' => 'Règlement de la facture du '. $invoiceDate->format('d/m/Y'),
                 'createdAt' => $createdAt,
@@ -102,7 +105,7 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
                 'customer' => $this->getReference(AccountFixtures::getAccountCustomerReference((string) $i)),
                 'amount' => $faker->numberBetween(1, 100),
                 'paymentStatus' => Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS,
-                'stripePaymentIntentId' => 'pi_'.$faker->regexify('[0-9]{1}[A-Z]{1}[0-9]{2}[A-Z]{8}[0-9]{1}[A-Z]{2}[0-9]{2}[A-Z]{7}'),
+                'stripePaymentIntentId' => 'pi_'.$stipePaymentId,
                 'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
                 'label' => 'Règlement de la facture du '. $invoiceDate->format('d/m/Y'),
                 'createdAt' => $createdAt,

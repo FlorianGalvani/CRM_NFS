@@ -72,6 +72,12 @@ class Account implements DatedInterface, IdInterface
      */
     private ?Account $commercial = null;
 
+    /**
+     * @ORM\OneToMany(mappedBy="customer", targetEntity=CustomerEvent::class, orphanRemoval=true, cascade={"persist", "remove"})
+     * @Groups({"account_read"})
+     */
+    private Collection $events;
+
     public function __construct()
     {
         $this->prospects = new ArrayCollection();
@@ -200,4 +206,11 @@ class Account implements DatedInterface, IdInterface
         $this->commercial = $commercial;
     }
 
+    /**
+     * @return Collection
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
 }

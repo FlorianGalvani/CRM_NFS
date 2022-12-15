@@ -26,6 +26,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    private ?string $sub_role = null;
+
     /**
      * @var string The hashed password
      */
@@ -130,5 +132,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getSubRole(): ?string
+    {
+        return $this->sub_role;
+    }
+
+    public function setSubRole(?string $sub_role): self
+    {
+        $this->sub_role = $sub_role;
+
+        return $this;
     }
 }

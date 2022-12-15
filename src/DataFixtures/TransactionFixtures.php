@@ -21,7 +21,7 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            UserFixtures::class,
+            UsersFixtures::class,
             AccountFixtures::class,
         ];
     }

@@ -21,7 +21,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            UserFixtures::class,
+            UsersFixtures::class,
         ];
     }
 
@@ -57,7 +57,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             $entity = $this->createAccount($data);
             $manager->persist($entity);
             /** @var User $user */
-            $user = $this->getReference(UserFixtures::getUserMichelReference($data['user_id']));
+            $user = $this->getReference(UsersFixtures::getUserMichelReference($data['user_id']));
             $user->setAccount($entity);
             $this->addReference(self::getAccountMichelReference($user->getEmail()), $entity);
             array_push($accounts, $entity);
@@ -79,7 +79,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             $entity = $this->createAccount($data);
             $manager->persist($entity);
             /** @var User $user */
-            $user = $this->getReference(UserFixtures::getUserReference((string) $i));
+            $user = $this->getReference(UsersFixtures::getUserReference((string) $i));
             $user->setAccount($entity);
             $this->addReference(self::getAccountReference((string) $i), $entity);
             switch ($entity->getType()) {
@@ -130,19 +130,19 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
     private function getMichelData(): iterable
     {
         yield [
-            'user_id' => UserFixtures::MICHEL_ADMIN,
+            'user_id' => UsersFixtures::MICHEL_ADMIN,
             'type' => AccountType::ADMIN,
             'name' => 'Michel Admin',
             'createdAt' => new \DateTime('2019-03-21'),
         ];
         yield [
-            'user_id' => UserFixtures::MICHEL_COMMERCIAL,
+            'user_id' => UsersFixtures::MICHEL_COMMERCIAL,
             'type' => AccountType::COMMERCIAL,
             'name' => 'Michel Commercial',
             'createdAt' => new \DateTime('2019-03-21'),
         ];
         yield [
-            'user_id' => UserFixtures::MICHEL_CUSTOMER,
+            'user_id' => UsersFixtures::MICHEL_CUSTOMER,
             'type' => AccountType::CUSTOMER,
             'name' => 'Michel Customer',
             'createdAt' => new \DateTime('2019-03-21'),

@@ -1,7 +1,13 @@
 api_platform:
+    title: 'CRM Manager - Documentation API'
+    description: 'Pour se connecter, utiliser le bouton "Authorize" puis renseigner le token dans le champ.'
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
     patch_formats:
         json: ['application/merge-patch+json']
     swagger:
         versions: [3]
+        api_keys:
+            JWT:
+                name: Authorization
+                type: header

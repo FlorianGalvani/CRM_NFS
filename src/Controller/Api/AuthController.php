@@ -1,23 +1,20 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
-use App\Repository\UserRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
-class ApiAuthController extends AbstractController
+class AuthController extends AbstractController
 {
     #[Route('/api/users', name: 'app_api_signup', methods: ['POST'])]
     public function signup(Request $request, UserPasswordHasherInterface $passwordHasher,ManagerRegistry $doctrine, ValidatorInterface $validator): JsonResponse
@@ -67,9 +64,6 @@ class ApiAuthController extends AbstractController
             $account = new Account();
 
             switch($data['account']) {
-                case AccountType::CUSTOMER:
-                    $account->setType(AccountType::CUSTOMER);
-                    break;
                 case AccountType::COMMERCIAL:
                     $account->setType(AccountType::COMMERCIAL);
                     break;

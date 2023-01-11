@@ -2,15 +2,13 @@
 
 namespace App\Entity;
 
-use App\Controller\ApiAuthController;
-use App\Repository\UserRepository;
 use App\Entity\Common\DatedInterface;
 use App\Entity\Common\DatedTrait;
 use App\Entity\Common\IdInterface;
 use App\Entity\Common\IdTrait;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -25,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post"={
  *              "name"="signup",
                 "uriTemplate"="/api/signup",
-                "controller"=ApiAuthController::class
+                "controller"=AuthController::class
  *          }
  *     }
  * )

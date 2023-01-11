@@ -13,6 +13,8 @@ security:
                 property: 'email'
 
     firewalls:
+    
+
 
         login:
             pattern: ^/api/login
@@ -23,6 +25,7 @@ security:
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
 
         api:
             pattern:   ^/api(?!/signup)
@@ -39,7 +42,13 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+    
+    role_hierarchy: 
+        ROLE_USER_CUSTOMER: ROLE_USER
+        ROLE_USER_COMMERCIAL: ROLE_USER
+        ROLE_ADMIN: ROLE_ADMIN
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
 when@test:
     security:

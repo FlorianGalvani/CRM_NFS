@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // react-router-dom components
@@ -55,9 +55,6 @@ function Basic() {
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const navigate = useNavigate();
-  if (Cookie.getCookie("token") !== undefined) {
-    navigate("/dashboard");
-  }
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()

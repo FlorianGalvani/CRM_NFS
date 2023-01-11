@@ -8,8 +8,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AppController extends AbstractController
 {
+    // regex to ignore api and email route
     /**
-     * @Route("/{reactRouting}", name="index", requirements={"reactRouting"="^(?!api).+"}, defaults={"reactRouting": null})
+     * @Route("/{reactRouting}", name="index", requirements={"reactRouting"="^(?!api)(?!email).+"}, defaults={"reactRouting": null})
      */
     public function index(): Response
     {

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,10 +25,14 @@ class ApiAuthController extends AbstractController
             'success' => false
         ];
 
-        $data = json_decode($request->getContent(), true);
-        //TODO: Validate the data + check if the user already exists
+        if(!$request->isXmlHttpRequest()) {
+            return $this->json($response,Response::HTTP_UNAUTHORIZED);
+        }
 
-        //Check if the user already exists
+        $user = new User();
+        $form = $this->createForm(UserFormType::class, $user, ['csrf_protection' => false]);
+        $data = json_decode($request->getContent(), true);
+
         $existingUser = $doctrine->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         
         if ($existingUser) {
@@ -35,16 +40,10 @@ class ApiAuthController extends AbstractController
             return $this->json($response, Response::HTTP_CONFLICT);
         }
 
-        $entityManager = $doctrine->getManager();
-        
-        $user = new User();
-        $user->setEmail($data['email']);
-        $user->setRoles(['ROLE_USER']);
-        $user->setPassword($data['password']);
-        $errors = $validator->validate($user);
+        $form->submit($data);
 
-        if (count($errors) > 0) {
-            $response['errors'] = $errors;
+        if (!$form->isValid()) {
+            $response['errors'] = $form->getErrors(true);
             return $this->json($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -54,8 +53,9 @@ class ApiAuthController extends AbstractController
         );
         $user->setPassword($password);
 
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $em = $doctrine->getManager();
+        $em->persist($user);
+        $em->flush();
 
         $response['success'] = true;
         return $this->json($response, Response::HTTP_CREATED);

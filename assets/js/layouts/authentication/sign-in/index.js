@@ -77,7 +77,6 @@ function Basic() {
       .then((response) => {
         if (response.status === 200) {
           document.cookie = "token=" + response.data.token;
-          document.cookie = "role=" + response.data.role;
           if (Cookie.getCookie("token") !== undefined) {
             navigate("/dashboard");
           }

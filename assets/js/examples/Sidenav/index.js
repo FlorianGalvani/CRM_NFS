@@ -14,6 +14,8 @@ Coded by www.creative-tim.com
 */
 
 import React, { useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 // react-router-dom components
 import { useLocation, NavLink } from "react-router-dom";
@@ -30,7 +32,7 @@ import Icon from "@mui/material/Icon";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
+// import MDButton from "components/MDButton";
 
 // Material Dashboard 2 React example components
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
@@ -46,6 +48,8 @@ import {
   setTransparentSidenav,
   setWhiteSidenav,
 } from "context";
+// Utils
+import { Cookie } from "utils/index";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
@@ -54,7 +58,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     transparentSidenav,
     whiteSidenav,
     darkMode,
-    sidenavColor,
+    // sidenavColor,
   } = controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
@@ -95,11 +99,13 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
-  // Render all the routes from the routes.js (All the visible items on the Sidenav)
+  const decoded = jwt_decode(Cookie.getCookie("token"));
+  console.log(decoded.roles.find((role) => role))
+
+  // Render all the routes from the routes.js (All the visible items on the Sidenav), if user is connect don't show sign in
   const renderRoutes = routes.map(
     ({ type, name, icon, title, noCollapse, key, href, route }) => {
       let returnValue;
-
       if (type === "collapse") {
         returnValue = href ? (
           <Link
@@ -152,6 +158,14 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             }
           />
         );
+      } 
+
+      if (Cookie.getCookie("token") !== undefined && key === "sign-in") {
+        returnValue = null;
+      }
+
+      if (decoded.roles.find((role) => role) !== "ROLE_ADMIN" && key === "sign-up") {
+        returnValue = null;
       }
 
       return returnValue;

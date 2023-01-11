@@ -3,49 +3,96 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Common\DatedInterface;
+use App\Entity\Common\DatedTrait;
+use App\Entity\Common\IdInterface;
+use App\Entity\Common\IdTrait;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+/**
+ * @ORM\Table("`user`")
+ * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ApiResource(
+ *      normalizationContext={"groups"={"users_read"}}
+ * )
+ * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")
+ */
+class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedInterface, IdInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use DatedTrait;
+    use IdTrait;
 
-    #[ORM\Column(length: 180, unique: true)]
-    #[Assert\Email(
-        message: 'The email {{ value }} is not a valid email.',
-    )]
-    private ?string $email = null;
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Groups({"users_read"})
+     * @Assert\NotBlank(message="L'adresse email de l'utilisateur est obligatoire")
+     * @Assert\Email(message="Le format de l'adresse email doit être valide")
+     */
+    private $email = null;
 
-    #[ORM\Column]
-    private array $roles = [];
+    /**
+     * @ORM\Column
+     * @Groups({"users_read"})
+     */
+    private ?array $roles = [];
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"users_read"})
+     * @Assert\NotBlank(message="Le prénom du customer est obligatoire")
+     * @Assert\Length(
+     *  allowEmptyString =true,
+     *  min=3, minMessage="Le prénom doit faire entre 3 et 255 caractères",
+     *  max=255, maxMessage="Le prénom doit faire entre 3 et 255 caractères"
+     * )
+     */
+    private $firstname = null;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"users_read"})
+     * @Assert\NotBlank(message="Le nom du customer est obligatoire")
+     * @Assert\Length(
+     *  allowEmptyString =true,
+     *  min=3, minMessage="Le nom doit faire entre 3 et 255 caractères",
+     *  max=255, maxMessage="Le nom doit faire entre 3 et 255 caractères"
+     * )
+     */
+    private $lastname = null;
+
+    /**
+     * @ORM\Column
+     * @Groups({"users_read"})
+     */
+    private $phone = null;
+
+    /**
+     * @ORM\Column
+     * @Groups({"users_read"})
+     */
+    private $address = null;
 
     /**
      * @var string The hashed password
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
      */
-    #[ORM\Column]
-    #[Assert\Length(
-        min: 8,
-        minMessage: 'Your password should be at least {{ limit }} characters',
-        // max length allowed by Symfony for security reasons
-        max: 4096,
-    )]
-    // Symfony Assert\Regex with a pattern that match 1 uppercase, 1 lowercase, 1 number and 1 special character
-    #[Assert\Regex(
-        pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
-        message: 'Your password should contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character',
-    )]
-    private ?string $password = null;
+    private $password = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
+    /**
+     * @ORM\OneToOne(inversedBy="user", targetEntity=Account::class, cascade={"persist", "remove"})
+     * @Groups({"users_read"})
+     */
+    private $account = null;
+
+    public function __construct() {
+        $this->createdAt = new \DateTime();
     }
 
     public function getEmail(): ?string
@@ -130,5 +177,85 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * @param string|null $firstname
+     */
+    public function setFirstname(?string $firstname): void
+    {
+        $this->firstname = $firstname;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * @param string|null $lastname
+     */
+    public function setLastname(?string $lastname): void
+    {
+        $this->lastname = $lastname;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @param string|null $phone
+     */
+    public function setPhone(?string $phone): void
+    {
+        $this->phone = $phone;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param string|null $address
+     */
+    public function setAddress(?string $address): void
+    {
+        $this->address = $address;
+    }
+
+    /**
+     * @return Account|null
+     */
+    public function getAccount(): ?Account
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account|null $account
+     */
+    public function setAccount(?Account $account): void
+    {
+        $this->account = $account;
     }
 }

@@ -31,6 +31,7 @@ Encore
         'context': path.resolve(__dirname, 'assets/js/context'),
         'examples': path.resolve(__dirname, 'assets/js/examples'),
         'routes': path.resolve(__dirname, 'assets/js/routes.js'),
+        'utils': path.resolve(__dirname, 'assets/js/utils'),
     })
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)

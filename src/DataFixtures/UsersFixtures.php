@@ -3,33 +3,154 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
-
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Faker;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
-class UsersFixtures extends Fixture
+final class UsersFixtures extends Fixture implements FixtureGroupInterface
 {
-    private UserPasswordHasherInterface $hasher;
+    public const MICHEL_ADMIN = 'michel.admin@nfs.school';
+    public const MICHEL_COMMERCIAL = 'michel.commercial@nfs.school';
+    public const MICHEL_CUSTOMER = 'michel.customer@nfs.school';
 
-    public function __construct(UserPasswordHasherInterface $hasher)
+    private $fakerFactory;
+    private $userPasswordHasher;
+
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
     {
-        $this->hasher = $hasher;
+        $this->fakerFactory = \Faker\Factory::create('fr_FR');
+        $this->userPasswordHasher = $userPasswordHasher;
+    }
+
+    public static function getGroups(): array
+    {
+        return ['user', 'account'];
+    }
+
+    public static function getUserReference(string $key): string
+    {
+        return User::class . '_' . $key;
+    }
+
+    public static function getUserMichelReference(string $email): string
+    {
+        return User::class . '_Michel_' . $email;
     }
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Faker\Factory::create('fr_FR');
+        // Michel(s)
+        foreach ($this->getMichelData() as $data) {
+            $entity = $this->createUser($data);
+            $manager->persist($entity);
+            $this->addReference(self::getUserMichelReference($entity->getEmail()), $entity);
+        }
 
-        $user = new User();
-        $user->setEmail($faker->email);
-        $user->setRoles(['ROLE_USER']);
+        // 200 random user(s)
+        $i = 0;
+        foreach ($this->getData() as $data) {
+            $entity = $this->createUser($data);
+            $manager->persist($entity);
+            $this->addReference(self::getUserReference((string) $i), $entity);
+            ++$i;
+        }
 
-        $password = $this->hasher->hashPassword($user, 'pass_1234');
-        $user->setPassword($password);
-
-        $manager->persist($user);
         $manager->flush();
+    }
+
+    private function createUser(array $data): User
+    {
+        $entity = new User();
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
+            ->disableExceptionOnInvalidPropertyPath()
+            ->getPropertyAccessor();
+
+        if ($plainPassword = $data['plainPassword'] ?? null) {
+            $password = $this->userPasswordHasher->hashPassword($entity, $plainPassword);
+            $data['password'] = $password;
+            unset($data['plainPassword']);
+        }
+
+        foreach ($data as $key => $value) {
+            if ($propertyAccessor->isWritable($entity, $key)) {
+                $propertyAccessor->setValue($entity, $key, $value);
+            }
+        }
+
+        return $entity;
+    }
+
+    private function getMichelData(): iterable
+    {
+        yield [
+            'email' => self::MICHEL_ADMIN,
+            'plainPassword' => self::MICHEL_ADMIN,
+            'firstname' => "Michel",
+            'lastname' => "Admin",
+            'roles' => ['ROLE_ADMIN'],
+            'phone' => '0000000000',
+            'address' => '10 Rue du Général Sarrail, 76000 Rouen'
+        ];
+        yield [
+            'email' => self::MICHEL_COMMERCIAL,
+            'plainPassword' => self::MICHEL_COMMERCIAL,
+            'firstname' => "Michel",
+            'lastname' => "Commercial",
+            'roles' => ['ROLE_USER'],
+            'phone' => '0000000000',
+            'address' => '10 Rue du Général Sarrail, 76000 Rouen'
+        ];
+        yield [
+            'email' => self::MICHEL_CUSTOMER,
+            'plainPassword' => self::MICHEL_CUSTOMER,
+            'firstname' => "Michel",
+            'lastname' => "Customer",
+            'roles' => ['ROLE_USER'],
+            'phone' => '0000000000',
+            'address' => '10 Rue du Général Sarrail, 76000 Rouen'
+        ];
+    }
+
+    private function getData(): iterable
+    {
+        $faker = $this->fakerFactory;
+        $slugger = new AsciiSlugger('fr');
+
+        for ($i = 0; $i < 100; ++$i) {
+            $firstname = $faker->firstname();
+            $lastname = $faker->lastname();
+            $phone = $faker->phoneNumber();
+            $address = $faker->address();
+
+            $email = '';
+            $email .= $slugger->slug($firstname);
+            if ($faker->boolean(40)) {
+                $email .= '.';
+            }
+            $email .= $slugger->slug($lastname);
+            if ($faker->boolean(30)) {
+                $email .= $faker->numberBetween(10, 90);
+            }
+            if ($faker->boolean(40)) {
+                $email .= '@' . $faker->domainName();
+            } else {
+                $email .= '@' . $faker->freeEmailDomain();
+            }
+
+            $data = [
+                'firstname' => $firstname,
+                'lastname' => $lastname,
+                'password' => $faker->password(),
+                'email' => $email,
+                'phone' => $phone,
+                'address' => $address,
+                'roles' => ['ROLE_USER'],
+            ];
+            yield $data;
+        }
     }
 }

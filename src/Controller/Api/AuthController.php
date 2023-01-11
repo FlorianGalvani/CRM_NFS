@@ -73,7 +73,7 @@ class AuthController extends AbstractController
             }
 
             $account->setName($user->getFirstname().' '.$user->getLastname());
-            $account->setAccountStatus(Account::ACCOUNT_STATUS_ACTIVE);
+            $account->setAccountStatus(Account::ACCOUNT_STATUS_PENDING);
             $entityManager->persist($account);
 
             $user->setAccount($account);

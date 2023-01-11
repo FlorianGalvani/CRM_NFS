@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Account;
 use App\Entity\User;
+use App\Enum\Account\AccountType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +19,7 @@ use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class ApiAuthController extends AbstractController
 {
-    #[Route('/api/signup', name: 'app_api_signup', methods: ['POST'])]
+    #[Route('/api/users', name: 'app_api_signup', methods: ['POST'])]
     public function signup(Request $request, UserPasswordHasherInterface $passwordHasher,ManagerRegistry $doctrine, ValidatorInterface $validator): JsonResponse
     {
         $response = [
@@ -40,7 +42,12 @@ class ApiAuthController extends AbstractController
         $user = new User();
         $user->setEmail($data['email']);
         $user->setRoles(['ROLE_USER']);
+        $user->setFirstname($data['firstname']);
+        $user->setLastname($data['lastname']);
         $user->setPassword($data['password']);
+        $user->setPhone($data['phone']);
+        $user->setAddress($data['address']);
+
         $errors = $validator->validate($user);
 
         if (count($errors) > 0) {
@@ -55,11 +62,33 @@ class ApiAuthController extends AbstractController
         $user->setPassword($password);
 
         $entityManager->persist($user);
+
+        if($data['account']) {
+            $account = new Account();
+
+            switch($data['account']) {
+                case AccountType::CUSTOMER:
+                    $account->setType(AccountType::CUSTOMER);
+                    break;
+                case AccountType::COMMERCIAL:
+                    $account->setType(AccountType::COMMERCIAL);
+                    break;
+                case AccountType::ADMIN:
+                    $account->setType(AccountType::ADMIN);
+                    break;
+            }
+
+            $account->setName($user->getFirstname().' '.$user->getLastname());
+            $account->setAccountStatus(Account::ACCOUNT_STATUS_ACTIVE);
+            $entityManager->persist($account);
+
+            $user->setAccount($account);
+        }
+
         $entityManager->flush();
 
         $response['success'] = true;
         return $this->json($response, Response::HTTP_CREATED);
     }
-
 }
 

@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Prospect;
+use App\Event\CreateProspectEvent;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProspectController extends AbstractController
 {
     #[Route('/api/prospects', methods: ['POST'])]
-    public function create(Request $request, ManagerRegistry $doctrine): Response
+    public function create(Request $request, ManagerRegistry $doctrine, EventDispatcherInterface $eventDispatcher): Response
     {
         $response = [
             'success' => false
@@ -42,6 +43,8 @@ class ProspectController extends AbstractController
             'success' => true,
             'data' => $prospect
         ];
+
+        $eventDispatcher->dispatch(new CreateProspectEvent($prospect), CreateProspectEvent::NAME);
 
         return $this->json($response, Response::HTTP_CREATED);
     }

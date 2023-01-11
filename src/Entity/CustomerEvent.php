@@ -24,7 +24,15 @@ class CustomerEvent implements DatedInterface, IdInterface
     use IdTrait;
 
     /**
+     * @ORM\ManyToOne(targetEntity=Prospect::class)
+     * @ORM\Column(nullable=true)
+     * @Groups({"customer_events_read"})
+     */
+    private $prospect;
+
+    /**
      * @ORM\ManyToOne(targetEntity=Account::class)
+     * @ORM\Column(nullable=true)
      * @Groups({"customer_events_read"})
      */
     private $customer;
@@ -38,6 +46,18 @@ class CustomerEvent implements DatedInterface, IdInterface
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+    }
+
+    public function getProspect(): Prospect
+    {
+        return $this->prospect;
+    }
+
+    public function setProspect(Prospect $prospect): self
+    {
+        $this->prospect = $prospect;
+
+        return $this;
     }
 
     public function getCustomer(): Account

@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\Api\ProspectController;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Table("`prospect`")
@@ -24,6 +25,7 @@ use App\Controller\Api\ProspectController;
  *          }
  *     }
  * )
+ * @UniqueEntity(fields = {"email"},message ="Un prospect ayant cette adresse email existe déjà")
  */
 class Prospect implements DatedInterface, IdInterface
 {

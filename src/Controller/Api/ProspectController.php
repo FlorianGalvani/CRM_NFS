@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Prospect;
 use App\Event\CreateProspectEvent;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

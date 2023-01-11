@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3568428-f47e-4b2e-b2e5-ec8199d53d9c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/migrations/Version20230111145836.php" afterDir="false" />
+    <list default="true" id="a3568428-f47e-4b2e-b2e5-ec8199d53d9c" name="Changes" comment="fix(api/crud): change le statut du nouveau compte créé en 'pending'">
+      <change afterPath="$PROJECT_DIR$/src/Event/CreateCustomerEvent.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/CustomerEvent.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/CustomerEvent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/EventSubscriber/CustomerSubscriber.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/EventSubscriber/CustomerSubscriber.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -222,6 +222,14 @@
       <workItem from="1673426775861" duration="1666000" />
       <workItem from="1673443397955" duration="349000" />
     </task>
+    <task id="LOCAL-00001" summary="fix(api/crud): change le statut du nouveau compte créé en 'pending'">
+      <created>1673450617126</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1673450617126</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -229,5 +237,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="fix(api/crud): change le statut du nouveau compte créé en 'pending'" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(api/crud): change le statut du nouveau compte créé en 'pending'" />
   </component>
 </project>

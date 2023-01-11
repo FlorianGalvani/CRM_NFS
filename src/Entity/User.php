@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Controller\ApiAuthController;
 use App\Repository\UserRepository;
 use App\Entity\Common\DatedInterface;
 use App\Entity\Common\DatedTrait;
@@ -19,7 +20,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table("`user`")
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
- *      normalizationContext={"groups"={"users_read"}}
+ *      normalizationContext={"groups"={"users_read"}},
+ *     itemOperations={
+ *          "post"={
+ *              "name"="signup",
+                "uriTemplate"="/api/signup",
+                "controller"=ApiAuthController::class
+ *          }
+ *     }
  * )
  * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")
  */

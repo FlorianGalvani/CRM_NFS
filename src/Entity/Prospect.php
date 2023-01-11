@@ -10,12 +10,19 @@ use App\Entity\Common\IdTrait;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Controller\Api\ProspectController;
 
 /**
  * @ORM\Table("`prospect`")
  * @ORM\Entity(repositoryClass=ProspectRepository::class)
  * @ApiResource(
- *      normalizationContext={"groups"={"prospect_read"}}
+ *      normalizationContext={"groups"={"prospect_read"}},
+ *     itemOperations={
+ *          "post"={
+ *              "name"="create",
+ *              "controller"=ProspectController::class
+ *          }
+ *     }
  * )
  */
 class Prospect implements DatedInterface, IdInterface

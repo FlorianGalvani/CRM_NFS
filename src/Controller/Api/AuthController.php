@@ -16,8 +16,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AuthController extends AbstractController
 {
-    #[Route('/api/users', name: 'app_api_signup', methods: ['POST'])]
-    public function signup(Request $request, UserPasswordHasherInterface $passwordHasher,ManagerRegistry $doctrine, ValidatorInterface $validator): JsonResponse
+    #[Route('/api/users', methods: ['POST'])]
+    public function signup(Request $request, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine, ValidatorInterface $validator): JsonResponse
     {
         $response = [
             'success' => false
@@ -81,7 +81,10 @@ class AuthController extends AbstractController
 
         $entityManager->flush();
 
-        $response['success'] = true;
+        $response = [
+            'success' => true,
+            'data' => $user
+        ];
         return $this->json($response, Response::HTTP_CREATED);
     }
 }

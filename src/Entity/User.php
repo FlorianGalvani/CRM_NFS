@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+Use App\Repository\UserRepository;
 use App\Entity\Common\DatedInterface;
 use App\Entity\Common\DatedTrait;
 use App\Entity\Common\IdInterface;

@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a3568428-f47e-4b2e-b2e5-ec8199d53d9c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Controller/Api/ProspectController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/ApiAuthController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Api/AuthController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Api/AuthController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Api/AuthController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/Api/ProspectController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Api/ProspectController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Prospect.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Prospect.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -22,7 +23,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="api/entities" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />

@@ -67,7 +67,8 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
 
         $document = new Document();
 
-        $document->setAccount($entity->getCustomer());
+        $document->setCustomer($entity->getCustomer());
+        $document->setCommercial($entity->getCustomer());
         $document->setTransaction($entity);
         $document->setFileExtension($faker->randomElement(['dot', 'pdf', 'png', 'jpg']));
         $document->setFileName('doc-'.$invoiceDate->format('d-m-Y'));

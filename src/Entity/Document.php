@@ -31,7 +31,13 @@ class Document implements DatedInterface, IdInterface
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */
-    private $account = null;
+    private $customer = null;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"document_read"})
+     */
+    private $commercial = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Transaction", fetch="EAGER", cascade={"persist", "remove"})
@@ -58,18 +64,36 @@ class Document implements DatedInterface, IdInterface
      */
     private $fileExtension = null;
 
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     * @Groups({"document_read"})
+     */
+    private $data = null;
+
     public function __construct() {
         $this->createdAt = new \DateTime();
     }
 
-    public function getAccount(): ?Account
+    public function getCustomer(): ?Account
     {
-        return $this->account;
+        return $this->customer;
     }
 
-    public function setAccount(?Account $account): self
+    public function setCustomer(?Account $account): self
     {
-        $this->account = $account;
+        $this->customer = $account;
+
+        return $this;
+    }
+
+    public function getCommercial(): ?Account
+    {
+        return $this->commercial;
+    }
+
+    public function setCommercial(?Account $account): self
+    {
+        $this->commercial = $account;
 
         return $this;
     }
@@ -121,4 +145,17 @@ class Document implements DatedInterface, IdInterface
 
         return $this;
     }
+
+    public function getData(): ?string
+    {
+        return $this->data;
+    }
+
+    public function setData(string $data): self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+    
 }

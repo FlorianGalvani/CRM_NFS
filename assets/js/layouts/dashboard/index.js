@@ -13,8 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -38,19 +37,8 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 
-// Utils
-import { Cookie } from "utils/index";
-
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (Cookie.getCookie("token") === undefined) {
-      navigate("/authentication/sign-in");
-    }
-  }, []);
 
   return (
     <DashboardLayout>

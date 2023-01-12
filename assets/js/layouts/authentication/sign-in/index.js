@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // react-router-dom components
@@ -26,7 +26,6 @@ import MuiLink from "@mui/material/Link";
 
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
-import GitHubIcon from "@mui/icons-material/GitHub";
 import GoogleIcon from "@mui/icons-material/Google";
 
 // Material Dashboard 2 React components
@@ -78,7 +77,6 @@ function Basic() {
       .then((response) => {
         if (response.status === 200) {
           document.cookie = "token=" + response.data.token;
-          document.cookie = "role=" + response.data.role;
           if (Cookie.getCookie("token") !== undefined) {
             navigate("/dashboard");
           }
@@ -120,16 +118,6 @@ function Basic() {
                 color="white"
               >
                 <FacebookIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-            <Grid item xs={2}>
-              <MDTypography
-                component={MuiLink}
-                href="#"
-                variant="body1"
-                color="white"
-              >
-                <GitHubIcon color="inherit" />
               </MDTypography>
             </Grid>
             <Grid item xs={2}>

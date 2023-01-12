@@ -113,7 +113,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
     {
         $entity = new Account();
         // Default
-        $entity->setAccountStatus(Account::ACCOUNT_STATUS_PENDING);
+        $entity->setAccountStatus(Account::ACCOUNT_STATUS_ACTIVE);
         // Data
         $propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
             ->disableExceptionOnInvalidPropertyPath()

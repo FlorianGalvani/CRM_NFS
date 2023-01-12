@@ -12,6 +12,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\Api\ProspectController;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table("`prospect`")
@@ -42,18 +43,32 @@ class Prospect implements DatedInterface, IdInterface
     /**
      * @ORM\Column(length=255)
      * @Groups({"prospect_read"})
+     * @Assert\NotBlank(message="Le prénom du prospect est obligatoire")
+     * @Assert\Length(
+     *  allowEmptyString =true,
+     *  min=3, minMessage="Le prénom doit faire entre 3 et 255 caractères",
+     *  max=255, maxMessage="Le prénom doit faire entre 3 et 255 caractères"
+     * )
      */
     private $firstname = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"prospect_read"})
+     * @Assert\NotBlank(message="Le nom du prospect est obligatoire")
+     * @Assert\Length(
+     *  allowEmptyString =true,
+     *  min=3, minMessage="Le nom doit faire entre 3 et 255 caractères",
+     *  max=255, maxMessage="Le nom doit faire entre 3 et 255 caractères"
+     * )
      */
     private $lastname = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"prospect_read"})
+     * @Assert\NotBlank(message="L'adresse email du prospect est obligatoire")
+     * @Assert\Email(message="Le format de l'adresse email doit être valide")
      */
     private $email = null;
 

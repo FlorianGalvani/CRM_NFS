@@ -2,16 +2,16 @@
 
 namespace App\Controller\Api;
 
+use App\Controller\BaseController;
 use App\Entity\Prospect;
 use App\Event\CreateProspectEvent;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ProspectController extends AbstractController
+class ProspectController extends BaseController
 {
     #[Route('/api/prospects', methods: ['POST'])]
     public function create(Request $request, ManagerRegistry $doctrine, EventDispatcherInterface $eventDispatcher): Response
@@ -35,6 +35,11 @@ class ProspectController extends AbstractController
             ->setEmail($data['email']);
 
         $prospect->setCommercial($user->getAccount());
+
+        $errors = $this->validateData($prospect);
+        if($errors !== null) {
+            return $this->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
+        }
 
         $entityManager = $doctrine->getManager();
         $entityManager->persist($prospect);

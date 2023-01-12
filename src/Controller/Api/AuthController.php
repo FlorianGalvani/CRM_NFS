@@ -2,31 +2,28 @@
 
 namespace App\Controller\Api;
 
+use App\Controller\BaseController;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AuthController extends AbstractController
+class AuthController extends BaseController
 {
     #[Route('/api/users', methods: ['POST'])]
-    public function signup(Request $request, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine, ValidatorInterface $validator): JsonResponse
+    public function signup(Request $request, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine): JsonResponse
     {
         $response = [
             'success' => false
         ];
 
         $data = json_decode($request->getContent(), true);
-        //TODO: Validate the data + check if the user already exists
 
-        //Check if the user already exists
         $existingUser = $doctrine->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         
         if ($existingUser) {
@@ -45,11 +42,9 @@ class AuthController extends AbstractController
         $user->setPhone($data['phone']);
         $user->setAddress($data['address']);
 
-        $errors = $validator->validate($user);
-
-        if (count($errors) > 0) {
-            $response['errors'] = $errors;
-            return $this->json($response, Response::HTTP_BAD_REQUEST);
+        $errors = $this->validateData($user);
+        if($errors !== null) {
+            return $this->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
         }
 
         $password = $passwordHasher->hashPassword(

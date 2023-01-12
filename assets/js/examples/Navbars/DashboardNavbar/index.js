@@ -108,24 +108,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
 
 
-  //logout
+  //logout without axios 
   const navigate = useNavigate();
   const handleLogout = () => {
-    axios
-      .post("http://localhost:8000/api/logout")
-      .then((response) => {
-        if (response.status === 200) {
-          console.log('logout');
-          Cookie.deleteCookie("token");
-          if (Cookie.getCookie("token") === null) {
-            navigate("/sign-in");
-          }
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    Cookie.deleteCookie("token");
+    navigate("/authentication/sign-in", { replace: true });
   };
+
+ 
 
   // Render the notifications menu
   const renderMenu = () => (

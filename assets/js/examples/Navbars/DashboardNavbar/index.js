@@ -52,7 +52,7 @@ import {
   setOpenConfigurator,
 } from "context";
 
-import axios from "axios";
+
 // Utils
 import { Cookie } from "utils/index";
 

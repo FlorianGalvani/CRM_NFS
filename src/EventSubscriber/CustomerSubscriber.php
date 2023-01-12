@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\CustomerEvent;
+use App\Enum\Customer\EventType;
 use App\Event\CreateCustomerEvent;
 use App\Event\CreateProspectEvent;
 use App\Repository\CustomerEventRepository;
@@ -34,7 +35,7 @@ class CustomerSubscriber implements EventSubscriberInterface
         $customerEvents = (new CustomerEvent())
             ->setProspect($prospect)
             ->setEvents([
-                'prospect_created' => new \DateTime()
+                EventType::EVENT_PROSPECT_CREATED => new \DateTime()
             ]);
 
         $this->em->persist($customerEvents);
@@ -46,7 +47,7 @@ class CustomerSubscriber implements EventSubscriberInterface
         $customer = $event->getCustomer();
 
         $existingProspect = $this->prospectRepository->findOneBy(['email' => $customer->getUser()->getEmail()]);
-        $_event = ['customer_created' => new \DateTime()];
+        $_event = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime()];
 
         if($existingProspect !== null) {
             $customerEvent = $this->customerEventRepository->findOneBy(['prospect' => $existingProspect]);

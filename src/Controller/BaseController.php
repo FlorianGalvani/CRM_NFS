@@ -4,16 +4,35 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BaseController extends AbstractController
 {
-    private $validator;
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            ValidatorInterface::class,
+        ]);
+    }
 
-    public function __construct(ValidatorInterface $validator) {
-        $this->validator = $validator;
+    protected function getValidatorInterface(): ValidatorInterface
+    {
+        if (!$this->container->has(ValidatorInterface::class)) {
+            throw new \LogicException('The ValidatorInterface is not registered in your application.');
+        }
+
+        return $this->container->get(ValidatorInterface::class);
+    }
+
+    protected function validateData($data): ?ConstraintViolationListInterface
+    {
+        $errors = $this->getValidatorInterface()->validate($data);
+
+        if (count($errors) > 0) {
+            return $errors;
+        }
+        return null;
     }
 
     protected function getFormErrors(FormInterface $form): array
@@ -33,15 +52,5 @@ class BaseController extends AbstractController
         }
 
         return $errors;
-    }
-
-    protected function validateData($data): ?ConstraintViolationListInterface
-    {
-        $errors = $this->validator->validate($data);
-
-        if (count($errors) > 0) {
-            return $errors;
-        }
-        return null;
     }
 }

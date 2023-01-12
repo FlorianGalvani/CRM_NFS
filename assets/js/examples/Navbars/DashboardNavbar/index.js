@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import React, { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -51,6 +51,12 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+
+
+// Utils
+import { Cookie } from "utils/index";
+
+
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -99,6 +105,17 @@ function DashboardNavbar({ absolute, light, isMini }) {
     setOpenConfigurator(dispatch, !openConfigurator);
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
+
+
+
+  //logout without axios 
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    Cookie.deleteCookie("token");
+    navigate("/authentication/sign-in", { replace: true });
+  };
+
+ 
 
   // Render the notifications menu
   const renderMenu = () => (
@@ -189,6 +206,15 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 onClick={handleConfiguratorOpen}
               >
                 <Icon sx={iconsStyle}>settings</Icon>
+              </IconButton>
+              <IconButton
+                size="small"
+                disableRipple
+                color="inherit"
+                sx={navbarIconButton}
+                onClick={handleLogout}
+              >
+                <Icon sx={iconsStyle}>logout</Icon>
               </IconButton>
               {renderMenu()}
             </MDBox>

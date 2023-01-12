@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Account\AccountType;
 Use App\Repository\UserRepository;
 use App\Entity\Common\DatedInterface;
 use App\Entity\Common\DatedTrait;
@@ -264,5 +265,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     public function setAccount(?Account $account): void
     {
         $this->account = $account;
+    }
+
+    public function getAccountStatus(): ?string
+    {
+        return $this->getAccount()->getAccountStatus();
     }
 }

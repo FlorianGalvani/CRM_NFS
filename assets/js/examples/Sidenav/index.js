@@ -13,8 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React, { useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 
 // react-router-dom components
@@ -58,7 +57,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     transparentSidenav,
     whiteSidenav,
     darkMode,
-    // sidenavColor,
   } = controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
@@ -72,6 +70,19 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
+
+  const [token, setDecodedToken] = useState();
+
+  const decodedToken = () => {
+    if (Cookie.getCookie("token") !== undefined) {
+      const jwtToken = jwt_decode(Cookie.getCookie("token"));
+      setDecodedToken(jwtToken)
+    }
+  };
+
+  useEffect(() => {
+    decodedToken()
+  }, [])
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -99,8 +110,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
-  const decoded = jwt_decode(Cookie.getCookie("token"));
-  console.log(decoded.roles.find((role) => role))
+  // const decoded = jwt_decode(Cookie.getCookie("token"));
+  // console.log(decoded.roles.find((role) => role))
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav), if user is connect don't show sign in
   const renderRoutes = routes.map(
@@ -164,7 +175,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         returnValue = null;
       }
 
-      if (decoded.roles.find((role) => role) !== "ROLE_ADMIN" && key === "sign-up") {
+      if (token?.roles.find((role) => role) !== "ROLE_ADMIN" && key === "sign-up") {
         returnValue = null;
       }
 

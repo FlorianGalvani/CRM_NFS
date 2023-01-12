@@ -16,7 +16,7 @@ import "regenerator-runtime";
 import React, { useState, useEffect, useMemo } from "react";
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -54,8 +54,11 @@ import {
 } from "context";
 
 // Images
-import brandWhite from "assets/images/logo-ct.png";
-import brandDark from "assets/images/logo-ct-dark.png";
+import brandWhite from "assets/images/icon.png";
+import brandDark from "assets/images/icon.png";
+
+// Utils
+import { Cookie } from "utils/index";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -134,6 +137,14 @@ export default function App() {
       return null;
     });
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (Cookie.getCookie("token") === undefined) {
+      navigate("/authentication/sign-in");
+    }
+  }, []);
+
   const configsButton = (
     <MDBox
       display="flex"
@@ -199,7 +210,7 @@ export default function App() {
                 ? brandDark
                 : brandWhite
             }
-            brandName="Material Dashboard 2"
+            brandName="CRManager"
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}

@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Enum\Account\AccountType;
+Use App\Repository\UserRepository;
 use App\Entity\Common\DatedInterface;
 use App\Entity\Common\DatedTrait;
 use App\Entity\Common\IdInterface;
 use App\Entity\Common\IdTrait;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use DateTimeImmutable;
@@ -20,7 +21,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table("`user`")
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
- *      normalizationContext={"groups"={"users_read"}}
+ *      normalizationContext={"groups"={"users_read"}},
+ *     itemOperations={
+ *          "post"={
+ *              "name"="signup",
+                "uriTemplate"="/api/signup",
+                "controller"=AuthController::class
+ *          }
+ *     }
  * )
  * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")
  */
@@ -279,6 +287,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
         $this->account = $account;
     }
 
+    public function getAccountStatus(): ?string
+    {
+        return $this->getAccount()->getAccountStatus();
+    }
+
     /**
      * @return string|null
      */
@@ -326,7 +339,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     {
         $this->emailVerified = $emailVerified;
     }
-    
+
 
 
 }

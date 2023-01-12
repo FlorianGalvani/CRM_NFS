@@ -27,7 +27,13 @@ class CustomerEvent implements DatedInterface, IdInterface
      * @ORM\ManyToOne(targetEntity=Account::class)
      * @Groups({"customer_events_read"})
      */
-    private $customer;
+    private $customer = null;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Prospect::class)
+     * @Groups({"customer_events_read"})
+     */
+    private $prospect = null;
 
     /**
      * @ORM\Column(nullable=true)
@@ -48,6 +54,18 @@ class CustomerEvent implements DatedInterface, IdInterface
     public function setCustomer(Account $customer): self
     {
         $this->customer = $customer;
+
+        return $this;
+    }
+
+    public function getProspect(): Prospect
+    {
+        return $this->prospect;
+    }
+
+    public function setProspect(Prospect $prospect): self
+    {
+        $this->prospect = $prospect;
 
         return $this;
     }

@@ -52,12 +52,8 @@ import { Cookie } from "utils/index";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
-  const {
-    miniSidenav,
-    transparentSidenav,
-    whiteSidenav,
-    darkMode,
-  } = controller;
+  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode } =
+    controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
 
@@ -73,16 +69,18 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const [token, setDecodedToken] = useState();
 
+  console.log(token);
+
   const decodedToken = () => {
     if (Cookie.getCookie("token") !== undefined) {
       const jwtToken = jwt_decode(Cookie.getCookie("token"));
-      setDecodedToken(jwtToken)
+      setDecodedToken(jwtToken);
     }
   };
 
   useEffect(() => {
-    decodedToken()
-  }, [])
+    decodedToken();
+  }, []);
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -169,13 +167,28 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             }
           />
         );
-      } 
+      }
 
       if (Cookie.getCookie("token") !== undefined && key === "sign-in") {
         returnValue = null;
       }
 
-      if (token?.roles.find((role) => role) !== "ROLE_ADMIN" && key === "sign-up") {
+      if (
+        token?.roles.find((role) => role) !== "ROLE_ADMIN" &&
+        key === "sign-up"
+      ) {
+        returnValue = null;
+      }
+
+      if (
+        token?.roles.find((role) => role) === "ROLE_ADMIN" &&
+        key === "profile"
+      ) {
+        returnValue = null;
+      } else if (
+        token?.roles.find((role) => role) === "ROLE_USER" &&
+        key === "tables"
+      ) {
         returnValue = null;
       }
 

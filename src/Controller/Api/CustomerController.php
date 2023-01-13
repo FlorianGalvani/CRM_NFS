@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Service\Emails\SendEmail;
 use App\Form\Commercial\NewCustomerType;
 use App\Controller\BaseController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,15 +15,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class CustomerController extends BaseController
 {
-    #[Route('/api/commercial/new/customer', name: 'app_api_commercial_crud')]
-    public function createNewCustomer(Request $request, UserPasswordHasherInterface $passwordHasher): Response
+    #[Route('/api/users', name: 'app_api_commercial_crud', methods:['POST'])]
+    public function createNewCustomer(Request $request, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail): Response
     {
-        $currentUser = $this->getUser();
-
-        if($currentUser == null) {
-            throw $this->createAccessDeniedException();
-        }
-
         $em = $this->getManagerRegistry()->getManager();
 
         $response = [
@@ -62,8 +57,11 @@ class CustomerController extends BaseController
         $account->setType(\App\Enum\Account\AccountType::CUSTOMER);
         $account->setName($data['firstname'] . ' ' . $data['lastname']);
         $account->setAccountStatus(\App\Entity\Account::ACCOUNT_STATUS_PENDING);
-       
-        $account->setCommercial($currentUser->getAccount());
+
+        $currentUser = $this->getUser();
+
+        $currentCommercial = $this->getManagerRegistry()->getRepository(User::class)->findOneBy(['email' => $currentUser->getEmail()]);
+        $account->setCommercial($currentCommercial->getAccount());
         $em->persist($account);
         $user->setAccount($account);
         $password = 'pass_1234';
@@ -76,6 +74,8 @@ class CustomerController extends BaseController
         $em->persist($user);
         $em->flush();
 
+        $sendEmail->sendNewCustomerEmail($user, $password);
+
         $response['success'] = true;
         return $this->json($response,Response::HTTP_OK);
     }
@@ -83,12 +83,6 @@ class CustomerController extends BaseController
     #[Route('/api/commercial/quotes/new', name: 'app_api_commercial_quotes_create')]
     function createNewQuotes (Request $request)
     {
-        $currentUser = $this->getUser();
-
-        if($currentUser == null) {
-            throw $this->createAccessDeniedException();
-        }
-        
         $response = [
             'success' => false
         ];
@@ -96,8 +90,10 @@ class CustomerController extends BaseController
         if(!$request->isXmlHttpRequest()) {
             return $this->json($response,Response::HTTP_UNAUTHORIZED);
         }
-        $formData = json_decode($request->getContent(), true);
 
+        $currentUser = $this->getUser();
+
+        $formData = json_decode($request->getContent(), true);
         $document = new \App\Entity\Document();
         $document->setType(\App\Enum\Document\DocumentType::QUOTE);
         $document->setFileName($formData['fileName']);
@@ -118,10 +114,6 @@ class CustomerController extends BaseController
     function listQuotes (Request $request,SerializerInterface $serializer)
     {
         $currentUser = $this->getUser();
-
-        if($currentUser == null) {
-            throw $this->createAccessDeniedException();
-        }
         
         $response = [
             'success' => false

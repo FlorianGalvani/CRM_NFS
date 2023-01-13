@@ -245,19 +245,19 @@ const QuotesPage = ({ pdfMode }) => {
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                    placeholder="Your Client's Name"
+                    placeholder="Nom Client"
                     value={invoice.clientName}
                     onChange={(value) => handleChange("clientName", value)}
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                    placeholder="Client's Address"
+                    placeholder="Adresse Client"
                     value={invoice.clientAddress}
                     onChange={(value) => handleChange("clientAddress", value)}
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                    placeholder="City, State Zip"
+                    placeholder="Ville, Code Postal"
                     value={invoice.clientAddress2}
                     onChange={(value) => handleChange("clientAddress2", value)}
                     pdfMode={pdfMode}

@@ -29,7 +29,7 @@ function BillingInformation() {
     <Card id="delete-account">
       <MDBox pt={3} px={2}>
         <MDTypography variant="h6" fontWeight="medium">
-          Billing Information
+          Détails de facturation
         </MDTypography>
       </MDBox>
       <MDBox pt={1} pb={2} px={2}>

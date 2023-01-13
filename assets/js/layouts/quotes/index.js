@@ -190,15 +190,6 @@ const QuotesPage = ({ pdfMode }) => {
 
               <View className="flex" pdfMode={pdfMode}>
                 <View className="w-50" pdfMode={pdfMode}>
-                  <EditableFileImage
-                    className="logo"
-                    placeholder="Your Logo"
-                    value={invoice.logo}
-                    width={invoice.logoWidth}
-                    pdfMode={pdfMode}
-                    onChangeImage={(value) => handleChange("logo", value)}
-                    onChangeWidth={(value) => handleChange("logoWidth", value)}
-                  />
                   <EditableInput
                     className="fs-20 bold"
                     placeholder="Dev Studio"
@@ -501,12 +492,6 @@ const QuotesPage = ({ pdfMode }) => {
                       />
                     </View>
                     <View className="w-50 p-5 flex" pdfMode={pdfMode}>
-                      <EditableInput
-                        className="dark bold right ml-30"
-                        value={invoice.currency}
-                        onChange={(value) => handleChange("currency", value)}
-                        pdfMode={pdfMode}
-                      />
                       <Text
                         className="right bold dark w-auto"
                         pdfMode={pdfMode}
@@ -517,6 +502,12 @@ const QuotesPage = ({ pdfMode }) => {
                           : 0
                         ).toFixed(2)}
                       </Text>
+                      <EditableInput
+                        className="dark bold"
+                        value={invoice.currency}
+                        onChange={(value) => handleChange("currency", value)}
+                        pdfMode={pdfMode}
+                      />
                     </View>
                   </View>
                 </View>

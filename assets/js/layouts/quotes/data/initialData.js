@@ -38,7 +38,7 @@ export const initialInvoice = {
     { ...initialProductLine },
   ],
   subTotalLabel: 'Sous-total',
-  taxLabel: 'Sale Tax (10%)',
+  taxLabel: 'TVA (19.6%)',
   totalLabel: 'TOTAL',
   currency: '€',
   notesLabel: 'Notes',

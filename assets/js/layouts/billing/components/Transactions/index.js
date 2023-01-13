@@ -42,7 +42,7 @@ function Transactions() {
           fontWeight="medium"
           textTransform="capitalize"
         >
-          Your Transaction&apos;s
+          Transactions
         </MDTypography>
         <MDBox display="flex" alignItems="flex-start">
           <MDBox color="text" mr={0.5} lineHeight={0}>

@@ -69,9 +69,6 @@ class CustomerSubscriber implements EventSubscriberInterface
         $customerEvent->setCustomer($customer);
 
         $this->em->flush();
-
-        //todo: envoyer email
-            // récupérer le mot de passe décrypter ? // on peut pas sur Symfo => sécu
     }
 
     public static function getSubscribedEvents(): array

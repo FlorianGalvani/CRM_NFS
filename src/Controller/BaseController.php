@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -20,6 +21,12 @@ class BaseController extends AbstractController
             TokenStorageInterface::class,
             JWTTokenManagerInterface::class,
         ]);
+    }
+
+    protected function getUser(): User
+    {
+        $decodedToken = $this->getJWTTokenManagerInterface()->decode($this->getTokenStorageInterface()->getToken());
+        return $this->getManagerRegistry()->getRepository(User::class)->findOneBy(['email' => $decodedToken['username']]);
     }
 
     protected function getTokenStorageInterface(): TokenStorageInterface

@@ -53,7 +53,7 @@ function Dashboard() {
                   color="info"
                   title="Nombre de clients"
                   description="Portefeuille clients"
-                  // date="campaign sent 2 days ago"
+                  date="campaign sent 2 days ago"
                   chart={reportsBarChartData}
                 />
               </MDBox>
@@ -64,7 +64,7 @@ function Dashboard() {
                   color="success"
                   title="Facturation"
                   description={"Total des factures"}
-                  // date="updated 4 min ago"
+                  date="updated 4 min ago"
                   chart={sales}
                 />
               </MDBox>

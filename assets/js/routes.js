@@ -123,7 +123,7 @@ const routes = [
     key: "quotes",
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/quotes",
-    component: <Quotes  />,
+    component: <Quotes />,
   },
 ];
 

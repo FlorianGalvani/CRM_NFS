@@ -38,7 +38,6 @@ class AuthController extends BaseController
         $user->setRoles(['ROLE_USER']);
         $user->setFirstname($data['firstname']);
         $user->setLastname($data['lastname']);
-        $user->setPassword($data['password']);
         $user->setPhone($data['phone']);
         $user->setAddress($data['address']);
 

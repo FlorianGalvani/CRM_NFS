@@ -6,6 +6,9 @@
 parameters:
     locale: fr
 
+    app.stripe.keys.public: '%env(STRIPE_PUBLIC_KEY)%'
+    app.stripe.keys.private: '%env(STRIPE_PRIVATE_KEY)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:

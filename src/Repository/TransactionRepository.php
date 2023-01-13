@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Account;
 use App\Entity\Transaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,17 @@ class TransactionRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findLastOneByAccountAndStatus(Account $account, $statuses): ?Transaction
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.customer = :account')
+            ->andWhere('t.paymentStatus MEMBER OF :statuses')
+            ->setParameter('account', $account)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
 //    /**

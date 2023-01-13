@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use DateTimeImmutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -99,8 +100,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
      */
     private $account = null;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"users_read"})
+     */
+    private $emailVerified = null;
+
+    /**
+     * @ORM\Column(nullable=true)
+     * @Groups({"users_read"})
+     */
+    private $emailVerificationToken = null;
+
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     * @Groups({"users_read"})
+     */
+    private $emailVerificationToken_at = null;
+
     public function __construct() {
         $this->createdAt = new \DateTime();
+        $this->emailVerified = false;
     }
 
     public function getEmail(): ?string
@@ -271,4 +291,55 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     {
         return $this->getAccount()->getAccountStatus();
     }
+
+    /**
+     * @return string|null
+     */
+    public function getEmailVerificationToken(): ?string
+    {
+        return $this->emailVerificationToken;
+    }
+
+    /**
+     * @param string|null $address
+     */
+    public function setEmailVerificationToken(?string $emailVerificationToken): void
+    {
+        $this->emailVerificationToken = $emailVerificationToken;
+    }
+
+        /**
+     * @return string|null
+     */
+    public function getEmailVerificationTokenAt(): ?DateTimeImmutable
+    {
+        return $this->emailVerificationToken;
+    }
+
+    /**
+     * @param string|null $address
+     */
+    public function setEmailVerificationTokenAt(?DateTimeImmutable $emailVerificationToken_at): void
+    {
+        $this->emailVerificationToken_at = $emailVerificationToken_at;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getEmailVerified(): ?bool
+    {
+        return $this->emailVerified;
+    }
+
+    /**
+     * @param bool|null $emailVerified
+     */
+    public function setEmailVerified(?bool $emailVerified): void
+    {
+        $this->emailVerified = $emailVerified;
+    }
+
+
+
 }

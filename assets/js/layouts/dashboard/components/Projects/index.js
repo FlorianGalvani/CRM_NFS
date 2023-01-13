@@ -69,21 +69,9 @@ function Projects() {
       >
         <MDBox>
           <MDTypography variant="h6" gutterBottom>
-            Projects
+            Clients
           </MDTypography>
           <MDBox display="flex" alignItems="center" lineHeight={0}>
-            <Icon
-              sx={{
-                fontWeight: "bold",
-                color: ({ palette: { info } }) => info.main,
-                mt: -0.5,
-              }}
-            >
-              done
-            </Icon>
-            <MDTypography variant="button" fontWeight="regular" color="text">
-              &nbsp;<strong>30 done</strong> this month
-            </MDTypography>
           </MDBox>
         </MDBox>
         <MDBox color="text" px={2}>

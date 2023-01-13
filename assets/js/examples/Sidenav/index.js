@@ -181,6 +181,13 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       }
 
       if (
+        token?.roles.find((role) => role) !== "ROLE_ADMIN" &&
+        key === "quotes"
+      ) {
+        returnValue = null;
+      }
+
+      if (
         token?.roles.find((role) => role) === "ROLE_ADMIN" &&
         key === "profile"
       ) {

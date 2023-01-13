@@ -17,12 +17,6 @@ class CustomerController extends BaseController
     #[Route('/api/commercial/new/customer', name: 'app_api_commercial_crud')]
     public function createNewCustomer(Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $currentUser = $this->getUser();
-
-        if($currentUser == null) {
-            throw $this->createAccessDeniedException();
-        }
-
         $em = $this->getManagerRegistry()->getManager();
 
         $response = [
@@ -62,8 +56,10 @@ class CustomerController extends BaseController
         $account->setType(\App\Enum\Account\AccountType::CUSTOMER);
         $account->setName($data['firstname'] . ' ' . $data['lastname']);
         $account->setAccountStatus(\App\Entity\Account::ACCOUNT_STATUS_PENDING);
-       
-        $account->setCommercial($currentUser->getAccount());
+        $currentUser = $this->getJWTTokenManagerInterface()->decode($this->getTokenStorageInterface()->getToken());
+
+        $currentCommercial = $this->getManagerRegistry()->getRepository(User::class)->findOneBy(['email' => $currentUser['username']]);
+        $account->setCommercial($currentCommercial->getAccount());
         $em->persist($account);
         $user->setAccount($account);
         $password = 'pass_1234';
@@ -96,8 +92,9 @@ class CustomerController extends BaseController
         if(!$request->isXmlHttpRequest()) {
             return $this->json($response,Response::HTTP_UNAUTHORIZED);
         }
+        $decodedToken = $this->getJWTTokenManagerInterface()->decode($this->getTokenStorageInterface()->getToken());
+        $currentUser = $this->getManagerRegistry()->getRepository(User::class)->findOneBy(['email' => $decodedToken['username']]);
         $formData = json_decode($request->getContent(), true);
-
         $document = new \App\Entity\Document();
         $document->setType(\App\Enum\Document\DocumentType::QUOTE);
         $document->setFileName($formData['fileName']);

@@ -46,11 +46,11 @@ function PaymentMethod() {
         alignItems="center"
       >
         <MDTypography variant="h6" fontWeight="medium">
-          Payment Method
+          Moyen de paiement
         </MDTypography>
         <MDButton variant="gradient" color="dark">
           <Icon sx={{ fontWeight: "bold" }}>add</Icon>
-          &nbsp;add new card
+          &nbsp;ajouter carte
         </MDButton>
       </MDBox>
       <MDBox p={2}>
@@ -119,7 +119,7 @@ function PaymentMethod() {
               >
                 <Tooltip title="Edit Card" placement="top">
                   <Icon sx={{ cursor: "pointer" }} fontSize="small">
-                    edit
+                    modifier
                   </Icon>
                 </Tooltip>
               </MDBox>

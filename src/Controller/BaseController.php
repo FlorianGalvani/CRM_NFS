@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class BaseController extends AbstractController
 {
@@ -15,7 +17,27 @@ class BaseController extends AbstractController
         return array_merge(parent::getSubscribedServices(), [
             ValidatorInterface::class,
             ManagerRegistry::class,
+            TokenStorageInterface::class,
+            JWTTokenManagerInterface::class,
         ]);
+    }
+
+    protected function getTokenStorageInterface(): TokenStorageInterface
+    {
+        if (!$this->container->has(TokenStorageInterface::class)) {
+            throw new \LogicException('The TokenStorageInterface is not registered in your application.');
+        }
+
+        return $this->container->get(TokenStorageInterface::class);
+    }
+
+    protected function getJWTTokenManagerInterface(): JWTTokenManagerInterface
+    {
+        if (!$this->container->has(JWTTokenManagerInterface::class)) {
+            throw new \LogicException('The JWTTokenManagerInterface is not registered in your application.');
+        }
+
+        return $this->container->get(JWTTokenManagerInterface::class);
     }
 
     protected function getValidatorInterface(): ValidatorInterface

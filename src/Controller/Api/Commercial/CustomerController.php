@@ -18,14 +18,6 @@ use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuild
 class CustomerController extends AbstractController
 {
 
-    private $jwtManager = null;
-    private $tokenStorageInterface = null;
-
-    public function __construct(TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager)
-    {
-        $this->jwtManager = $jwtManager;
-        $this->tokenStorageInterface = $tokenStorageInterface;
-    }
 
     #[Route('/api/commercial/new/customer', name: 'app_api_commercial_crud')]
     public function createNewCustomer(Request $request, ManagerRegistry $managerRegistry, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail): Response

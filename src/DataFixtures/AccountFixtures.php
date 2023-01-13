@@ -55,6 +55,15 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
         // Michel(s)
         foreach ($this->getMichelData() as $data) {
             $entity = $this->createAccount($data);
+            if($entity->getType() === AccountType::COMMERCIAL) {
+                $entity->setCompanyData(json_encode([
+                    "name" => "NFS",
+                    "address" => "1 rue de la paix",
+                    "zipCode" => "76000",
+                    "city" => "Rouen",
+                    "country" => "France",
+                ]));
+            }
             $manager->persist($entity);
             /** @var User $user */
             $user = $this->getReference(UsersFixtures::getUserMichelReference($data['user_id']));

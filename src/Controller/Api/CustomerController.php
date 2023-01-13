@@ -66,10 +66,10 @@ class CustomerController extends BaseController
         $account->setCommercial($currentUser->getAccount());
         $em->persist($account);
         $user->setAccount($account);
-        
+        $password = 'pass_1234';
         $passwordHash = $passwordHasher->hashPassword(
             $user,
-            $data['password']
+            $password
         );
         $user->setPassword($passwordHash);
        

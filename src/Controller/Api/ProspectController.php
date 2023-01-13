@@ -5,7 +5,6 @@ namespace App\Controller\Api;
 use App\Controller\BaseController;
 use App\Entity\Prospect;
 use App\Event\CreateProspectEvent;
-use Doctrine\Persistence\ManagerRegistry;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProspectController extends BaseController
 {
     #[Route('/api/prospects', methods: ['POST'])]
-    public function create(Request $request, ManagerRegistry $doctrine, EventDispatcherInterface $eventDispatcher): Response
+    public function create(Request $request, EventDispatcherInterface $eventDispatcher): Response
     {
         $response = [
             'success' => false
@@ -41,7 +40,7 @@ class ProspectController extends BaseController
             return $this->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
         }
 
-        $entityManager = $doctrine->getManager();
+        $entityManager = $this->getManagerRegistry()->getManager();
         $entityManager->persist($prospect);
         $entityManager->flush();
 

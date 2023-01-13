@@ -8,6 +8,7 @@ use App\Event\CreateCustomerEvent;
 use App\Event\CreateProspectEvent;
 use App\Repository\CustomerEventRepository;
 use App\Repository\ProspectRepository;
+use App\Service\Emails\SendEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -16,16 +17,19 @@ class CustomerSubscriber implements EventSubscriberInterface
     private $em;
     private $customerEventRepository;
     private $prospectRepository;
+    private $mailer;
 
     public function __construct(
         EntityManagerInterface $em,
         CustomerEventRepository $customerEventRepository,
-        ProspectRepository $prospectRepository
+        ProspectRepository $prospectRepository,
+        SendEmail $mailer
     )
     {
         $this->em = $em;
         $this->customerEventRepository = $customerEventRepository;
         $this->prospectRepository = $prospectRepository;
+        $this->mailer = $mailer;
     }
 
     public function onCreateProspect(CreateProspectEvent $event): void

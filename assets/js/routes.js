@@ -41,6 +41,8 @@ import React from "react";
 import Dashboard from "./layouts/dashboard";
 import Tables from "./layouts/tables";
 import Billing from "./layouts/billing";
+import Quotes from "./layouts/quotes";
+
 // import RTL from "./layouts/rtl";
 // import Notifications from "./layouts/notifications";
 import Profile from "./layouts/profile";
@@ -121,7 +123,7 @@ const routes = [
     key: "quotes",
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/quotes",
-    component: <Billing />,
+    component: <Quotes  />,
   },
 ];
 

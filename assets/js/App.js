@@ -59,7 +59,7 @@ import brandDark from "assets/images/icon.png";
 
 // Utils
 import { Cookie } from "utils/index";
-
+import "./app.css"
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const {

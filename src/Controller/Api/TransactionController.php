@@ -18,6 +18,28 @@ class TransactionController extends BaseController
         $this->transactionRepository = $transactionRepository;
     }
 
+    #[Route('/api/payment', methods: ['POST'])]
+    public function payment(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        // Récupération de la provision en cours
+        $this->transactionRepository = $this->getDoctrine()->getRepository(Transaction::class);
+
+        $transaction = $this->transactionRepository->findLastOneByAccountAndStatus($currentAccount, [Transaction::TRANSACTION_QUOTATION_SENT]);
+
+        if (null === $transaction) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->json([
+            'provision' => $transaction,
+            'key' => $this->getParameter('app.stripe.keys.public'),
+        ]);
+    }
+
     #[Route('/api/stripe_create', methods: ['POST'])]
     public function stripeCreate(): Response
     {
@@ -25,7 +47,7 @@ class TransactionController extends BaseController
         $user = $this->getUser();
         $currentAccount = $user->getAccount();
 
-        // Récupération de la provision en cours
+        // Récupération de la transaction en cours s'il y en a une
         $transaction = $this->transactionRepository->findLastOneByAccountAndStatus($currentAccount, [Transaction::TRANSACTION_STATUS_PAYMENT_INTENT]);
 
         if (null === $transaction) {
@@ -56,7 +78,7 @@ class TransactionController extends BaseController
             ];
 
             // Suivi de la transaction en cours
-            $transaction->setStatus(Transaction::TRANSACTION_STATUS_PAYMENT_INTENT);
+            $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_INTENT);
             $transaction->setStripePaymentIntentId($paymentIntent->id);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();

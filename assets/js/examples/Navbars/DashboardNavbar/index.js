@@ -112,7 +112,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const navigate = useNavigate();
   const handleLogout = () => {
     Cookie.deleteCookie("token");
-    navigate("/authentication/sign-in", { replace: true });
+    navigate("/connexion", { replace: true });
   };
 
  

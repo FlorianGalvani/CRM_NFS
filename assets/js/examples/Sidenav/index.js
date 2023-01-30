@@ -169,32 +169,32 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         );
       }
 
-      if (Cookie.getCookie("token") !== undefined && key === "sign-in") {
+      if (Cookie.getCookie("token") !== undefined && key === "connexion") {
         returnValue = null;
       }
 
       if (
         token?.roles.find((role) => role) !== "ROLE_ADMIN" &&
-        key === "sign-up"
+        key === "compte"
       ) {
         returnValue = null;
       }
 
       if (
         token?.roles.find((role) => role) !== "ROLE_ADMIN" &&
-        key === "quotes"
+        key === "devis"
       ) {
         returnValue = null;
       }
 
       if (
         token?.roles.find((role) => role) === "ROLE_ADMIN" &&
-        key === "profile"
+        key === "profil"
       ) {
         returnValue = null;
       } else if (
         token?.roles.find((role) => role) === "ROLE_USER" &&
-        key === "tables"
+        key === "utilisateurs"
       ) {
         returnValue = null;
       }

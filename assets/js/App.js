@@ -143,7 +143,7 @@ export default function App() {
 
   useEffect(() => {
     if (Cookie.getCookie("token") === undefined) {
-      navigate("/authentication/sign-in");
+      navigate("/connexion");
     }
   }, []);
 

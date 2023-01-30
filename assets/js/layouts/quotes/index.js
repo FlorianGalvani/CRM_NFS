@@ -190,36 +190,27 @@ const QuotesPage = ({ pdfMode }) => {
 
               <View className="flex" pdfMode={pdfMode}>
                 <View className="w-50" pdfMode={pdfMode}>
-                  <EditableFileImage
-                    className="logo"
-                    placeholder="Your Logo"
-                    value={invoice.logo}
-                    width={invoice.logoWidth}
-                    pdfMode={pdfMode}
-                    onChangeImage={(value) => handleChange("logo", value)}
-                    onChangeWidth={(value) => handleChange("logoWidth", value)}
-                  />
                   <EditableInput
                     className="fs-20 bold"
-                    placeholder="Your Company"
+                    placeholder="Dev Studio"
                     value={invoice.companyName}
                     onChange={(value) => handleChange("companyName", value)}
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                    placeholder="Your Name"
+                    placeholder="Nom Commercial"
                     value={invoice.name}
                     onChange={(value) => handleChange("name", value)}
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                    placeholder="Company's Address"
+                    placeholder="77 Rue Rambuteau"
                     value={invoice.companyAddress}
                     onChange={(value) => handleChange("companyAddress", value)}
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                    placeholder="City, State Zip"
+                    placeholder="Paris, 75001"
                     value={invoice.companyAddress2}
                     onChange={(value) => handleChange("companyAddress2", value)}
                     pdfMode={pdfMode}
@@ -245,19 +236,19 @@ const QuotesPage = ({ pdfMode }) => {
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                    placeholder="Your Client's Name"
+                    placeholder="Nom Client"
                     value={invoice.clientName}
                     onChange={(value) => handleChange("clientName", value)}
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                    placeholder="Client's Address"
+                    placeholder="Adresse Client"
                     value={invoice.clientAddress}
                     onChange={(value) => handleChange("clientAddress", value)}
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                    placeholder="City, State Zip"
+                    placeholder="Ville, Code Postal"
                     value={invoice.clientAddress2}
                     onChange={(value) => handleChange("clientAddress2", value)}
                     pdfMode={pdfMode}
@@ -401,7 +392,7 @@ const QuotesPage = ({ pdfMode }) => {
                       <EditableTextarea
                         className="dark"
                         rows={2}
-                        placeholder="Enter item name/description"
+                        placeholder="Saisissez une description"
                         value={productLine.description}
                         onChange={(value) =>
                           handleProductLineChange(i, "description", value)
@@ -456,7 +447,7 @@ const QuotesPage = ({ pdfMode }) => {
                   {!pdfMode && (
                     <button className="link" onClick={handleAdd}>
                       <span className="icon icon-add bg-green mr-10"></span>
-                      Add Line Item
+                      Ajouter une ligne
                     </button>
                   )}
                 </View>
@@ -501,12 +492,6 @@ const QuotesPage = ({ pdfMode }) => {
                       />
                     </View>
                     <View className="w-50 p-5 flex" pdfMode={pdfMode}>
-                      <EditableInput
-                        className="dark bold right ml-30"
-                        value={invoice.currency}
-                        onChange={(value) => handleChange("currency", value)}
-                        pdfMode={pdfMode}
-                      />
                       <Text
                         className="right bold dark w-auto"
                         pdfMode={pdfMode}
@@ -517,6 +502,12 @@ const QuotesPage = ({ pdfMode }) => {
                           : 0
                         ).toFixed(2)}
                       </Text>
+                      <EditableInput
+                        className="dark bold"
+                        value={invoice.currency}
+                        onChange={(value) => handleChange("currency", value)}
+                        pdfMode={pdfMode}
+                      />
                     </View>
                   </View>
                 </View>

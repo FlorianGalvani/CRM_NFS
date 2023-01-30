@@ -14,12 +14,8 @@ Coded by www.creative-tim.com
 */
 import React from "react";
 
-// react-router-dom components
-import { Link } from "react-router-dom";
-
 // @mui material components
 import Card from "@mui/material/Card";
-import Checkbox from "@mui/material/Checkbox";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -27,100 +23,112 @@ import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 
-// Authentication layout components
-import CoverLayout from "layouts/authentication/components/CoverLayout";
+// @mui material components
+import Grid from "@mui/material/Grid";
 
-// Images
-import bgImage from "assets/images/bg-sign-up-cover.jpeg";
+// Material Dashboard 2 React example components
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 function Cover() {
   return (
-    <CoverLayout image={bgImage}>
-      <Card>
-        <MDBox
-          variant="gradient"
-          bgColor="info"
-          borderRadius="lg"
-          coloredShadow="success"
-          mx={2}
-          mt={-3}
-          p={3}
-          mb={1}
-          textAlign="center"
-        >
-          <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Join us today
-          </MDTypography>
-          <MDTypography display="block" variant="button" color="white" my={1}>
-            Enter your email and password to register
-          </MDTypography>
-        </MDBox>
-        <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
-            <MDBox mb={2}>
-              <MDInput type="text" label="Name" variant="standard" fullWidth />
-            </MDBox>
-            <MDBox mb={2}>
-              <MDInput
-                type="email"
-                label="Email"
-                variant="standard"
-                fullWidth
-              />
-            </MDBox>
-            <MDBox mb={2}>
-              <MDInput
-                type="password"
-                label="Password"
-                variant="standard"
-                fullWidth
-              />
-            </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
-              <Checkbox />
-              <MDTypography
-                variant="button"
-                fontWeight="regular"
-                color="text"
-                sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
+    <DashboardLayout>
+      <DashboardNavbar />
+      <MDBox mt={10}>
+        <Grid container spacing={1} justifyContent="center">
+          <Grid item>
+            <Card>
+              <MDBox
+                variant="gradient"
+                bgColor="info"
+                borderRadius="lg"
+                coloredShadow="success"
+                mx={2}
+                mt={-3}
+                p={3}
+                mb={1}
+                textAlign="center"
               >
-                &nbsp;&nbsp;I agree the&nbsp;
-              </MDTypography>
-              <MDTypography
-                component="a"
-                href="#"
-                variant="button"
-                fontWeight="bold"
-                color="info"
-                textGradient
-              >
-                Terms and Conditions
-              </MDTypography>
-            </MDBox>
-            <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
-                sign in
-              </MDButton>
-            </MDBox>
-            <MDBox mt={3} mb={1} textAlign="center">
-              <MDTypography variant="button" color="text">
-                Already have an account?{" "}
                 <MDTypography
-                  component={Link}
-                  to="/authentication/sign-in"
-                  variant="button"
-                  color="info"
+                  variant="h4"
                   fontWeight="medium"
-                  textGradient
+                  color="white"
+                  mt={1}
                 >
-                  Sign In
+                  Enregistrer un nouveau compte
                 </MDTypography>
-              </MDTypography>
-            </MDBox>
-          </MDBox>
-        </MDBox>
-      </Card>
-    </CoverLayout>
+                <MDTypography
+                  display="block"
+                  variant="button"
+                  color="white"
+                  my={1}
+                >
+                  Ajouter les coordonnées du nouveau compte
+                </MDTypography>
+              </MDBox>
+              <MDBox pt={4} pb={3} px={3}>
+                <MDBox component="form" role="form">
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="text"
+                      label="Nom"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="text"
+                      label="Prénom"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="email"
+                      label="Email"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="tel"
+                      label="Téléphone"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="textarea"
+                      multiline rows={5}
+                      label="Description"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={8}>
+                    <MDInput
+                      type="password"
+                      label="Mot de passe"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mt={4} mb={1}>
+                    <MDButton variant="gradient" color="info" fullWidth>
+                      Ajouter le compte
+                    </MDButton>
+                  </MDBox>
+                </MDBox>
+              </MDBox>
+            </Card>
+          </Grid>
+        </Grid>
+      </MDBox>
+    </DashboardLayout>
   );
 }
 

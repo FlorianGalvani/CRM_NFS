@@ -2,15 +2,14 @@ import React from 'react';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 
 import Card from "@mui/material/Card";
-import MDButton from "components/MDButton";
 import MDBox from "components/MDBox";
 
 import axios from "axios";
 import {loadStripe} from '@stripe/stripe-js';
-import {Elements, ElementsConsumer} from '@stripe/react-stripe-js';
+import {Elements} from '@stripe/react-stripe-js';
 
 import {config} from "../../config/config";
-import {CheckoutForm, } from "layouts/payment/components/checkoutForm";
+import {CheckoutForm, } from "layouts/payment/components/CheckoutForm";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import {Alert} from "@mui/material";
 import {useLocation} from "react-router-dom";
@@ -43,7 +42,7 @@ export default function Payment() {
     const [error, setError] = React.useState(false);
     const [transaction, setTransaction] = React.useState(null);
     const [message, setMessage] = React.useState(null);
-    const [token, setToken] = React.useState('')
+    const [token] = React.useState(Cookie.getCookie("token"));
 
     const location = useLocation();
     const pathnames = location.pathname.split('/');
@@ -51,8 +50,6 @@ export default function Payment() {
 
     React.useEffect(() => {
         // js get document.cookie value of token
-        setToken(Cookie.getCookie("token"));
-
         const getTransaction = async () => {
             setIsLoading(true)
             const response = await get(token, id);
@@ -111,8 +108,8 @@ export default function Payment() {
                                     {transaction.object.label},
                                     le {Formatter.formatDate(transaction.factureDate)}
                                 </h5>
-                                <h5>Montant : {transaction.object.amount}</h5>
-                                <CheckoutForm {...transaction} token={token} />
+                                <h5>Montant : {transaction.object.amount} €</h5>
+                                <CheckoutForm transaction={transaction.object} token={token} />
                             </Elements>
                     }
                 </Card>

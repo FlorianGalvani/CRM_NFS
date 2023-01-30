@@ -9,7 +9,7 @@ import MDBox from "components/MDBox";
 import {Alert} from "@mui/material";
 import axios from "axios";
 
-export const CheckoutForm = (transaction, token) => {
+export const CheckoutForm = ({token, transaction}) => {
     const stripe = useStripe();
     const elements = useElements();
     const [message, setMessage] = useState({
@@ -17,6 +17,8 @@ export const CheckoutForm = (transaction, token) => {
         success: false
     });
     const [isLoading, setIsLoading] = useState(false);
+    const [paymentSuccess, setPaymentSuccess] = useState(false);
+
 
     useEffect(() => {
         if (!stripe) {
@@ -68,14 +70,16 @@ export const CheckoutForm = (transaction, token) => {
         } else if(error) {
             setMessage({data: "Une erreur est survenue.", success: false});
         } else {
-            axios.get(`/api/stripe_create/${transaction.id}`, {
+            axios.get(`/api/payment_success/${transaction.id}`, {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
             }).then((res) => {
-                console.log(res)
+                setMessage({data: res.data.message, success: true});
+                setPaymentSuccess(true);
             }).catch((err) => {
                 console.log(err)
+                setMessage({data: "Une erreur est survenue.", success: false});
             })
         }
 
@@ -84,6 +88,14 @@ export const CheckoutForm = (transaction, token) => {
 
     const paymentElementOptions = {
         layout: "tabs"
+    }
+
+    if(paymentSuccess) {
+        return (
+            <MDBox mt={2}>
+                {message.data && <Alert severity={'success'} id="payment-success">{message.data}</Alert>}
+            </MDBox>
+        )
     }
 
     return (

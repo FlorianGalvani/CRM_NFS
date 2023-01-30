@@ -99,7 +99,7 @@ class TransactionController extends BaseController
 
             return $this->json([
                 'success' => true,
-                'transaction' => $transaction
+                'message' => 'Votre paiement de '.$transaction->getAmount().' € a bien été pris en compte'
             ]);
         } catch (Error $e) {
             http_response_code(500);

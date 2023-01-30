@@ -15,6 +15,24 @@ class SendEmail
         $this->mailer = $mailer;
     }
 
+    public function sendNewCommercialEmail(User $user, string $password) {
+
+        $templateEmail = (new TemplatedEmail())
+            ->from('noreply@crmanager.comy')
+            ->to($user->getEmail())
+            ->subject('Votre compte commercial a été créé')
+            ->htmlTemplate('emails/new_commercial.html.twig')
+            ->context( [
+                'username' => $user->getEmail(),
+                'firstname' => $user->getFirstName(),
+                'lastname' => $user->getLastName(),
+                'password' => $password,
+                'emailToken' => $user->getEmailVerificationToken(),
+            ]);
+        ;
+        $this->mailer->send($templateEmail);
+    }
+
     public function sendNewCustomerEmail(User $user, string $password) {
 
          $templateEmail = (new TemplatedEmail())

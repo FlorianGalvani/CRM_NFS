@@ -6,6 +6,7 @@ use App\Controller\BaseController;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
+use App\Service\Emails\SendEmail;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AuthController extends BaseController
 {
+    private $maiiler;
+
+    public function __construct(SendEmail $mailer) {
+        $this->mailer = $mailer;
+    }
+
     #[Route('/api/users', methods: ['POST'])]
     public function signup(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
@@ -76,6 +83,8 @@ class AuthController extends BaseController
         }
 
         $entityManager->flush();
+
+        $this->mailer->sendNewCommercialEmail($user, $data['password']);
 
         $response = [
             'success' => true,

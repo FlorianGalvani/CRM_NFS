@@ -22,12 +22,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
  *      normalizationContext={"groups"={"users_read"}},
- *     itemOperations={
+ *      collectionOperations={
  *          "post"={
  *              "name"="signup",
                 "uriTemplate"="/api/signup",
                 "controller"=AuthController::class
- *          }
+ *          }, "get"
  *     }
  * )
  * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")

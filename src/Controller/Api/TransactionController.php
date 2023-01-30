@@ -18,37 +18,19 @@ class TransactionController extends BaseController
         $this->transactionRepository = $transactionRepository;
     }
 
-    #[Route('/api/payment', methods: ['POST'])]
-    public function payment(): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        $currentAccount = $user->getAccount();
-
-        // Récupération de la provision en cours
-        $this->transactionRepository = $this->getDoctrine()->getRepository(Transaction::class);
-
-        $transaction = $this->transactionRepository->findLastOneByAccountAndStatus($currentAccount, [Transaction::TRANSACTION_QUOTATION_SENT]);
-
-        if (null === $transaction) {
-            throw $this->createNotFoundException();
-        }
-
-        return $this->json([
-            'provision' => $transaction,
-            'key' => $this->getParameter('app.stripe.keys.public'),
-        ]);
-    }
-
-    #[Route('/api/stripe_create', methods: ['POST'])]
-    public function stripeCreate(): Response
+    #[Route('/api/stripe_create/{id}', methods: ['GET'])]
+    public function stripeCreate($id): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         $currentAccount = $user->getAccount();
 
         // Récupération de la transaction en cours s'il y en a une
-        $transaction = $this->transactionRepository->findLastOneByAccountAndStatus($currentAccount, [Transaction::TRANSACTION_STATUS_PAYMENT_INTENT]);
+        $transaction = $this->transactionRepository->findLastOneByAccountAndStatus(
+            $id,
+            $currentAccount,
+            [Transaction::TRANSACTION_INVOICE_SENT, Transaction::TRANSACTION_STATUS_PAYMENT_INTENT]
+        );
 
         if (null === $transaction) {
             throw $this->createNotFoundException();
@@ -56,14 +38,12 @@ class TransactionController extends BaseController
 
         \Stripe\Stripe::setApiKey($this->getParameter('app.stripe.keys.private'));
         try {
-            // Création de Stripe Payment Intent
             if (null === $transaction->getStripePaymentIntentId()) {
                 $paymentIntent = \Stripe\PaymentIntent::create([
                     'amount' => $transaction->getAmount() * 100,
                     'currency' => 'eur',
                 ]);
             } else {
-                // ou mise à jour de Stripe Payment Intent
                 $paymentIntent = \Stripe\PaymentIntent::update(
                     $transaction->getStripePaymentIntentId(),
                     ['metadata' => [
@@ -73,20 +53,56 @@ class TransactionController extends BaseController
                 );
             }
 
-            $output = [
-                'clientSecret' => $paymentIntent->client_secret,
-            ];
-
-            // Suivi de la transaction en cours
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_INTENT);
             $transaction->setStripePaymentIntentId($paymentIntent->id);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
+            $output = [
+                'clientSecret' => $paymentIntent->client_secret,
+                'transaction' => $transaction,
+                'factureDate' => $transaction->getTransactionInvoice()->getCreatedAt()
+            ];
+
             return $this->json($output);
         } catch (Error $e) {
             http_response_code(500);
 
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/payment_success/{id}', methods: ['GET'])]
+    public function paymentSuccess($id): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        // Récupération de la transaction en cours s'il y en a une
+        $transaction = $this->transactionRepository->findLastOneByAccountAndStatus(
+            $id,
+            $currentAccount,
+            [Transaction::TRANSACTION_STATUS_PAYMENT_INTENT]
+        );
+
+        if (null === $transaction) {
+            throw $this->createNotFoundException();
+        }
+
+        try {
+            $invoice = $transaction->getTransactionInvoice();
+            $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS);
+            $transaction->setLabel('Règlement d\'une facture');
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
+
+            return $this->json([
+                'success' => true,
+                'transaction' => $transaction
+            ]);
+        } catch (Error $e) {
+            http_response_code(500);
             return $this->json(['error' => $e->getMessage()]);
         }
     }

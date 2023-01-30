@@ -40,12 +40,13 @@ class TransactionRepository extends ServiceEntityRepository
         }
     }
 
-    public function findLastOneByAccountAndStatus(Account $account, $statuses): ?Transaction
+    public function findLastOneByAccountAndStatus($id, Account $account, $statuses): ?Transaction
     {
         return $this->createQueryBuilder('t')
+            ->where('t.id = :id')
             ->andWhere('t.customer = :account')
-            ->andWhere('t.paymentStatus MEMBER OF :statuses')
-            ->setParameter('account', $account)
+            ->andWhere('t.paymentStatus IN (:statuses)')
+            ->setParameters(['id' => $id, 'account' => $account, 'statuses' => $statuses])
             ->getQuery()
             ->getOneOrNullResult()
         ;

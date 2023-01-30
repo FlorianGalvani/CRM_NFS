@@ -69,7 +69,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const [token, setDecodedToken] = useState();
 
-  console.log(token);
+  // console.log(token);
 
   const decodedToken = () => {
     if (Cookie.getCookie("token") !== undefined) {

@@ -25,8 +25,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     itemOperations={
  *          "post"={
  *              "name"="signup",
-                "uriTemplate"="/api/signup",
-                "controller"=AuthController::class
+ *               "uriTemplate"="/api/signup",
+ *                "controller"=AuthController::class
  *          }
  *     }
  * )

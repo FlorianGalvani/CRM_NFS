@@ -124,14 +124,7 @@ const routes = [
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/quotes",
     component: <Quotes  />,
-  },
+  }
 ];
-
-
-
-
-
-
-
 
 export default routes;

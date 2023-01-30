@@ -10,9 +10,11 @@ use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Faker;
 
 final class AccountFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
 {
+
     public static function getGroups(): array
     {
         return ['account'];
@@ -51,14 +53,23 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
     }
     public function load(ObjectManager $manager): void
     {
+        $faker = Faker\Factory::create();
         $accounts = [];
         // Michel(s)
         foreach ($this->getMichelData() as $data) {
             $entity = $this->createAccount($data);
             if($entity->getType() === AccountType::COMMERCIAL) {
-                $entity->setCompanyData(json_encode([
+                $entity->setData(json_encode([
                     "name" => "NFS",
                     "address" => "1 rue de la paix",
+                    "zipCode" => "76000",
+                    "city" => "Rouen",
+                    "country" => "France",
+                ]));
+            }
+            if ($entity->getType() === AccountType::CUSTOMER) {
+                $entity->setData(json_encode([
+                    "address" => "14 rue du bonheur",
                     "zipCode" => "76000",
                     "city" => "Rouen",
                     "country" => "France",
@@ -71,6 +82,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             $this->addReference(self::getAccountMichelReference($user->getEmail()), $entity);
             array_push($accounts, $entity);
             if($entity->getType() === AccountType::CUSTOMER) {
+
                 foreach($accounts as $account) {
                     if($account->getType() === AccountType::COMMERCIAL) {
                         $account->addCustomer($entity);
@@ -98,6 +110,12 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     ++$iCommercial;
                     break;
                 case AccountType::CUSTOMER:
+                    $entity->setData(json_encode([
+                        "address" => $faker->streetAddress,
+                        "zipCode" => $faker->postcode,
+                        "city" => $faker->city,
+                        "country" => $faker->country,
+                    ]));
                     $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $this->addReference(self::getAccountCustomerReference((string) $iIndividual), $entity);
                     $commercial = $this->getReference(self::getAccountCommercialReference((string) $iCommercial-1));

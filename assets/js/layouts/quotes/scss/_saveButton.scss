@@ -1,0 +1,25 @@
+.saveButton {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    background-color: $color-dark;
+    color: $color-white;
+    border-radius: 0.75rem;
+    border: none;
+    font-size: 1.15rem;
+    box-shadow: inset 0rem 0rem 0.0625rem 0.0625rem rgb(255 255 255 / 90%),
+      0rem 1.25rem 1.6875rem 0rem rgb(0 0 0 / 5%);
+    cursor: pointer;
+
+    @media screen and (hover: hover) {
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        background-color: $color-dark-2;
+      }
+    }
+  }
+}

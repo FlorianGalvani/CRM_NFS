@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Www;
 
 use App\Entity\User;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\BaseController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EmailVerifyController extends AbstractController
+class EmailVerifyController extends BaseController
 {
     #[Route('/email/verify/{token}', name: 'app_email_verify')]
-    public function index($token,Request $request,ManagerRegistry $doctrine): Response
+    public function index($token,Request $request): Response
     {
-        $user = $doctrine->getRepository(User::class)->findOneBy(['emailVerificationToken' => $token]);
+        $user = $this->getManagerRegistry()->getRepository(User::class)->findOneBy(['emailVerificationToken' => $token]);
 
         if (!$user) {
             return $this->redirect('/dashboard');
@@ -27,7 +26,7 @@ class EmailVerifyController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setEmailVerified(true);
             $user->setEmailVerificationToken(null);
-            $em = $doctrine->getManager();
+            $em = $this->getManagerRegistry()->getManager();
             $em->persist($user);
             $em->flush();
             return $this->redirect('/dashboard');

@@ -37,21 +37,28 @@
   }
 }
 
+.wrap {
+  display: flex;
+  margin-inline: auto;
+  width: min(827px, 100%);
+}
 
 .invoice-wrapper {
   position: relative;
   background: #fff;
   padding: 40px 35px;
   box-shadow: 0 0 17px 0 rgba(16, 40, 73, 0.09);
+  border-radius: 0.75rem;
 }
 
 .download-pdf {
+  display: none;
   position: fixed;
   top: 100px;
   margin-left: -110px;
   width: 40px;
   height: 40px;
-  background: url('../images/download.svg');
+  background: url("../images/download.svg");
   transition: opacity 0.2s ease-in-out;
 
   &.loading {
@@ -155,12 +162,12 @@
 }
 
 .image__edit {
-  background-image: url('../images/resize.svg');
+  background-image: url("../images/resize.svg");
   right: 20px;
 }
 
 .image__remove {
-  background-image: url('../images/remove.svg');
+  background-image: url("../images/remove.svg");
   right: -10px;
 }
 

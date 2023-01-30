@@ -35,10 +35,10 @@ function Invoices() {
         alignItems="center"
       >
         <MDTypography variant="h6" fontWeight="medium">
-          Invoices
+          Factures
         </MDTypography>
         <MDButton variant="outlined" color="info" size="small">
-          view all
+          voir tout
         </MDButton>
       </MDBox>
       <MDBox p={2}>

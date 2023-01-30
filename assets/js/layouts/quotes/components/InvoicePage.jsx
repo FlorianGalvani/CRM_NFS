@@ -196,19 +196,19 @@ const InvoicePage = ({ data, pdfMode, onChange }) => {
               pdfMode={pdfMode}
             />
             <EditableInput
-              placeholder="Your Client's Name"
+              placeholder="Nom Client"
               value={invoice.clientName}
               onChange={(value) => handleChange('clientName', value)}
               pdfMode={pdfMode}
             />
             <EditableInput
-              placeholder="Client's Address"
+              placeholder="Adresse Client"
               value={invoice.clientAddress}
               onChange={(value) => handleChange('clientAddress', value)}
               pdfMode={pdfMode}
             />
             <EditableInput
-              placeholder="City, State Zip"
+              placeholder="Ville, Code Postal"
               value={invoice.clientAddress2}
               onChange={(value) => handleChange('clientAddress2', value)}
               pdfMode={pdfMode}
@@ -332,7 +332,7 @@ const InvoicePage = ({ data, pdfMode, onChange }) => {
                 <EditableTextarea
                   className="dark"
                   rows={2}
-                  placeholder="Enter item name/description"
+                  placeholder="Saisissez une description"
                   value={productLine.description}
                   onChange={(value) => handleProductLineChange(i, 'description', value)}
                   pdfMode={pdfMode}
@@ -378,7 +378,7 @@ const InvoicePage = ({ data, pdfMode, onChange }) => {
             {!pdfMode && (
               <button className="link" onClick={handleAdd}>
                 <span className="icon icon-add bg-green mr-10"></span>
-                Add Line Item
+                Ajouter une ligne
               </button>
             )}
           </View>
@@ -421,18 +421,19 @@ const InvoicePage = ({ data, pdfMode, onChange }) => {
                 />
               </View>
               <View className="w-50 p-5 flex" pdfMode={pdfMode}>
-                <EditableInput
-                  className="dark bold right ml-30"
-                  value={invoice.currency}
-                  onChange={(value) => handleChange('currency', value)}
-                  pdfMode={pdfMode}
-                />
+                
                 <Text className="right bold dark w-auto" pdfMode={pdfMode}>
                   {(typeof subTotal !== 'undefined' && typeof saleTax !== 'undefined'
                     ? subTotal + saleTax
                     : 0
                   ).toFixed(2)}
                 </Text>
+                <EditableInput
+                  className="dark bold"
+                  value={invoice.currency}
+                  onChange={(value) => handleChange('currency', value)}
+                  pdfMode={pdfMode}
+                />
               </View>
             </View>
           </View>

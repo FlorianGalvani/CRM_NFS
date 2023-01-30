@@ -6,7 +6,6 @@ use App\Controller\BaseController;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AuthController extends BaseController
 {
     #[Route('/api/users', methods: ['POST'])]
-    public function signup(Request $request, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine): JsonResponse
+    public function signup(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         $response = [
             'success' => false
@@ -24,14 +23,14 @@ class AuthController extends BaseController
 
         $data = json_decode($request->getContent(), true);
 
-        $existingUser = $doctrine->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        $existingUser = $this->getManagerRegistry()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         
         if ($existingUser) {
             $response['message'] = 'User already exists';
             return $this->json($response, Response::HTTP_CONFLICT);
         }
 
-        $entityManager = $doctrine->getManager();
+        $entityManager = $this->getManagerRegistry()->getManager();
         
         $user = new User();
         $user->setEmail($data['email']);
@@ -41,6 +40,8 @@ class AuthController extends BaseController
         $user->setPassword($data['password']);
         $user->setPhone($data['phone']);
         $user->setAddress($data['address']);
+        $user->setEmailVerificationToken(bin2hex(random_bytes(32)));
+        $user->setEmailVerificationTokenAt(new \DateTimeImmutable());
 
         $errors = $this->validateData($user);
         if($errors !== null) {

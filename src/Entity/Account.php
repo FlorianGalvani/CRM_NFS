@@ -85,6 +85,12 @@ class Account implements DatedInterface, IdInterface
      */
     private $events;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"account_read"})
+     */
+    private $about;
+
     public function __construct()
     {
         $this->prospects = new ArrayCollection();
@@ -123,6 +129,18 @@ class Account implements DatedInterface, IdInterface
     public function setName(?string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getAbout(): ?string
+    {
+        return $this->about;
+    }
+
+    public function setAbout(?string $about): self
+    {
+        $this->about = $about;
+
+        return $this;
     }
 
     public function getAccountStatus(): ?string

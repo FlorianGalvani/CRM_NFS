@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Api\Commercial;
+namespace App\Controller\Api;
 
 use App\Entity\Account;
 use App\Entity\User;

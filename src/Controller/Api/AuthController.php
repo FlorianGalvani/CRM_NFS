@@ -69,6 +69,11 @@ class AuthController extends BaseController
                 case AccountType::COMMERCIAL:
                     $account->setType(AccountType::COMMERCIAL);
                     break;
+                case AccountType::CUSTOMER:
+                    $account->setType(AccountType::CUSTOMER);
+                    $currentUser = $this->getUser();
+                    $account->setCommercial($currentUser->getAccount());
+                    break;
                 case AccountType::ADMIN:
                     $account->setType(AccountType::ADMIN);
                     break;

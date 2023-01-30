@@ -8,6 +8,7 @@ import MDButton from "components/MDButton";
 import MDBox from "components/MDBox";
 import {Alert} from "@mui/material";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 export const CheckoutForm = ({token, transaction}) => {
     const stripe = useStripe();
@@ -17,7 +18,7 @@ export const CheckoutForm = ({token, transaction}) => {
         success: false
     });
     const [isLoading, setIsLoading] = useState(false);
-    const [paymentSuccess, setPaymentSuccess] = useState(false);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -70,13 +71,12 @@ export const CheckoutForm = ({token, transaction}) => {
         } else if(error) {
             setMessage({data: "Une erreur est survenue.", success: false});
         } else {
-            axios.get(`/api/payment_success/${transaction.id}`, {
+            axios.get(`/api/payment_success/${transaction.id}?pm=${paymentIntent.payment_method}`, {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
             }).then((res) => {
-                setMessage({data: res.data.message, success: true});
-                setPaymentSuccess(true);
+                navigate('/factures');
             }).catch((err) => {
                 console.log(err)
                 setMessage({data: "Une erreur est survenue.", success: false});
@@ -88,14 +88,6 @@ export const CheckoutForm = ({token, transaction}) => {
 
     const paymentElementOptions = {
         layout: "tabs"
-    }
-
-    if(paymentSuccess) {
-        return (
-            <MDBox mt={2}>
-                {message.data && <Alert severity={'success'} id="payment-success">{message.data}</Alert>}
-            </MDBox>
-        )
     }
 
     return (

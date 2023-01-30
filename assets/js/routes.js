@@ -115,7 +115,7 @@ const routes = [
     name: "Paiement",
     key: "payment",
     icon: <Icon fontSize="small">payment</Icon>,
-    route: "/payment/832",
+    route: "/payment/1084",
     component: <Payment />,
   },
 ];

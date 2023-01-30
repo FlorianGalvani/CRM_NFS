@@ -6,6 +6,7 @@ use App\Controller\BaseController;
 use App\Entity\User;
 use App\Entity\Transaction;
 use App\Repository\TransactionRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -73,11 +74,15 @@ class TransactionController extends BaseController
     }
 
     #[Route('/api/payment_success/{id}', methods: ['GET'])]
-    public function paymentSuccess($id): Response
+    public function paymentSuccess($id, Request $request): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         $currentAccount = $user->getAccount();
+
+        $payment_method_id = $request->get('pm');
+
+        \Stripe\Stripe::setApiKey($this->getParameter('app.stripe.keys.private'));
 
         // Récupération de la transaction en cours s'il y en a une
         $transaction = $this->transactionRepository->findLastOneByAccountAndStatus(
@@ -94,6 +99,20 @@ class TransactionController extends BaseController
             $invoice = $transaction->getTransactionInvoice();
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS);
             $transaction->setLabel('Règlement d\'une facture');
+
+            $payment_method = \Stripe\PaymentMethod::retrieve($payment_method_id);
+
+            $userPaymentMethod = [
+                'card' => [
+                    'brand' => $payment_method->card->brand,
+                    'country' => $payment_method->card->country,
+                    "exp_month" => $payment_method->card->exp_month,
+                    "exp_year" => $payment_method->card->exp_year,
+                    "last4" => $payment_method->card->last4
+                ]
+            ];
+
+            $user->getAccount()->setPaymentMethod(json_encode($userPaymentMethod));
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 

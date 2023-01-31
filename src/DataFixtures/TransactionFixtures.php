@@ -86,9 +86,43 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         $stipePaymentId = substr( str_shuffle( $chars ), 0, 24 );
 
+        $createdAt = $faker->dateTimeBetween('+60 days', '+90 days');
+
+        yield [
+            'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
+            'amount' => $faker->numberBetween(200, 250),
+            'paymentStatus' => Transaction::TRANSACTION_QUOTATION_SENT,
+            'stripePaymentIntentId' => null,
+            'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
+            'label' => 'Envoie d\'un devis',
+            'createdAt' => $createdAt,
+            'updatedAt' => $createdAt,
+        ];
+
+        yield [
+            'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
+            'amount' => $faker->numberBetween(200, 250),
+            'paymentStatus' => Transaction::TRANSACTION_INVOICE_SENT,
+            'stripePaymentIntentId' => null,
+            'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
+            'label' => 'Envoie d\'une facture',
+            'createdAt' => $createdAt,
+            'updatedAt' => $createdAt,
+        ];
+
+        yield [
+            'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
+            'amount' => $faker->numberBetween(200, 250),
+            'paymentStatus' => Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE,
+            'stripePaymentIntentId' => null,
+            'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
+            'label' => 'Envoie d\'une facture',
+            'createdAt' => $createdAt,
+            'updatedAt' => $createdAt,
+        ];
+
         // Michel customer
         for ($i = 0; $i < 5; ++$i) {
-            $createdAt = $faker->dateTimeBetween('+60 days', '+90 days');
             $invoiceDate = $faker->dateTimeBetween('+60 days', '+85 days');
             yield [
                 'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
@@ -101,17 +135,6 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
                 'updatedAt' => $createdAt,
             ];
         }
-
-        yield [
-            'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
-            'amount' => $faker->numberBetween(200, 250),
-            'paymentStatus' => Transaction::TRANSACTION_INVOICE_SENT,
-            'stripePaymentIntentId' => null,
-            'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
-            'label' => 'Envoie d\'une facture',
-            'createdAt' => $createdAt,
-            'updatedAt' => $createdAt,
-        ];
 
         // autres fake customers
         for ($i = 0; $i < 30; ++$i) {

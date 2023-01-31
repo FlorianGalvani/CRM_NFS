@@ -128,7 +128,7 @@ function CustomerBilling() {
             <MDBox mt={8}>
                 <MDBox mb={3}>
                     <Grid container spacing={3}>
-                        <Grid item xs={12} lg={8}>
+                        <Grid item xs={12} lg={7}>
                             <Grid container spacing={3}>
                                 <Grid  display="grid"
                                        justifyContent="center"
@@ -155,7 +155,7 @@ function CustomerBilling() {
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item xs={12} lg={4}>
+                        <Grid item xs={12} lg={5}>
                             <Invoices />
                         </Grid>
                     </Grid>
@@ -374,6 +374,39 @@ PaymentMethod.propTypes = {
 };
 
 function Transactions({transactions}) {
+    const transactionProps = (transaction) => {
+        let props = {
+            color: '',
+            value: '',
+            icon: ''
+        }
+
+        switch(transaction.paymentStatus) {
+            case 'quotation_requested':
+                props = {color: 'info', icon: 'check'}
+                break;
+            case 'quotation_sent':
+                props = {color: 'info', icon: 'check'}
+                break;
+            case 'invoice_sent':
+                props = {color: 'warning', icon: 'priority_high'}
+                break;
+            case 'payment_intent':
+                props = {color: 'warning', icon: 'priority_high'}
+                break;
+            case 'payment_failure':
+                props = {color: 'error', icon: 'priority_high'}
+                break;
+            case 'payment_abandoned':
+                props = {color: 'error', icon: 'priority_high'}
+                break;
+            case 'payment_success':
+                props = {color: 'success', icon: 'check'}
+                break;
+        }
+
+        return props;
+    }
 
     return (
         <Card sx={{ height: "100%" }}>
@@ -415,15 +448,11 @@ function Transactions({transactions}) {
                         transactions.map((transaction, index) => (
                             <Transaction
                                 key={index}
-                                color={transaction.paymentStatus === 'payment_success' ? 'success' : 'error'}
-                                icon="expand_more"
-                                name={transaction.label}
-                                description="27 March 2020, at 12:30 PM"
-                                value={
-                                    transaction.paymentStatus === 'payment_success' ?
-                                    transaction.amount+' €'
-                                        : 'Facture en attente de paiement'
-                                }
+                                color={transactionProps(transaction).color}
+                                icon={transactionProps(transaction).icon}
+                                name={transaction.type}
+                                description={transaction.label}
+                                value={transaction.amount+' €'}
                             />
                         ))
                     }

@@ -340,6 +340,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
         $this->emailVerified = $emailVerified;
     }
 
-
+    public function getData(): array
+    {
+        return [
+            'firstname' => $this->getFirstname(),
+            'lastname' => $this->getLastname(),
+            'email' => $this->getEmail(),
+            'account' => $this->getAccount()->getData(),
+            'phone' => $this->getPhone(),
+            'address' => $this->getAddress()
+        ];
+    }
 
 }

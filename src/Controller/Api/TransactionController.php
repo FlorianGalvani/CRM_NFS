@@ -102,11 +102,15 @@ class TransactionController extends BaseController
 
             $payment_method = \Stripe\PaymentMethod::retrieve($payment_method_id);
 
+            $exp_month = '';
+            $exp_month .= $payment_method->card->exp_month < 10 ? '0' : '';
+            $exp_month .= $payment_method->card->exp_month;
+
             $userPaymentMethod = [
                 'card' => [
                     'brand' => $payment_method->card->brand,
                     'country' => $payment_method->card->country,
-                    "exp_month" => $payment_method->card->exp_month,
+                    "exp_month" => $exp_month,
                     "exp_year" => $payment_method->card->exp_year,
                     "last4" => $payment_method->card->last4
                 ]

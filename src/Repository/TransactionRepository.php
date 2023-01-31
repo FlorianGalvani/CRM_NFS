@@ -52,6 +52,17 @@ class TransactionRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findAllByAccount(Account $account): array
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.customer = :account')
+            ->setParameter('account', $account)
+            ->orderBy('t.id', 'ASC')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Transaction[] Returns an array of Transaction objects
 //     */

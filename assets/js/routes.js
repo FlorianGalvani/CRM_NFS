@@ -52,6 +52,7 @@ import SignUp from "./layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import CustomerBilling from "layouts/billing/customer";
 
 const routes = [
   {
@@ -77,6 +78,14 @@ const routes = [
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/factures",
     component: <Billing />,
+  },
+  {
+    type: "collapse",
+    name: "Mes factures",
+    key: "mes-factures",
+    icon: <Icon fontSize="small">receipt_long</Icon>,
+    route: "/mes-factures",
+    component: <CustomerBilling />,
   },
   {
     type: "collapse",
@@ -115,7 +124,7 @@ const routes = [
     name: "Paiement",
     key: "payment",
     icon: <Icon fontSize="small">payment</Icon>,
-    route: "/payment/1084",
+    route: "/payment/1120",
     component: <Payment />,
   },
 ];

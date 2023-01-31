@@ -250,4 +250,15 @@ class Account implements DatedInterface, IdInterface
 
         return $this;
     }
+
+    public function getData(): array
+    {
+        return [
+            'AccountStatus' => $this->getAccountStatus(),
+            'paymentMethod' => json_decode($this->getPaymentMethod()),
+            'events' => $this->getEvents(),
+            'name'=> $this->getName(),
+            'type' => $this->getType()
+        ];
+    }
 }

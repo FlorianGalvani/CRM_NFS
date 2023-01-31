@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\TransactionRepository;
 use App\Service\Emails\SendEmail;
 use App\Form\Commercial\NewCustomerType;
 use App\Controller\BaseController;
@@ -15,6 +16,29 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class CustomerController extends BaseController
 {
+    private $transactionRepository;
+
+    public function __construct(TransactionRepository $transactionRepository)
+    {
+        $this->transactionRepository = $transactionRepository;
+    }
+
+    #[Route('/api/customer/billing', methods: ['GET'])]
+    public function dashboard()
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $transactions = $this->transactionRepository->findAllByAccount($currentAccount);
+
+        try {
+            return $this->json($transactions);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
     #[Route('/api/users', name: 'app_api_commercial_crud', methods:['POST'])]
     public function createNewCustomer(Request $request, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail): Response
     {

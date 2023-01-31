@@ -53,6 +53,8 @@ import SignUp from "./layouts/authentication/sign-up";
 // @mui icons
 import Icon from "@mui/material/Icon";
 import CustomerBilling from "layouts/billing/customer";
+import Invoice from "layouts/billing/customer/invoices/show";
+import Invoices from "layouts/billing/customer/invoices";
 
 const routes = [
   {
@@ -78,14 +80,6 @@ const routes = [
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/factures",
     component: <Billing />,
-  },
-  {
-    type: "collapse",
-    name: "Mes factures",
-    key: "mes-factures",
-    icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/mes-factures",
-    component: <CustomerBilling />,
   },
   {
     type: "collapse",
@@ -119,12 +113,29 @@ const routes = [
     route: "/devis",
     component: <Quotes />,
   },
-  { // todo: supp 'collapse' et coller un lien dans la pertie factures du client
+
+    // Routes client
+  {
     type: "collapse",
-    name: "Paiement",
-    key: "payment",
-    icon: <Icon fontSize="small">payment</Icon>,
-    route: "/payment/1120",
+    name: "Mes transactions",
+    key: "transactions",
+    icon: <Icon fontSize="small">receipt_long</Icon>,
+    route: "/mes-factures",
+    component: <CustomerBilling />,
+  },
+  {
+    key: "mes-factures",
+    route: "/transactions/mes-factures",
+    component: <Invoices />
+  },
+  {
+    key: "facture",
+    route: "transactions/:id",
+    component: <Invoice />,
+  },
+  {
+    key: "paiement",
+    route: "transactions/paiement/:id",
     component: <Payment />,
   },
 ];

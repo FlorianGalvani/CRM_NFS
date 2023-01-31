@@ -3,16 +3,19 @@
 namespace App\Entity\Common;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait DatedTrait
 {
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"transaction_read", "user_read", "account_read", "customer_read", "prospect_read", "transaction_read"})
      */
     protected $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"transaction_read", "user_read", "account_read", "customer_read", "prospect_read", "transaction_read"})
      */
     protected $updatedAt = null;
 

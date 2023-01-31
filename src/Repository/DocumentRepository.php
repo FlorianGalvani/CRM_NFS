@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Account;
 use App\Entity\Document;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,35 @@ class DocumentRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findAllInvoiceByAccount()
+    {
+
+    }
+
+    public function findLastOneInvoiceByAccount(Account $account): ?Document
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.customer = :account')
+            ->andWhere('d.type = :type')
+            ->setParameters(['account' => $account, 'type' => 'facture'])
+            ->orderBy('d.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findLastQuotesByAccount(Account $account): array{
+        return $this->createQueryBuilder('d')
+            ->where('d.customer = :account')
+            ->andWhere('d.type = :type')
+            ->setParameters(['account' => $account, 'type' => 'devis'])
+            ->orderBy('d.id', 'DESC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
 //    /**

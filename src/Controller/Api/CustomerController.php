@@ -3,7 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
-use App\Repository\TransactionRepository;
+use App\Repository\DocumentRepository;
 use App\Service\Emails\SendEmail;
 use App\Form\Commercial\NewCustomerType;
 use App\Controller\BaseController;
@@ -16,27 +16,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class CustomerController extends BaseController
 {
-    private $transactionRepository;
+    private $documentRepository;
 
-    public function __construct(TransactionRepository $transactionRepository)
+    public function __construct(DocumentRepository $documentRepository)
     {
-        $this->transactionRepository = $transactionRepository;
-    }
-
-    #[Route('/api/customer/billing', methods: ['GET'])]
-    public function dashboard()
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        $currentAccount = $user->getAccount();
-
-        $transactions = $this->transactionRepository->findAllByAccount($currentAccount);
-
-        try {
-            return $this->json($transactions);
-        } catch(Error $e) {
-            return $this->json(['error' => $e->getMessage()]);
-        }
+        $this->documentRepository = $documentRepository;
     }
 
     #[Route('/api/users', name: 'app_api_commercial_crud', methods:['POST'])]
@@ -155,5 +139,20 @@ class CustomerController extends BaseController
         $response['data'] = $jsonContent;
         return $this->json($response,Response::HTTP_OK);
     }
-    
+
+    #[Route('/api/customer_invoices')]
+    public function invoices(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        try {
+            return $this->json();
+        } catch(Error $e) {
+            http_response_code(500);
+
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
 }

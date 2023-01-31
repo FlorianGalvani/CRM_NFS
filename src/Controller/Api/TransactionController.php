@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Controller\BaseController;
 use App\Entity\User;
 use App\Entity\Transaction;
+use App\Repository\DocumentRepository;
 use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,10 +14,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class TransactionController extends BaseController
 {
     private $transactionRepository;
+    private $documentRepository;
 
-    public function __construct(TransactionRepository $transactionRepository)
+    public function __construct(
+        TransactionRepository $transactionRepository,
+        DocumentRepository $documentRepository
+    )
     {
         $this->transactionRepository = $transactionRepository;
+        $this->documentRepository = $documentRepository;
     }
 
     #[Route('/api/stripe_create/{id}', methods: ['GET'])]
@@ -39,6 +45,7 @@ class TransactionController extends BaseController
 
         \Stripe\Stripe::setApiKey($this->getParameter('app.stripe.keys.private'));
         try {
+            $invoiceData = $transaction->getTransactionInvoice()->getData();
             if (null === $transaction->getStripePaymentIntentId()) {
                 $paymentIntent = \Stripe\PaymentIntent::create([
                     'amount' => $transaction->getAmount() * 100,
@@ -56,6 +63,8 @@ class TransactionController extends BaseController
 
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_INTENT);
             $transaction->setStripePaymentIntentId($paymentIntent->id);
+            $invoiceData['status'] = $transaction->getPaymentStatus();
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
@@ -96,7 +105,7 @@ class TransactionController extends BaseController
         }
 
         try {
-            $invoice = $transaction->getTransactionInvoice();
+            $invoiceData = $transaction->getTransactionInvoice()->getData();
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS);
             $transaction->setLabel('Règlement d\'une facture');
 
@@ -116,7 +125,9 @@ class TransactionController extends BaseController
                 ]
             ];
 
+            $invoiceData['status'] = $transaction->getPaymentStatus();
             $user->getAccount()->setPaymentMethod(json_encode($userPaymentMethod));
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
@@ -129,4 +140,33 @@ class TransactionController extends BaseController
             return $this->json(['error' => $e->getMessage()]);
         }
     }
+
+    #[Route('/api/customer-transactions', methods: ['GET'])]
+    public function dashboard()
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $transactions = $this->transactionRepository->findAllBilledTransactionByAccount($currentAccount);
+        $lastInvoice = $this->documentRepository->findLastOneInvoiceByAccount($currentAccount);
+        $lastThreeQuotes = $this->documentRepository->findLastQuotesByAccount($currentAccount);
+
+        $quotesData = [];
+
+        foreach($lastThreeQuotes as $_quotes) {
+            array_push($quotesData, $_quotes->getInfos());
+        }
+
+        try {
+            return $this->json([
+                'transactions' => $transactions,
+                'lastInvoice' => $lastInvoice->getInfos(),
+                'lastThreeQuotes' => $quotesData
+            ]);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
 }

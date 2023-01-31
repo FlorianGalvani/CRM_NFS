@@ -73,7 +73,8 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
         $document->setFileExtension($faker->randomElement(['dot', 'pdf', 'png', 'jpg']));
         $document->setFileName('doc-'.$invoiceDate->format('d-m-Y'));
         $document->setData(json_encode([
-            'amount' => $faker->numberBetween(200, 250)
+            'amount' => $faker->numberBetween(200, 250),
+            'status' => $entity->getPaymentStatus()
         ]));
 
         return $document;
@@ -88,6 +89,7 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
 
         $createdAt = $faker->dateTimeBetween('+60 days', '+90 days');
 
+        // Michel customer
         yield [
             'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
             'amount' => $faker->numberBetween(200, 250),
@@ -116,12 +118,10 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
             'paymentStatus' => Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE,
             'stripePaymentIntentId' => null,
             'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
-            'label' => 'Envoie d\'une facture',
+            'label' => 'Echec de paiement',
             'createdAt' => $createdAt,
             'updatedAt' => $createdAt,
         ];
-
-        // Michel customer
         for ($i = 0; $i < 5; ++$i) {
             $invoiceDate = $faker->dateTimeBetween('+60 days', '+85 days');
             yield [

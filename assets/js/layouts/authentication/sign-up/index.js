@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 // Utils
 import { Cookie } from "utils/index";
+import axios from "axios";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -26,9 +27,7 @@ import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import NativeSelect from '@mui/material/NativeSelect';
 
 // @mui material components
@@ -41,8 +40,6 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 function Cover() {
   const [token, setDecodedToken] = useState();
 
-  console.log(token);
-
   const decodedToken = () => {
     if (Cookie.getCookie("token") !== undefined) {
       const jwtToken = jwt_decode(Cookie.getCookie("token"));
@@ -53,6 +50,54 @@ function Cover() {
   useEffect(() => {
     decodedToken();
   }, []);
+
+  // const [state, setState] = useState({
+  //   nom: '',
+  //   prenom: '',
+  //   email: '',
+  //   password: '',
+  //   telephone: '',
+  //   adresse: '',
+  // });
+
+  // const handleChange = (event) => {
+  //   const value = event.target.value;
+  //   setState({
+  //     ...state,
+  //     [event.target.name]: value,
+  //   });
+  //   console.log(state)
+  // };
+
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+
+  //   const token = Cookie.getCookie("token");
+
+  //   const data = new FormData(event.currentTarget);
+  //   const roles = data.get('type');
+
+  //   const user = {
+  //     roles: roles,
+  //     lastname: state.nom,
+  //     firstname: state.prenom,
+  //     email: state.email,
+  //     password: state.password,
+  //     phone: state.telephone,
+  //     address: state.adresse,
+  //   };
+
+  //   axios.post(`http://localhost:8000/api/users`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //     user
+  //   })
+  //     .then(res => {
+  //       console.log(res);
+  //       console.log(res.data);
+  //     })
+  // };
 
   return (
     <DashboardLayout>
@@ -90,32 +135,39 @@ function Cover() {
                 </MDTypography>
               </MDBox>
               <MDBox pt={4} pb={3} px={3}>
-                <MDBox component="form" role="form">
-                  <MDBox mb={2}>
-                    <MDInput
-                      type="text"
-                      label="Nom"
-                      variant="standard"
-                      fullWidth
-                    />
-                  </MDBox>
-                  <MDBox mb={2}>
-                    <MDInput
-                      type="text"
-                      label="Prénom"
-                      variant="standard"
-                      fullWidth
-                    />
-                  </MDBox>
-                  <MDBox mb={2}>
-                    <MDInput
-                      type="email"
-                      label="Email"
-                      variant="standard"
-                      fullWidth
-                    />
-                  </MDBox>
+                <MDBox component="form" role="form"
+                  {...{
+                    onSubmit: (e) => {
+                      e.preventDefault();
+                      const data = new FormData(e.currentTarget);
 
+                      const token = Cookie.getCookie("token");
+
+                      const user = {
+                        roles: data.get('type'),
+                        firstname: data.get('prenom'),
+                        lastname: data.get('nom'),
+                        email: data.get('email'),
+                        phone: data.get('telephone'),
+                        address: data.get('adresse'),
+                        password: data.get('password')
+                      }
+
+                      const config = {
+                        headers: {
+                          'Authorization': `Basic ${token}`
+                        }
+                      }
+
+                      axios.post('http://localhost:8000/api/users', user, config)
+                        .then((response) => {
+                          console.log(response);
+                        }, (error) => {
+                          console.log(error);
+                          console.log(token)
+                        });
+                    }
+                  }}>
                   <MDBox mb={2}>
                     <FormControl fullWidth>
                       <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -140,10 +192,41 @@ function Cover() {
                       </NativeSelect>
                     </FormControl>
                   </MDBox>
-
                   <MDBox mb={2}>
                     <MDInput
+                      // onChange={handleChange}
+                      type="text"
+                      label="Nom"
+                      name="nom"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      // onChange={handleChange}
+                      type="text"
+                      name="prenom"
+                      label="Prénom"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      // onChange={handleChange}
+                      type="email"
+                      name="email"
+                      label="Email"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      // onChange={handleChange}
                       type="tel"
+                      name="telephone"
                       label="Téléphone"
                       variant="standard"
                       fullWidth
@@ -151,24 +234,37 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
+                      // onChange={handleChange}
+                      type="text"
+                      name="adresse"
+                      label="Adresse"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  {/* <MDBox mb={2}>
+                    <MDInput
                       type="textarea"
+                      name="description"
                       multiline
                       rows={5}
                       label="Description"
                       variant="standard"
                       fullWidth
                     />
-                  </MDBox>
+                  </MDBox> */}
                   <MDBox mb={8}>
                     <MDInput
+                      // onChange={handleChange}
                       type="password"
+                      name="password"
                       label="Mot de passe"
                       variant="standard"
                       fullWidth
                     />
                   </MDBox>
                   <MDBox mt={4} mb={1}>
-                    <MDButton variant="gradient" color="info" fullWidth>
+                    <MDButton type="submit" variant="gradient" color="info" fullWidth>
                       Ajouter le compte
                     </MDButton>
                   </MDBox>

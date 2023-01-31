@@ -51,53 +51,58 @@ function Cover() {
     decodedToken();
   }, []);
 
-  // const [state, setState] = useState({
-  //   nom: '',
-  //   prenom: '',
-  //   email: '',
-  //   password: '',
-  //   telephone: '',
-  //   adresse: '',
-  // });
+  const [state, setState] = useState({
+    nom: '',
+    prenom: '',
+    email: '',
+    password: '',
+    telephone: '',
+    adresse: '',
+  });
 
-  // const handleChange = (event) => {
-  //   const value = event.target.value;
-  //   setState({
-  //     ...state,
-  //     [event.target.name]: value,
-  //   });
-  //   console.log(state)
-  // };
+  const handleChange = (event) => {
+    const value = event.target.value;
+    setState({
+      ...state,
+      [event.target.name]: value,
+    });
+    console.log(state)
+  };
 
-  // const handleSubmit = (event) => {
-  //   event.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-  //   const token = Cookie.getCookie("token");
+    const token = Cookie.getCookie("token");
 
-  //   const data = new FormData(event.currentTarget);
-  //   const roles = data.get('type');
+    const data = new FormData(event.currentTarget);
+    const roles = data.get('type');
 
-  //   const user = {
-  //     roles: roles,
-  //     lastname: state.nom,
-  //     firstname: state.prenom,
-  //     email: state.email,
-  //     password: state.password,
-  //     phone: state.telephone,
-  //     address: state.adresse,
-  //   };
+    const user = {
+      roles: roles,
+      lastname: state.nom,
+      firstname: state.prenom,
+      email: state.email,
+      password: state.password,
+      phone: state.telephone,
+      address: state.adresse,
+    };
 
-  //   axios.post(`http://localhost:8000/api/users`, {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //     user
-  //   })
-  //     .then(res => {
-  //       console.log(res);
-  //       console.log(res.data);
-  //     })
-  // };
+    const url = `http://localhost:8000/api/users`;
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    }
+
+    axios.post(url, user, config)
+      .then(res => {
+        console.log(res);
+      }, (error) => {
+        console.log(error);
+      })
+  };
 
   return (
     <DashboardLayout>
@@ -135,8 +140,7 @@ function Cover() {
                 </MDTypography>
               </MDBox>
               <MDBox pt={4} pb={3} px={3}>
-                <MDBox component="form" role="form"
-                  {...{
+                {/* {...{
                     onSubmit: (e) => {
                       e.preventDefault();
                       const data = new FormData(e.currentTarget);
@@ -155,11 +159,13 @@ function Cover() {
 
                       const config = {
                         headers: {
-                          'Authorization': `Basic ${token}`
+                          Authorization: `Bearer ${token}`
                         }
                       }
 
-                      axios.post('http://localhost:8000/api/users', user, config)
+                      const url = 'http://localhost:8000/api/users';
+
+                      axios.post(url, user, config)
                         .then((response) => {
                           console.log(response);
                         }, (error) => {
@@ -167,7 +173,8 @@ function Cover() {
                           console.log(token)
                         });
                     }
-                  }}>
+                  }} */}
+                <MDBox component="form" role="form" onSubmit={handleSubmit}>
                   <MDBox mb={2}>
                     <FormControl fullWidth>
                       <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -194,7 +201,7 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       type="text"
                       label="Nom"
                       name="nom"
@@ -204,7 +211,7 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       type="text"
                       name="prenom"
                       label="Prénom"
@@ -214,7 +221,7 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       type="email"
                       name="email"
                       label="Email"
@@ -224,7 +231,7 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       type="tel"
                       name="telephone"
                       label="Téléphone"
@@ -234,7 +241,7 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       type="text"
                       name="adresse"
                       label="Adresse"
@@ -255,7 +262,7 @@ function Cover() {
                   </MDBox> */}
                   <MDBox mb={8}>
                     <MDInput
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       type="password"
                       name="password"
                       label="Mot de passe"

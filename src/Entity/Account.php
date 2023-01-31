@@ -85,6 +85,12 @@ class Account implements DatedInterface, IdInterface
      */
     private $about;
 
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     * @Groups({"customer_read"})
+     */
+    private $paymentMethod = null;
+
     public function __construct()
     {
         $this->prospects = new ArrayCollection();
@@ -231,5 +237,17 @@ class Account implements DatedInterface, IdInterface
     public function getEvents(): Collection
     {
         return $this->events;
+    }
+
+    public function getPaymentMethod(): ?string
+    {
+        return $this->paymentMethod;
+    }
+
+    public function setPaymentMethod(string $paymentMethod): self
+    {
+        $this->paymentMethod = $paymentMethod;
+
+        return $this;
     }
 }

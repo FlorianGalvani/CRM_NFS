@@ -26,7 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post"={
  *              "name"="signup",
                 "uriTemplate"="/api/signup",
-                "controller"=AuthController::class
+                "controller"=CustomerController::class
  *          }, "get"
  *     }
  * )
@@ -90,7 +90,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
      */
     private $password = null;
 

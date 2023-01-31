@@ -55,7 +55,6 @@ function Cover() {
     nom: '',
     prenom: '',
     email: '',
-    password: '',
     telephone: '',
     adresse: '',
   });
@@ -82,7 +81,6 @@ function Cover() {
       lastname: state.nom,
       firstname: state.prenom,
       email: state.email,
-      password: state.password,
       phone: state.telephone,
       address: state.adresse,
     };
@@ -260,7 +258,7 @@ function Cover() {
                       fullWidth
                     />
                   </MDBox> */}
-                  <MDBox mb={8}>
+                  {/* <MDBox mb={8}>
                     <MDInput
                       onChange={handleChange}
                       type="password"
@@ -269,7 +267,7 @@ function Cover() {
                       variant="standard"
                       fullWidth
                     />
-                  </MDBox>
+                  </MDBox> */}
                   <MDBox mt={4} mb={1}>
                     <MDButton type="submit" variant="gradient" color="info" fullWidth>
                       Ajouter le compte

@@ -174,7 +174,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       }
 
       if (
-        token?.roles.find((role) => role) !== "ROLE_ADMIN" &&
+        token?.account === 'customer' &&
         key === "compte"
       ) {
         returnValue = null;

@@ -12,7 +12,10 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import React from "react";
+import React, { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
+// Utils
+import { Cookie } from "utils/index";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -22,6 +25,11 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import NativeSelect from '@mui/material/NativeSelect';
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -31,6 +39,21 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 function Cover() {
+  const [token, setDecodedToken] = useState();
+
+  console.log(token);
+
+  const decodedToken = () => {
+    if (Cookie.getCookie("token") !== undefined) {
+      const jwtToken = jwt_decode(Cookie.getCookie("token"));
+      setDecodedToken(jwtToken);
+    }
+  };
+
+  useEffect(() => {
+    decodedToken();
+  }, []);
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -92,6 +115,32 @@ function Cover() {
                       fullWidth
                     />
                   </MDBox>
+
+                  <MDBox mb={2}>
+                    <FormControl fullWidth>
+                      <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                        Type
+                      </InputLabel>
+                      <NativeSelect
+                        defaultValue={'commercial'}
+                        inputProps={{
+                          name: 'type',
+                          id: 'uncontrolled-native',
+                        }}
+                      >
+                        {token?.account === "admin" && (
+                          <option value={'commercial'}>Commercial</option>
+                        )}
+                        {token?.account !== "admin" && (
+                          <>
+                            <option value={'client'}>Client</option>
+                            <option value={'prospect'}>Prospect</option>
+                          </>
+                        )}
+                      </NativeSelect>
+                    </FormControl>
+                  </MDBox>
+
                   <MDBox mb={2}>
                     <MDInput
                       type="tel"
@@ -103,7 +152,8 @@ function Cover() {
                   <MDBox mb={2}>
                     <MDInput
                       type="textarea"
-                      multiline rows={5}
+                      multiline
+                      rows={5}
                       label="Description"
                       variant="standard"
                       fullWidth

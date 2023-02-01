@@ -27,7 +27,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "name"="signup",
                 "uriTemplate"="/api/signup",
                 "controller"=CustomerController::class
- *          }, "get"
+ *          }, "get"={
+                "name"="index",
+ *              "uriTemplate"="/api/users",
+ *              "controller"=AuthController::class
+*           }
  *     }
  * )
  * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")

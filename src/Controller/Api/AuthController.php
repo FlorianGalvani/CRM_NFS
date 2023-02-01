@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AuthController extends BaseController
 {
-    private $maiiler;
+    private $mailer;
     private $userRepo;
 
     public function __construct(SendEmail $mailer, UserRepository $userRepo) {
@@ -35,7 +35,7 @@ class AuthController extends BaseController
         }
     }
 
-    #[Route('/api/users', methods: ['POST'])]
+    #[Route('/api/signup', methods: ['POST'])]
     public function signup(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         $response = [

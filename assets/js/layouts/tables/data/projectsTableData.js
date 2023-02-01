@@ -36,7 +36,7 @@ import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import logoInvesion from "assets/images/small-logos/logo-invision.svg";
 
 export default function data() {
-  const [prospects, setProspects] = useState('');
+  const [prospects, setProspects] = useState([]);
 
   const getAllProspects = () => {
     const token = Cookie.getCookie("token");
@@ -92,9 +92,9 @@ export default function data() {
       { Header: "action", accessor: "action", align: "center" },
     ],
 
-    rows: [
-      {
-        project: <Project image={LogoAsana} name="Asana" />,
+    rows: prospects.map((prospect) => {
+      return {
+        project: <Project image={LogoAsana} name={prospect.firstname + ' ' + prospect.lastname} />,
         budget: (
           <MDTypography
             component="a"
@@ -103,7 +103,7 @@ export default function data() {
             color="text"
             fontWeight="medium"
           >
-            $2,500
+            {/* {prospect.budget} */}
           </MDTypography>
         ),
         status: (
@@ -114,7 +114,7 @@ export default function data() {
             color="text"
             fontWeight="medium"
           >
-            working
+            {/* {prospect.status} */}
           </MDTypography>
         ),
         completion: <Progress color="info" value={60} />,
@@ -123,162 +123,41 @@ export default function data() {
             <Icon>more_vert</Icon>
           </MDTypography>
         ),
-      },
-      {
-        project: <Project image={logoGithub} name="Github" />,
-        budget: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="button"
-            color="text"
-            fontWeight="medium"
-          >
-            $5,000
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            done
-          </MDTypography>
-        ),
-        completion: <Progress color="success" value={100} />,
-        action: (
-          <MDTypography component="a" href="#" color="text">
-            <Icon>more_vert</Icon>
-          </MDTypography>
-        ),
-      },
-      {
-        project: <Project image={logoAtlassian} name="Atlassian" />,
-        budget: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="button"
-            color="text"
-            fontWeight="medium"
-          >
-            $3,400
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            canceled
-          </MDTypography>
-        ),
-        completion: <Progress color="error" value={30} />,
-        action: (
-          <MDTypography component="a" href="#" color="text">
-            <Icon>more_vert</Icon>
-          </MDTypography>
-        ),
-      },
-      {
-        project: <Project image={logoSpotify} name="Spotify" />,
-        budget: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="button"
-            color="text"
-            fontWeight="medium"
-          >
-            $14,000
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            working
-          </MDTypography>
-        ),
-        completion: <Progress color="info" value={80} />,
-        action: (
-          <MDTypography component="a" href="#" color="text">
-            <Icon>more_vert</Icon>
-          </MDTypography>
-        ),
-      },
-      {
-        project: <Project image={logoSlack} name="Slack" />,
-        budget: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="button"
-            color="text"
-            fontWeight="medium"
-          >
-            $1,000
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            canceled
-          </MDTypography>
-        ),
-        completion: <Progress color="error" value={0} />,
-        action: (
-          <MDTypography component="a" href="#" color="text">
-            <Icon>more_vert</Icon>
-          </MDTypography>
-        ),
-      },
-      {
-        project: <Project image={logoInvesion} name="Invesion" />,
-        budget: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="button"
-            color="text"
-            fontWeight="medium"
-          >
-            $2,300
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            done
-          </MDTypography>
-        ),
-        completion: <Progress color="success" value={100} />,
-        action: (
-          <MDTypography component="a" href="#" color="text">
-            <Icon>more_vert</Icon>
-          </MDTypography>
-        ),
-      },
-    ],
+      }
+    })
   };
 }
+
+// [
+//   {
+//     project: <Project image={LogoAsana} name="Asana" />,
+//     budget: (
+//       <MDTypography
+//         component="a"
+//         href="#"
+//         variant="button"
+//         color="text"
+//         fontWeight="medium"
+//       >
+//         $2,500
+//       </MDTypography>
+//     ),
+//     status: (
+//       <MDTypography
+//         component="a"
+//         href="#"
+//         variant="caption"
+//         color="text"
+//         fontWeight="medium"
+//       >
+//         working
+//       </MDTypography>
+//     ),
+//     completion: <Progress color="info" value={60} />,
+//     action: (
+//       <MDTypography component="a" href="#" color="text">
+//         <Icon>more_vert</Icon>
+//       </MDTypography>
+//     ),
+//   },
+// ],

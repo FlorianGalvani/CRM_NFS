@@ -74,6 +74,12 @@ class Account implements DatedInterface, IdInterface
     private $commercial = null;
 
     /**
+     * @ORM\Column(type="json", nullable=true)
+     * @Groups({"account_read"})
+     */
+    private $data = null;
+
+    /**
      * @ORM\OneToMany(mappedBy="customer", targetEntity=CustomerEvent::class, orphanRemoval=true, cascade={"persist", "remove"})
      * @Groups({"account_read"})
      */
@@ -238,6 +244,25 @@ class Account implements DatedInterface, IdInterface
     {
         return $this->events;
     }
+
+    /**
+     * @return null
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param null $data
+     */
+    public function setData($data): void
+    {
+        $this->data = $data;
+    }
+
+
+
 
     public function getPaymentMethod(): ?string
     {

@@ -13,26 +13,33 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
-use Symfony\Component\Serializer\SerializerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
 class CustomerController extends BaseController
 {
-
+    private $jwtManager = null;
+    private $tokenStorageInterface = null;
     private $userRepo;
     private $accountRepo;
     private $documentRepository;
 
-    public function __construct(UserRepository $userRepo, AccountRepository $accountRepo, DocumentRepository $documentRepository) {
+    public function __construct(TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager,UserRepository $userRepo, AccountRepository $accountRepo, DocumentRepository $documentRepository)
+    {
+        $this->jwtManager = $jwtManager;
+        $this->tokenStorageInterface = $tokenStorageInterface;
         $this->userRepo = $userRepo;
         $this->accountRepo = $accountRepo;
         $this->documentRepository = $documentRepository;
     }
 
-    #[Route('/api/users', name: 'app_api_commercial_crud', methods:['POST'])]
-    public function createNewCustomer(Request $request, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail): Response
+    #[Route('/api/commercial/new/customer', name: 'app_api_commercial_crud')]
+    public function createNewCustomer(Request $request, ManagerRegistry $managerRegistry, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail): Response
     {
-        $em = $this->getManagerRegistry()->getManager();
+
+        $em = $managerRegistry->getManager();
 
         $response = [
             'success' => false
@@ -45,7 +52,7 @@ class CustomerController extends BaseController
         $data = json_decode($request->getContent(), true);
         $form = $this->createForm(NewCustomerType::class, [], ['csrf_protection' => false]);
         $existingUser = $this->getManagerRegistry()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-        
+
         if ($existingUser) {
             $response['message'] = 'User already exists';
             return $this->json($response, Response::HTTP_CONFLICT);
@@ -71,7 +78,6 @@ class CustomerController extends BaseController
         $account->setType(\App\Enum\Account\AccountType::CUSTOMER);
         $account->setName($data['firstname'] . ' ' . $data['lastname']);
         $account->setAccountStatus(\App\Entity\Account::ACCOUNT_STATUS_PENDING);
-
         $currentUser = $this->getUser();
 
         $currentCommercial = $this->getManagerRegistry()->getRepository(User::class)->findOneBy(['email' => $currentUser->getEmail()]);
@@ -91,58 +97,6 @@ class CustomerController extends BaseController
         $sendEmail->sendNewCustomerEmail($user, $password);
 
         $response['success'] = true;
-        return $this->json($response,Response::HTTP_OK);
-    }
-
-    #[Route('/api/commercial/quotes/new', name: 'app_api_commercial_quotes_create')]
-    function createNewQuotes (Request $request)
-    {
-        $response = [
-            'success' => false
-        ];
-
-        if(!$request->isXmlHttpRequest()) {
-            return $this->json($response,Response::HTTP_UNAUTHORIZED);
-        }
-
-        $currentUser = $this->getUser();
-
-        $formData = json_decode($request->getContent(), true);
-        $document = new \App\Entity\Document();
-        $document->setType(\App\Enum\Document\DocumentType::QUOTE);
-        $document->setFileName($formData['fileName']);
-        $document->setFileExtension($formData['fileExtension']);
-        $customer = $this->getManagerRegistry()->getRepository(\App\Entity\Account::class)->find($formData['customer']);
-        $document->setCustomer($customer);
-        $commercial = $this->getManagerRegistry()->getRepository(\App\Entity\Account::class)->find($currentUser->getAccount()->getId());
-        $document->setCommercial($commercial);
-        $document->setData(json_encode($formData['data']));
-        $em = $this->getManagerRegistry()->getManager();
-        $em->persist($document);
-        $em->flush();
-        $response['success'] = true;
-        return $this->json($response,Response::HTTP_OK);
-    }
-
-    #[Route('/api/commercial/quotes/list', name: 'app_api_commercial_quotes_list')]
-    function listQuotes (Request $request,SerializerInterface $serializer)
-    {
-        $currentUser = $this->getUser();
-        
-        $response = [
-            'success' => false
-        ];
-
-        if(!$request->isXmlHttpRequest()) {
-            return $this->json($response,Response::HTTP_UNAUTHORIZED);
-        }
-        $quotes = $this->getManagerRegistry()->getRepository(\App\Entity\Document::class)->findBy(['commercial' => $currentUser->getAccount()->getId(), 'type' => \App\Enum\Document\DocumentType::QUOTE]);
-        $response['quotes'] = json_encode($quotes[0]->getData());
-        
-        $jsonContent = $serializer->serialize($quotes, 'json');
-    
-        $response['success'] = true;
-        $response['data'] = $jsonContent;
         return $this->json($response,Response::HTTP_OK);
     }
 
@@ -211,5 +165,4 @@ class CustomerController extends BaseController
             return $this->json(['error' => $e->getMessage()]);
         }
     }
-
 }

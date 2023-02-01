@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 import React, { useState, useEffect, useMemo } from "react";
 import "regenerator-runtime";
-
+import axios from 'axios'
 // react-router components
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
@@ -80,6 +80,7 @@ export default function App() {
 
   // Cache for the rtl
   useMemo(() => {
+
     const cacheRtl = createCache({
       key: "rtl",
       stylisPlugins: [rtlPlugin],
@@ -138,6 +139,9 @@ export default function App() {
 
       return null;
     });
+
+
+
 
   const navigate = useNavigate();
 

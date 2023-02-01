@@ -111,7 +111,7 @@ const routes = [
     name: "Devis",
     key: "devis",
     icon: <Icon fontSize="small">receipt</Icon>,
-    route: "/devis",
+    route: "/devis/nouveau",
     component: <Quotes />,
   },
 
@@ -140,12 +140,5 @@ const routes = [
     component: <Payment />,
   },
 ];
-
-
-
-
-
-
-
 
 export default routes;

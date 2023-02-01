@@ -25,13 +25,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      collectionOperations={
  *          "post"={
  *              "name"="signup",
-                "uriTemplate"="/api/signup",
-                "controller"=CustomerController::class
+ *              "uriTemplate"="/api/signup",
+ *              "controller"=CustomerController::class
  *          }, "get"={
-                "name"="index",
+ *             "name"="index",
  *              "uriTemplate"="/api/users",
  *              "controller"=AuthController::class
-*           }
+ *           }
  *     }
  * )
  * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")
@@ -127,7 +127,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
      */
     private $company = null;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->createdAt = new \DateTime();
         $this->emailVerified = false;
     }
@@ -329,7 +330,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
         $this->emailVerificationToken = $emailVerificationToken;
     }
 
-        /**
+    /**
      * @return string|null
      */
     public function getEmailVerificationTokenAt(): ?DateTimeImmutable

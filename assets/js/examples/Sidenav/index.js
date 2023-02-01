@@ -196,6 +196,13 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         returnValue = null;
       }
 
+      const managerRoles = ['admin', 'commercial'];
+      const customerRoutesKeys = ['paiement', 'facture', 'mes-factures', 'transactions'];
+
+      if (managerRoles.includes(token?.account) && customerRoutesKeys.includes(key)) {
+        returnValue = null;
+      }
+
       return returnValue;
     }
   );

@@ -19,11 +19,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=ProspectRepository::class)
  * @ApiResource(
  *      normalizationContext={"groups"={"prospect_read"}},
- *     itemOperations={
+ *     collectionOperations={
  *          "post"={
  *              "name"="create",
  *              "controller"=ProspectController::class
- *          }
+ *          }, "get"
  *     }
  * )
  * @UniqueEntity(fields = {"email"},message ="Un prospect ayant cette adresse email existe déjà")

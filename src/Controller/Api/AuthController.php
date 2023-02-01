@@ -44,7 +44,6 @@ class AuthController extends BaseController
         $user->setRoles(['ROLE_USER']);
         $user->setFirstname($data['firstname']);
         $user->setLastname($data['lastname']);
-        $user->setPassword($data['password']);
         $user->setPhone($data['phone']);
         $user->setAddress($data['address']);
         $user->setEmailVerificationToken(bin2hex(random_bytes(32)));
@@ -69,6 +68,11 @@ class AuthController extends BaseController
             switch($data['account']) {
                 case AccountType::COMMERCIAL:
                     $account->setType(AccountType::COMMERCIAL);
+                    break;
+                case AccountType::CUSTOMER:
+                    $account->setType(AccountType::CUSTOMER);
+                    $currentUser = $this->getUser();
+                    $account->setCommercial($currentUser->getAccount());
                     break;
                 case AccountType::ADMIN:
                     $account->setType(AccountType::ADMIN);

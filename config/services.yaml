@@ -6,6 +6,9 @@
 parameters:
     locale: fr
 
+    app.stripe.keys.public: '%env(STRIPE_PUBLIC_KEY)%'
+    app.stripe.keys.private: '%env(STRIPE_PRIVATE_KEY)%'
+
 services:
 
     # default configuration for services in *this* file
@@ -21,7 +24,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-    App\Services\JwtDecorator:
+    App\Service\JwtDecorator:
         decorates: 'api_platform.openapi.factory'
         arguments: [ '@.inner' ]
 

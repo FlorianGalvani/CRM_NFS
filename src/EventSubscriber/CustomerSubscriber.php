@@ -3,8 +3,11 @@
 namespace App\EventSubscriber;
 
 use App\Entity\CustomerEvent;
+use App\Entity\Document;
+use App\Entity\Transaction;
 use App\Enum\Customer\EventType;
 use App\Event\CreateCustomerEvent;
+use App\Event\CreateDocumentEvent;
 use App\Event\CreateProspectEvent;
 use App\Repository\CustomerEventRepository;
 use App\Repository\ProspectRepository;
@@ -43,6 +46,30 @@ class CustomerSubscriber implements EventSubscriberInterface
             ]);
 
         $this->em->persist($customerEvents);
+        $this->em->flush();
+    }
+
+    public function onCreateDocument(CreateDocumentEvent $event): void
+    {
+        $document = $event->getDocument();
+        $documentData = json_decode($document->getData());
+
+        $transaction = (new Transaction())
+            ->setCustomer($document->getCustomer());
+        if($documentData['amount']) $transaction->setAmount($documentData['amount']);
+
+
+        if($document->getType() === Document::TRANSACTION_DOCUMENT_QUOTATION) {
+            $transaction->setPaymentStatus(Transaction::TRANSACTION_QUOTATION_SENT)
+                ->setTransactionQuotation($document);
+        }
+
+        if($document->getType() === Document::TRANSACTION_DOCUMENT_INVOICE) {
+            $transaction->setPaymentStatus(Transaction::TRANSACTION_INVOICE_SENT)
+                ->setTransactionInvoice($document);
+        }
+
+        $this->em->persist($transaction);
         $this->em->flush();
     }
 

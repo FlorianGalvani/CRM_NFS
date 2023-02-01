@@ -37,7 +37,7 @@ export default function Data() {
   const getAllUsers = () => {
     const token = Cookie.getCookie("token");
 
-    axios.get(`http://localhost:8000/api/all-users`, {
+    axios.get(`http://localhost:8000/api/commercial-customers`, {
       headers: {
         "Authorization": `Bearer ${token}`,
       },
@@ -53,6 +53,8 @@ export default function Data() {
     getAllUsers()
   }, []);
 
+
+
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
       <MDAvatar src={image} name={name} size="sm" />
@@ -65,19 +67,19 @@ export default function Data() {
     </MDBox>
   );
 
-  // const Job = ({ title, description }) => (
-  //   <MDBox lineHeight={1} textAlign="left">
-  //     <MDTypography
-  //       display="block"
-  //       variant="caption"
-  //       color="text"
-  //       fontWeight="medium"
-  //     >
-  //       {title}
-  //     </MDTypography>
-  //     <MDTypography variant="caption">{description}</MDTypography>
-  //   </MDBox>
-  // );
+  const Job = ({ title, description }) => (
+    <MDBox lineHeight={1} textAlign="left">
+      <MDTypography
+        display="block"
+        variant="caption"
+        color="text"
+        fontWeight="medium"
+      >
+        {title}
+      </MDTypography>
+      <MDTypography variant="caption">{description}</MDTypography>
+    </MDBox>
+  );
 
   return {
     columns: [
@@ -86,19 +88,19 @@ export default function Data() {
       { Header: "Action", accessor: "action", align: "center" },
     ],
 
-  //loop user with role user
-
-  rows: users && users.map(user => (
+  rows:
+   users && users.map(user => (
+    console.log(user.user),
     {
       author: (
         <Author
         //random image team for each user
         image={[team2, team3, team4][Math.floor(Math.random() * 3)]}
-          name={user.firstname + " " + user.lastname} 
-          email={user.email}
+          name={user.user.firstname + " " + user.user.lastname} 
+          email={user.user.email}
         />
       ),
-
+      function: <Job title={user.user.company}  />,
       status: (
         <MDBox ml={-1}>
           <MDBadge

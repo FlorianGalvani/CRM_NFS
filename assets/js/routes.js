@@ -107,7 +107,7 @@ const routes = [
     name: "Devis",
     key: "devis",
     icon: <Icon fontSize="small">receipt</Icon>,
-    route: "/devis",
+    route: "/devis/nouveau",
     component: <Quotes />,
   },
   { // todo: supp 'collapse' et coller un lien dans la pertie factures du client
@@ -119,12 +119,5 @@ const routes = [
     component: <Payment />,
   },
 ];
-
-
-
-
-
-
-
 
 export default routes;

@@ -1,24 +1,18 @@
 import React, { useState, useEffect } from "react";
-import "./scss/quotes.scss";
-import { initialInvoice, initialProductLine } from "./data/initialData.js";
-import EditableInput from "./components/EditableInput.jsx";
-import EditableSelect from "./components/EditableSelect.jsx";
-import EditableTextarea from "./components/EditableTextarea.jsx";
-import EditableCalendarInput from "./components/EditableCalendarInput.jsx";
-import EditableFileImage from "./components/EditableFileImage.jsx";
-import countryList from "./data/countryList.js";
-import Document from "./components/Document.jsx";
-import Page from "./components/Page.jsx";
-import View from "./components/View.jsx";
-import Text from "./components/Text.jsx";
+import "../../quotes/scss/quotes.scss";
+import { initialInvoice, initialProductLine } from "../../quotes/data/initialData.js";
+import EditableInput from "../../quotes/components/EditableInput.jsx";
+import EditableSelect from "../../quotes/components/EditableSelect.jsx";
+import EditableTextarea from "../../quotes/components/EditableTextarea.jsx";
+import EditableCalendarInput from "../../quotes/components/EditableCalendarInput.jsx";
+import countryList from "../../quotes/data/countryList.js";
+import Document from "../../quotes/components/Document.jsx";
+import Page from "../../quotes/components/Page.jsx";
+import View from "../../quotes/components/View.jsx";
+import Text from "../../quotes/components/Text.jsx";
 import { Font } from "@react-pdf/renderer";
-import Download from "./components/DownloadPDF.jsx";
 import format from "date-fns/format";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import MDBox from "components/MDBox";
-import DashboardNavbar from "../../examples/Navbars/DashboardNavbar";
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+
 import axios from "axios";
 
 Font.register({
@@ -31,27 +25,30 @@ Font.register({
     },
   ],
 });
-const QuotesPage = ({ pdfMode }) => {
-  const savedInvoice = window.localStorage.getItem("invoiceData");
-  let data = null;
-  try {
-    if (savedInvoice) {
-      data = JSON.parse(savedInvoice);
-    }
-  } catch (e) {
-    console.log(e);
-  }
 
-  const onInvoiceUpdated = (invoice) => {
-    window.localStorage.setItem("invoiceData", JSON.stringify(invoice));
-  };
+const QuotePdf = ({ pdfMode,data }) => {
+    const [formData, setFormData] = useState(null);
+    useEffect(() => {
+        // js get document.cookie value of token
+        const token = document.cookie.split("=")[1];
+        axios.get('/api/commercial/quotes/formdata', {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        }).then(
+            (response) => {
+              setIsLoading(false);
+              setFormData(response.data.formData);
+            }
+        )
+      }, [])
+
 
   const [invoice, setInvoice] = useState(
     data ? { ...data } : { ...initialInvoice }
   );
   const [subTotal, setSubTotal] = useState(null);
   const [saleTax, setSaleTax] = useState(null);
-  const [formData, setFormData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const dateFormat = "MMM dd, yyyy";
   const invoiceDate =
@@ -61,26 +58,6 @@ const QuotesPage = ({ pdfMode }) => {
       ? new Date(invoice.invoiceDueDate)
       : new Date(invoiceDate.valueOf());
 
-  useEffect(() => {
-    // js get document.cookie value of token
-    const token = document.cookie.split("=")[1];
-    axios.get('/api/commercial/quotes/formdata', {
-      headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    }).then(
-        (response) => {
-          const data = response.data.formData;
-          handleChange("name",data.commercial.firstname + data.commercial.lastname)
-          handleChange("companyName", data.companyName)
-          handleChange("companyAddress", data.companyAddress)
-          handleChange("companyAddress2", data.companyAddress2)
-          handleChange("companyCountry", data.companyCountry)
-          setFormData(data);
-          setIsLoading(false);   
-        }
-    )
-  }, [])
 
   if (invoice.invoiceDueDate === "") {
     invoiceDueDate.setDate(invoiceDueDate.getDate() + 30);
@@ -175,118 +152,56 @@ const QuotesPage = ({ pdfMode }) => {
     setSaleTax(saleTax);
   }, [subTotal, invoice.taxLabel]);
 
-  useEffect(() => {
-    if (onInvoiceUpdated) {
-      onInvoiceUpdated(invoice);
-    }
-  }, [onInvoiceUpdated, invoice]);
-
-  const handleCustomerSelectChange = (event, value) => {
-    formData.customers.forEach((customer) => {
-      if (customer.data.name === value) {
-        setInvoice({
-          ...invoice,
-          clientName: customer.data.name,
-          clientAddress: customer.data.address,
-          clientAddress2: customer.data.city + ", " + customer.data.zip,
-          clientCountry: customer.data.country,
-        });
-      }
-    })
-  }
-
-  const handleSaveQuotesButtonClick = () => {
-
-    invoice["name"] = formData.commercial.firstname + ' ' +  formData.commercial.lastname;
-    invoice["companyName"] = formData.company.name;
-    invoice["companyAddress"] = formData.company.address;
-    invoice["companyAddress2"] = formData.company.city + ", " + formData.company.zipCode;
-    console.log("invoice",invoice);
-    const token = document.cookie.split("=")[1];
-    const customer = formData.customers.find((customer) => customer.data.name === invoice.clientName);
-    console.log("customer",customer);
-    axios.post('/api/commercial/quotes/new', {
-      invoice,
-      subTotal,
-      saleTax,
-      customer: customer.data.id
-    },{
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-
-    } ).then(
-        (response) => {
-          console.log(response);
-        }
-    )
-  };
-
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
-      <MDBox mt={8}>
-        <Document pdfMode={pdfMode} className="mt-[100px]">
-          <div className="wrap">
-            <Page className="invoice-wrapper mt-[100px]" pdfMode={pdfMode}>
-              {!pdfMode && <Download data={invoice} />}
 
-              {!isLoading &&
+        <Document pdfMode={pdfMode} className="mt-[100px]">
+            {formData !== null &&
+            <Page className="invoice-wrapper mt-[100px]" pdfMode={pdfMode}>
+        
                   <>
               <View className="flex" pdfMode={pdfMode}>
                 <View className="w-50" pdfMode={pdfMode}>
-                  {/* <EditableFileImage
-                      className="logo"
-                      placeholder="Your Logo"
-                      value={invoice.logo}
-                      width={invoice.logoWidth}
-                      pdfMode={pdfMode}
-                      onChangeImage={(value) => handleChange("logo", value)}
-                      onChangeWidth={(value) => handleChange("logoWidth", value)}
-                  /> */}
                   <EditableInput
-                    className="fs-20 bold disabled"
+                    className="fs-20 bold"
                     placeholder="Dev Studio"
-                    value={formData.company.name}
+                    value={data.companyName}
                     onChange={(value) => handleChange("companyName", value)}
                     pdfMode={pdfMode}
-                    disable
                   />
-                  <EditableInput
-                   
+                   <EditableInput
+                  
                     placeholder="Nom Commercial"
-                    value={formData.commercial.firstname + " " + formData.commercial.lastname}
+                    value={data.name}
                     onChange={(value) => handleChange("name", value)}
                     pdfMode={pdfMode}
-
+                      disable
                   />
                   <EditableInput
-                      className="disabled"
+                    
                     placeholder="77 Rue Rambuteau"
-                    value={formData.company.address}
+                    value={data.companyAddress}
                     onChange={(value) => handleChange("companyAddress", value)}
                     pdfMode={pdfMode}
                   />
                   <EditableInput
-                      className="disabled"
+                  
                     placeholder="Paris, 75001"
-                    value={formData.company.city +", " + formData.company.zipCode}
+                    value={data.companyAddress2}
                     onChange={(value) => handleChange("companyAddress2", value)}
                     pdfMode={pdfMode}
-                    disabled
+                  
                   />
                   <EditableSelect
-                      className="disabled"
+         
                     options={countryList}
-                      value={formData.company.country}
+                      value={data.companyCountry}
                     onChange={(value) => handleChange("companyCountry", value)}
                     pdfMode={pdfMode}
-                      disabled
-                  />
+                 
+                  /> 
                 </View>
                 <View className="w-50" pdfMode={pdfMode}>
-                  <h1 className="fs-45 text-yellow right bold uppercase">Devis</h1>
+                  <h1 className="fs-45 text-black right bold uppercase">Devis</h1>
                 </View>
               </View>
 
@@ -301,14 +216,6 @@ const QuotesPage = ({ pdfMode }) => {
                     disabled
                   />
 
-                  <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      options={formData.customersLabels}
-                      onChange={handleCustomerSelectChange}
-                      sx={{ width: 300 }}
-                      renderInput={(params) => <TextField {...params} label="Client" />}
-                  />
 
                   <EditableInput
                       className="disabled"
@@ -628,19 +535,12 @@ const QuotesPage = ({ pdfMode }) => {
                 />
               </View>
 
-              <div className="saveButton">
-                <button onClick={handleSaveQuotesButtonClick}>
-                  Enregistrer le devis
-                </button>
-              </div>
+            
                   </>
-              }
             </Page>
-          </div>
+            }
         </Document>
-      </MDBox>
-    </DashboardLayout>
   );
 };
 
-export default QuotesPage;
+export default QuotePdf;

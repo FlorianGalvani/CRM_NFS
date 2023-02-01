@@ -4,8 +4,8 @@ namespace App\Controller\Www;
 
 use App\Entity\User;
 use App\Controller\BaseController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EmailVerifyController extends BaseController

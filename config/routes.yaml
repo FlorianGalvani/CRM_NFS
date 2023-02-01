@@ -1,2 +1,6 @@
 api_login_check:
     path: /api/login_check
+    # config/routes.yaml
+user_show:
+    path: /users/{id}
+    controller: App\Controller\Api\CustomerController::show

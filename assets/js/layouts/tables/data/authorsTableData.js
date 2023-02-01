@@ -18,7 +18,6 @@ Coded by www.creative-tim.com
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Cookie } from "utils/index";
-import { Users } from "utils/index";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -36,15 +35,14 @@ export default function Data() {
 
   const getAllUsers = () => {
     const token = Cookie.getCookie("token");
-    console.log(token)
-    axios.get(`http://localhost:8000/api/users`, {
+
+    axios.get(`http://localhost:8000/api/all-users`, {
       headers: {
         "Authorization": `Bearer ${token}`,
       },
     })
       .then((response) => {
         const allUsers = response.data;
-        console.log(allUsers)
         setUsers(allUsers);
       })
       .catch((error) => console.log(error));
@@ -53,8 +51,6 @@ export default function Data() {
   useEffect(() => {
     getAllUsers()
   }, []);
-
-  console.log(users)
 
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>

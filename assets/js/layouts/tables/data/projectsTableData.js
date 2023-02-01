@@ -14,7 +14,9 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Cookie } from "utils/index";
 
 // @mui material components
 import Icon from "@mui/material/Icon";
@@ -34,6 +36,27 @@ import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import logoInvesion from "assets/images/small-logos/logo-invision.svg";
 
 export default function data() {
+  const [prospects, setProspects] = useState('');
+
+  const getAllProspects = () => {
+    const token = Cookie.getCookie("token");
+
+    axios.get(`http://localhost:8000/api/all-prospects`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        const allProspects = response.data;
+        setProspects(allProspects);
+      })
+      .catch((error) => console.log(error));
+  }
+
+  useEffect(() => {
+    getAllProspects()
+  }, []);
+
   const Project = ({ image, name }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
       <MDAvatar src={image} name={name} size="sm" variant="rounded" />

@@ -250,4 +250,18 @@ class Account implements DatedInterface, IdInterface
 
         return $this;
     }
+
+    public function getInfos(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'type' => $this->getType(),
+            'customers' => $this->getCustomers(),
+            'commercial' => $this->getCommercial(),
+            'user' => $this->getUser(),
+            'events' => $this->getEvents(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt()
+        ];
+    }
 }

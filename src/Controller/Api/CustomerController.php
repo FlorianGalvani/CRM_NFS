@@ -3,6 +3,8 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\AccountRepository;
+use App\Repository\UserRepository;
 use App\Service\Emails\SendEmail;
 use App\Form\Commercial\NewCustomerType;
 use App\Controller\BaseController;
@@ -15,6 +17,15 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class CustomerController extends BaseController
 {
+
+    private $userRepo;
+    private $accountRepo;
+
+    public function __construct(UserRepository $userRepo, AccountRepository $accountRepo) {
+        $this->userRepo = $userRepo;
+        $this->accountRepo = $accountRepo;
+    }
+
     #[Route('/api/users', name: 'app_api_commercial_crud', methods:['POST'])]
     public function createNewCustomer(Request $request, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail): Response
     {
@@ -130,6 +141,27 @@ class CustomerController extends BaseController
         $response['success'] = true;
         $response['data'] = $jsonContent;
         return $this->json($response,Response::HTTP_OK);
+    }
+
+    #[Route('/api/commercial-customers', methods: ['GET'])]
+    public function commercialCustomers()
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $customers = $this->accountRepo->findCustomersByCommercial($currentAccount);
+
+        $customersData = [];
+        foreach($customers as $customer) {
+            array_push($customersData, $customer->getInfos());
+        }
+
+        try {
+            return $this->json($customersData);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
     }
     
 }

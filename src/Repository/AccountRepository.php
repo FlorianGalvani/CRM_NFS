@@ -39,6 +39,17 @@ class AccountRepository extends ServiceEntityRepository
         }
     }
 
+    public function findCustomersByCommercial(Account $account)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.commercial = :account')
+            ->setParameter('account', $account)
+            ->orderBy('a.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Account[] Returns an array of Account objects
 //     */

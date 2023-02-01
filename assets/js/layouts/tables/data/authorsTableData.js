@@ -31,40 +31,26 @@ import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 
 export default function Data() {
+  const [users, setUsers] = useState('');
 
+  const getAllUsers = () => {
+    const token = Cookie.getCookie("token");
 
-//   const token = Cookie.getCookie("token");
-// console.log('Cookie value:', token);
-
-// if (!token) {
-//   console.error('Token not found in cookie');
-// }
-
-
-  const [users, setUsers] = useState([]);
-
-const getAllUsers = () => {
-  const token = Cookie.getCookie("token");
-  // console.log(token)
-  axios.get(`http://localhost:8000/api/users`, {
-    headers: {
-      "Authorization": `Bearer ${token}`,
-    },
-  })
-  .then((response) => {
-    const allUsers = response.data;
-    // console.log(allUsers)
-    setUsers(allUsers);
-  })
-  .catch((error) => console.log(error));
-}
+    axios.get(`http://localhost:8000/api/all-users`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        const allUsers = response.data;
+        setUsers(allUsers);
+      })
+      .catch((error) => console.log(error));
+  }
 
   useEffect(() => {
     getAllUsers()
   }, []);
-
-  // console.log(users)
-
 
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>

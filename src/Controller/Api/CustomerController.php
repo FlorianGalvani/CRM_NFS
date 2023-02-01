@@ -140,15 +140,44 @@ class CustomerController extends BaseController
         return $this->json($response,Response::HTTP_OK);
     }
 
-    #[Route('/api/customer_invoices')]
+    #[Route('/api/customer-invoices', methods: ['GET'])]
     public function invoices(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         $currentAccount = $user->getAccount();
 
+        $invoices = $this->documentRepository->findAllInvoicesByAccount($currentAccount);
+
+        $invoicesData = [];
+
+        foreach($invoices as $_invoices) {
+            array_push($invoicesData, $_invoices->getInfos());
+        }
+
         try {
-            return $this->json();
+            return $this->json($invoicesData);
+        } catch(Error $e) {
+            http_response_code(500);
+
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/customer-invoices/{id}', methods: ['GET'])]
+    public function invoiceShow($id): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $invoice = $this->documentRepository->findOneBy([
+            'id' => $id,
+            'customer' => $currentAccount
+        ]);
+
+        try {
+            return $this->json($invoice->getInfos());
         } catch(Error $e) {
             http_response_code(500);
 

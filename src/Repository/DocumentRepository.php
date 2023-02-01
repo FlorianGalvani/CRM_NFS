@@ -40,9 +40,16 @@ class DocumentRepository extends ServiceEntityRepository
         }
     }
 
-    public function findAllInvoiceByAccount()
+    public function findAllInvoicesByAccount(Account $account): array
     {
-
+        return $this->createQueryBuilder('d')
+            ->where('d.customer = :account')
+            ->andWhere('d.type = :type')
+            ->setParameters(['account' => $account, 'type' => 'facture'])
+            ->orderBy('d.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     public function findLastOneInvoiceByAccount(Account $account): ?Document

@@ -56,7 +56,7 @@ class AuthController extends BaseController
 
         $password = $passwordHasher->hashPassword(
             $user,
-            $data['password']
+            'pass_1234'
         );
         $user->setPassword($password);
 

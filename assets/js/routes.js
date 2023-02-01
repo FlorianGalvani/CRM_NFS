@@ -53,8 +53,8 @@ import SignUp from "./layouts/authentication/sign-up";
 // @mui icons
 import Icon from "@mui/material/Icon";
 import CustomerBilling from "layouts/billing/customer";
-import Invoice from "layouts/billing/customer/invoices/show";
-import Invoices from "layouts/billing/customer/invoices";
+import CustomerInvoice from "layouts/billing/customer/invoices/show";
+import CustomerInvoices from "layouts/billing/customer/invoices";
 
 const routes = [
   {
@@ -120,18 +120,18 @@ const routes = [
     name: "Mes transactions",
     key: "transactions",
     icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/mes-factures",
+    route: "/transactions",
     component: <CustomerBilling />,
   },
   {
     key: "mes-factures",
     route: "/transactions/mes-factures",
-    component: <Invoices />
+    component: <CustomerInvoices />
   },
   {
     key: "facture",
     route: "transactions/:id",
-    component: <Invoice />,
+    component: <CustomerInvoice />,
   },
   {
     key: "paiement",

@@ -45,7 +45,7 @@ class TransactionController extends BaseController
 
         \Stripe\Stripe::setApiKey($this->getParameter('app.stripe.keys.private'));
         try {
-            $invoiceData = $transaction->getTransactionInvoice()->getData();
+            $invoiceData = json_decode($transaction->getTransactionInvoice()->getData(), true);
             if (null === $transaction->getStripePaymentIntentId()) {
                 $paymentIntent = \Stripe\PaymentIntent::create([
                     'amount' => $transaction->getAmount() * 100,
@@ -64,6 +64,8 @@ class TransactionController extends BaseController
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_INTENT);
             $transaction->setStripePaymentIntentId($paymentIntent->id);
             $invoiceData['status'] = $transaction->getPaymentStatus();
+
+            $transaction->getTransactionInvoice()->setData(json_encode($invoiceData));
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();

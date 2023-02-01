@@ -28,13 +28,10 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 // Billing page components
-import Invoices from "layouts/billing/components/Invoices";
-import BillingInformation from "layouts/billing/components/BillingInformation";
 import Transaction from "layouts/billing/components/Transaction";
-import axios from "axios";
 
 // click for quotes
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import {Cookie} from "utils";
 import {useMaterialUIController} from "context";
@@ -49,6 +46,9 @@ import pattern from "assets/images/illustrations/pattern-tree.svg";
 import PropTypes from "prop-types";
 
 import {Formatter} from 'utils/Formatter.utils';
+import Quotes from "layouts/billing/customer/components/Quotes";
+import {Axios} from "utils/Axios.utils";
+import {Invoice} from "layouts/billing/customer/invoices";
 
 const Button = styled.button`
   height: 13.5rem;
@@ -80,27 +80,11 @@ const Button = styled.button`
 }
 `
 
-const get = async (token) => {
-    const response = [];
-    await axios.get('api/customer-transactions', {
-        headers: {
-            Authorization: 'Bearer ' + token
-        }
-    }).then((res) => {
-        response['success'] = true;
-        response['data'] = res.data;
-    }).catch((err) => {
-        response['error'] = true;
-        response['data'] = err.response.data;
-    })
-    return response;
-}
-
 function CustomerBilling() {
     const [account, setAccount] = React.useState(null);
     const [transactions, setTransactions] = React.useState([]);
     const [lastInvoice, setLastInvoince] = React.useState(null);
-    const [token] = React.useState(Cookie.getCookie("token"));
+    const [lastThreeQuotes, setLastThreeQuotes] = React.useState([]);
 
     const getAccount = () => {
         if (Cookie.getCookie("token") !== undefined) {
@@ -114,21 +98,21 @@ function CustomerBilling() {
 
         const getTransactions = async () => {
 
-            const response = await get(token);
+            const response = await Axios.get('/customer-transactions');
 
             if(response.error) {
                 console.log(response.data)
             } else {
-                console.log(response.data)
                 setTransactions(response.data.transactions)
                 setLastInvoince(response.data.lastInvoice)
+                setLastThreeQuotes(response.data.lastThreeQuotes)
             }
         }
         getTransactions();
     },  [])
 
     const invoiceDetailLink = (invoice) => {
-        return invoice?.transaction?.paymentStatus === 'payment_success' ? '/'+invoice?.id : '/paiement/'+invoice?.transaction?.id
+        return invoice?.transaction?.paymentStatus === 'payment_success' ? '/transactions/'+invoice?.id : '/transactions/paiement/'+invoice?.transaction?.id
     }
 
     return (
@@ -174,9 +158,11 @@ function CustomerBilling() {
                                     <MDTypography variant="h6" fontWeight="medium">
                                         Factures
                                     </MDTypography>
-                                    <MDButton variant="outlined" color="info" size="small">
-                                        <Link to={'/transactions/mes-factures'}>voir tout</Link>
-                                    </MDButton>
+                                    <Link to={'/transactions/mes-factures'}>
+                                        <MDButton variant="outlined" color="info" size="small">
+                                            voir tout
+                                        </MDButton>
+                                    </Link>
                                 </MDBox>
                                 <MDBox p={2}>
                                     <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
@@ -192,7 +178,9 @@ function CustomerBilling() {
                 <MDBox mb={3}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={7}>
-                            <BillingInformation />
+                            {
+                                lastThreeQuotes ? <Quotes quotes={lastThreeQuotes} /> : null
+                            }
                         </Grid>
                         <Grid item xs={12} md={5}>
                             {
@@ -482,57 +470,3 @@ function Transactions({transactions}) {
 Transactions.propTypes = {
     transactions: PropTypes.array,
 };
-
-function Invoice({ date, id, price, noGutter }) {
-    return (
-        <MDBox
-            component="li"
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            py={1}
-            pr={1}
-            mb={noGutter ? 0 : 1}
-        >
-            <MDBox lineHeight={1.125}>
-                <MDTypography display="block" variant="button" fontWeight="medium">
-                    {date}
-                </MDTypography>
-                <MDTypography variant="caption" fontWeight="regular" color="text">
-                    {id}
-                </MDTypography>
-            </MDBox>
-            <MDBox display="flex" alignItems="center">
-                <MDTypography variant="button" fontWeight="regular" color="text">
-                    {price}
-                </MDTypography>
-                <MDBox
-                    display="flex"
-                    alignItems="center"
-                    lineHeight={1}
-                    ml={3}
-                    sx={{ cursor: "pointer" }}
-                >
-                    <Icon fontSize="small">picture_as_pdf</Icon>
-                    <MDTypography variant="button" fontWeight="bold">
-                        &nbsp;PDF
-                    </MDTypography>
-                </MDBox>
-            </MDBox>
-        </MDBox>
-    );
-}
-
-// Setting default values for the props of Invoice
-Invoice.defaultProps = {
-    noGutter: false,
-};
-
-// Typechecking props for the Invoice
-Invoice.propTypes = {
-    date: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
-    price: PropTypes.string.isRequired,
-    noGutter: PropTypes.bool,
-}
-

@@ -9,31 +9,13 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import {Alert} from "@mui/material";
 import {useLocation} from "react-router-dom";
 import { Formatter } from "utils/Formatter.utils";
-import {Cookie} from "utils";
+import {Axios} from "utils";
+import Invoice from "layouts/billing/components/Invoice";
 
-async function get(token, param) {
-    const response = [];
-    await axios.get(`/api/documents/${param}`, {
-        headers: {
-            'Authorization': 'Bearer ' + token
-        }
-    }).then(
-        (res) => {
-            response['success'] = true;
-            response['data'] = res.data;
-        }
-    ).catch((err) => {
-        response['error'] = true;
-        response['data'] = err.response.data;
-    })
-    return response;
-}
-
-export default function Invoice() {
+export default function CustomerInvoice() {
     const [isLoading, setIsLoading] = React.useState(true);
     const [error, setError] = React.useState(false);
     const [message, setMessage] = React.useState(null);
-    const [token] = React.useState(Cookie.getCookie("token"));
     const [invoice, setInvoice] = React.useState(null);
 
     const location = useLocation();
@@ -44,7 +26,7 @@ export default function Invoice() {
         // js get document.cookie value of token
         const getInvoice = async () => {
             setIsLoading(true)
-            const response = await get(token, id);
+            const response = await Axios.get(`/customer-invoices/${id}`);
 
             if(response.error) {
                 if(response.data.status === 404) {
@@ -53,6 +35,7 @@ export default function Invoice() {
                 setError(true)
                 console.log(response.data)
             } else {
+                console.log(response.data)
                 setInvoice(response.data)
             }
             setIsLoading(false);

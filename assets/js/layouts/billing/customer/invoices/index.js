@@ -4,39 +4,25 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import Grid from "@mui/material/Grid";
 import MDBox from "components/MDBox";
 import {Link} from "react-router-dom";
-import {Cookie, Formatter} from "utils";
-import axios from "axios";
-import Invoice from "layouts/billing/components/Invoice";
+import {Axios, Formatter} from "utils";
+import Card from "@mui/material/Card";
+import MDTypography from "components/MDTypography";
+import Icon from "@mui/material/Icon";
+import PropTypes from "prop-types";
+import {Alert} from "@mui/material";
+import invoice from "layouts/billing/components/Invoice";
 
-const get = async (token) => {
-    const response = [];
-    await axios.get('api/customer-invoices', {
-        headers: {
-            Authorization: 'Bearer ' + token
-        }
-    }).then((res) => {
-        response['success'] = true;
-        response['data'] = res.data;
-    }).catch((err) => {
-        response['error'] = true;
-        response['data'] = err.response.data;
-    })
-    return response;
-}
-
-const Invoices = () => {
-    const [token] = React.useState(Cookie.getCookie("token"));
+const CustomerInvoices = () => {
     const [invoices, setInvoices] = React.useState([]);
 
     React.useEffect(() => {
         const getInvoices = async () => {
 
-            const response = await get(token);
+            const response = await Axios.get('/customer-invoices');
 
             if(response.error) {
                 console.log(response.data)
             } else {
-                console.log(response.data)
                 setInvoices(response.data)
             }
         }
@@ -44,7 +30,7 @@ const Invoices = () => {
     },  [])
 
     const invoiceDetailLink = (invoice) => {
-        return invoice?.transaction?.paymentStatus === 'payment_success' ? '/'+invoice?.id : '/paiement/'+invoice?.transaction?.id
+        return invoice?.transaction?.paymentStatus === 'payment_success' ? '/transactions/'+invoice?.id : '/transactions/paiement/'+invoice?.transaction?.id
     }
 
     return (
@@ -54,17 +40,25 @@ const Invoices = () => {
                 <MDBox mb={3}>
                     <Grid container spacing={3}>
                         {
-                            invoices.map((invoice, index) => (
-                                <Grid key={index} item xs={12} lg={7}>
-                                    <MDBox p={2}>
-                                        <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-                                            <Link to={invoiceDetailLink(invoice)}>
-                                                <Invoice date={Formatter.formatDate(invoice?.createdAt)} id={'#'+invoice?.fileName} price={invoice?.data.amount+' €'} />
-                                            </Link>
+                            invoices ? invoices.map((invoice, index) => (
+                                <Grid item xs={12} key={index}>
+                                    <Card sx={{ height: "100%" }}>
+                                        <MDBox p={2}>
+                                            <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
+                                                <Invoice
+                                                    date={Formatter.formatDate(invoice?.createdAt)}
+                                                    id={'#'+invoice?.fileName}
+                                                    price={invoice?.data.amount+' €'}
+                                                    status={invoice?.transaction.paymentStatus}
+                                                />
+                                                <Link to={invoiceDetailLink(invoice)}>
+                                                    Voir
+                                                </Link>
+                                            </MDBox>
                                         </MDBox>
-                                    </MDBox>
+                                    </Card>
                                 </Grid>
-                            ))
+                            )) : null
                         }
                     </Grid>
                 </MDBox>
@@ -73,4 +67,78 @@ const Invoices = () => {
     )
 }
 
-export default Invoices;
+export default CustomerInvoices;
+
+export function Invoice({ date, id, price, noGutter, status }) {
+    const invoiceStatus = () => {
+        let paymentStatus = {};
+        switch(status) {
+            case 'invoice_sent':
+                paymentStatus = {severity: 'warning', label: 'En attente de paiement'};
+                break;
+            case 'payment_intent':
+                paymentStatus = {severity: 'warning', label: 'En attente de paiement'};
+                break;
+            default:
+                paymentStatus = {severity: '', label: ''};
+        }
+        return paymentStatus;
+    };
+
+    return (
+        <MDBox
+            component="li"
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            py={1}
+            pr={1}
+            mb={noGutter ? 0 : 1}
+        >
+            <MDBox lineHeight={1.125}>
+                <MDTypography display="block" variant="button" fontWeight="medium">
+                    {date}
+                </MDTypography>
+                <MDTypography variant="caption" fontWeight="regular" color="text">
+                    {id}
+                </MDTypography>
+            </MDBox>
+            <MDBox display="flex" alignItems="center">
+                <MDTypography variant="button" fontWeight="regular" color="text">
+                    {price}
+                </MDTypography>
+                <MDBox
+                    display="flex"
+                    alignItems="center"
+                    lineHeight={1}
+                    ml={3}
+                    sx={{ cursor: "pointer" }}
+                >
+                    <Icon fontSize="small">picture_as_pdf</Icon>
+                    <MDTypography variant="button" fontWeight="bold">
+                        &nbsp;PDF
+                    </MDTypography>
+                </MDBox>
+            </MDBox>
+            {
+                status ? <MDBox display="flex" alignItems="center">
+                    <Alert severity={invoiceStatus().severity}>{invoiceStatus().label}</Alert>
+                </MDBox> : null
+            }
+        </MDBox>
+    );
+}
+
+// Setting default values for the props of Invoice
+Invoice.defaultProps = {
+    noGutter: false,
+};
+
+// Typechecking props for the Invoice
+Invoice.propTypes = {
+    date: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    price: PropTypes.string.isRequired,
+    noGutter: PropTypes.bool,
+    status: PropTypes.string,
+}

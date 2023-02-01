@@ -163,7 +163,6 @@ class Document implements DatedInterface, IdInterface
         return [
             'id' => $this->getId(),
             'customer' => $this->getCustomer(),
-            'commercial' => $this->getCommercial(),
             'type' => $this->getType(),
             'data' => json_decode($this->getData()),
             'fileName' => $this->getFileName(),

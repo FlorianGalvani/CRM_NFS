@@ -14,7 +14,11 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import React from "react";
+//api
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Cookie } from "utils/index";
+import { Users } from "utils/index";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -27,7 +31,31 @@ import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 
-export default function data() {
+export default function Data() {
+  const [users, setUsers] = useState('');
+
+  const getAllUsers = () => {
+    const token = Cookie.getCookie("token");
+    console.log(token)
+    axios.get(`http://localhost:8000/api/users`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        const allUsers = response.data;
+        console.log(allUsers)
+        setUsers(allUsers);
+      })
+      .catch((error) => console.log(error));
+  }
+
+  useEffect(() => {
+    getAllUsers()
+  }, []);
+
+  console.log(users)
+
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
       <MDAvatar src={image} name={name} size="sm" />

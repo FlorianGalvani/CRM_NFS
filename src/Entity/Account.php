@@ -251,14 +251,17 @@ class Account implements DatedInterface, IdInterface
         return $this;
     }
 
-    public function getData(): array
+    public function getInfos(): array
     {
         return [
-            'AccountStatus' => $this->getAccountStatus(),
-            'paymentMethod' => json_decode($this->getPaymentMethod()),
+            'id' => $this->getId(),
+            'type' => $this->getType(),
+            'customers' => $this->getCustomers(),
+            'commercial' => $this->getCommercial(),
+            'user' => $this->getUser(),
             'events' => $this->getEvents(),
-            'name'=> $this->getName(),
-            'type' => $this->getType()
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt()
         ];
     }
 }

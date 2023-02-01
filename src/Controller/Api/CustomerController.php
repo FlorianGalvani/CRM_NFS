@@ -3,7 +3,9 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\AccountRepository;
 use App\Repository\DocumentRepository;
+use App\Repository\UserRepository;
 use App\Service\Emails\SendEmail;
 use App\Form\Commercial\NewCustomerType;
 use App\Controller\BaseController;
@@ -16,10 +18,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class CustomerController extends BaseController
 {
+
+    private $userRepo;
+    private $accountRepo;
     private $documentRepository;
 
-    public function __construct(DocumentRepository $documentRepository)
-    {
+    public function __construct(UserRepository $userRepo, AccountRepository $accountRepo, DocumentRepository $documentRepository) {
+        $this->userRepo = $userRepo;
+        $this->accountRepo = $accountRepo;
         $this->documentRepository = $documentRepository;
     }
 
@@ -140,6 +146,27 @@ class CustomerController extends BaseController
         return $this->json($response,Response::HTTP_OK);
     }
 
+    #[Route('/api/commercial-customers', methods: ['GET'])]
+    public function commercialCustomers()
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $customers = $this->accountRepo->findCustomersByCommercial($currentAccount);
+
+        $customersData = [];
+        foreach($customers as $customer) {
+            array_push($customersData, $customer->getInfos());
+        }
+
+        try {
+            return $this->json($customersData);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
     #[Route('/api/customer-invoices', methods: ['GET'])]
     public function invoices(): Response
     {
@@ -184,4 +211,5 @@ class CustomerController extends BaseController
             return $this->json(['error' => $e->getMessage()]);
         }
     }
+
 }

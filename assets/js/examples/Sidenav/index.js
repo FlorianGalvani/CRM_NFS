@@ -68,9 +68,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
   const [token, setDecodedToken] = useState();
-
-  console.log(token);
-
+  
   const decodedToken = () => {
     if (Cookie.getCookie("token") !== undefined) {
       const jwtToken = jwt_decode(Cookie.getCookie("token"));

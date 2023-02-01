@@ -23,7 +23,6 @@ import MDButton from "components/MDButton";
 
 // Billing page components
 import Invoice from "layouts/billing/components/Invoice";
-
 function Invoices() {
   return (
     <Card sx={{ height: "100%" }}>

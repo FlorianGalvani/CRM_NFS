@@ -83,10 +83,8 @@ class QuotesController extends AbstractController
         }
 
         $formData = json_decode($request->getContent(), true);
-        $base64Img = $formData['invoice']['logo'];
         unset($formData['invoice']['logo']);
-        if ($base64Img) {
-            $uploadedFile = $fileUploader->uploadBase64($base64Img);
+       
 
             $decodedToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
             $currentUser = $managerRegistry->getRepository(User::class)->findOneBy(['email' => $decodedToken['username']]);
@@ -107,7 +105,7 @@ class QuotesController extends AbstractController
             $em->flush();
 
             $response['success'] = true;
-        }
+     
 
         return $this->json($response,Response::HTTP_OK);
     }
@@ -123,14 +121,24 @@ class QuotesController extends AbstractController
             return $this->json($response,Response::HTTP_UNAUTHORIZED);
         }
 
-        $decodedToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
-        $currentUser = $managerRegistry->getRepository(User::class)->findOneBy(['email' => $decodedToken['username']]);
-        $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy(['commercial' => $currentUser->getAccount()->getId(), 'type' => \App\Enum\Document\DocumentType::QUOTE]);
-        $response['quotes'] = json_encode($quotes[0]->getData());
+        $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy(['commercial' => $this->currentUser->getAccount()->getId(), 'type' => \App\Enum\Document\DocumentType::QUOTE]);
+        return $this->json($quotes,Response::HTTP_OK);
 
-        $jsonContent = $serializer->serialize($quotes, 'json');
+        $i = 0;
+        foreach ($quotes as $quote) {
+            // $newQuote = [
+            //     'id' => $quote->getId(),
+                
+            // ];
+            // unset($quote['data']);
+     
+            // return $this->json($quote,Response::HTTP_OK);
+            $response['quotes'][] = json_decode($quote->get());
+        }
+
+
 
         $response['success'] = true;
-        return $this->json($jsonContent,Response::HTTP_OK);
+        return $this->json($response,Response::HTTP_OK);
     }
 }

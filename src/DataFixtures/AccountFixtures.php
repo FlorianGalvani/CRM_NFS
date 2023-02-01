@@ -65,6 +65,13 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     "zipCode" => "76000",
                     "city" => "Rouen",
                     "country" => "France",
+                    "company" => [
+                        "name" => "NFS",
+                        "address" => "1 rue de la paix",
+                        "zipCode" => "76000",
+                        "city" => "Rouen",
+                        "country" => "France",
+                    ]
                 ]));
             }
             if ($entity->getType() === AccountType::CUSTOMER) {

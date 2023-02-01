@@ -145,6 +145,15 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             'user_id' => UsersFixtures::MICHEL_CUSTOMER,
             'type' => AccountType::CUSTOMER,
             'name' => 'Michel Customer',
+            'paymentMethod' => json_encode([
+                'card' => [
+                    'brand' => 'visa',
+                    'country' => 'fr',
+                    "exp_month" => 05,
+                    "exp_year" => 23,
+                    "last4" => 4242
+                ]
+            ]),
             'createdAt' => new \DateTime('2019-03-21'),
         ];
     }

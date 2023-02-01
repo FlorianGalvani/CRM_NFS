@@ -255,7 +255,10 @@ class Account implements DatedInterface, IdInterface
     {
         return [
             'id' => $this->getId(),
+            'name' => $this->getName(),
             'type' => $this->getType(),
+            'paymentMethod' => json_decode($this->getPaymentMethod()),
+            'about' => $this->getAbout(),
             'customers' => $this->getCustomers(),
             'commercial' => $this->getCommercial(),
             'user' => $this->getUser(),

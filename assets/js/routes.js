@@ -55,6 +55,7 @@ import Icon from "@mui/material/Icon";
 import CustomerBilling from "layouts/billing/customer";
 import CustomerInvoice from "layouts/billing/customer/invoices/show";
 import CustomerInvoices from "layouts/billing/customer/invoices";
+import Home from "./Pages/Home";
 
 const routes = [
   {
@@ -63,7 +64,7 @@ const routes = [
     key: "dashboard",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
-    component: <Dashboard />,
+    component: <Home/>,
   },
   {
     type: "collapse",
@@ -115,14 +116,14 @@ const routes = [
   },
 
     // Routes client
-  {
-    type: "collapse",
-    name: "Mes transactions",
-    key: "transactions",
-    icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/transactions",
-    component: <CustomerBilling />,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Mes transactions",
+  //   key: "transactions",
+  //   icon: <Icon fontSize="small">receipt_long</Icon>,
+  //   route: "/transactions",
+  //   component: <CustomerBilling />,
+  // },
   {
     key: "mes-factures",
     route: "/transactions/mes-factures",

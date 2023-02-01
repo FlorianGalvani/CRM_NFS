@@ -1,17 +1,3 @@
-/**
- =========================================================
- * Material Dashboard 2 React - v2.1.0
- =========================================================
-
- * Product Page: https://www.creative-tim.com/product/material-dashboard-react
- * Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
- Coded by www.creative-tim.com
-
- =========================================================
-
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- */
 import React from "react";
 import styled from '@emotion/styled'
 // @mui material components
@@ -50,36 +36,6 @@ import Quotes from "layouts/billing/customer/components/Quotes";
 import {Axios} from "utils/Axios.utils";
 import {Invoice} from "layouts/billing/customer/invoices";
 
-const Button = styled.button`
-  height: 13.5rem;
-  background-color: #fff;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
-  color: #344767;
-  font-weight: 700;
-  letter-spacing: 0.0075em;
-  opacity: 1;
-  text-transform: none;
-  border: 0;
-  outline: 0;
-  padding: 1.5rem 2rem;
-  transition: all 0.3s;
-  cursor: pointer;
-  border-radius: 0.75rem;
-  border-bottom: 4px solid #d9d9d9;
-    :hover {
-      box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 
-                  0px 1px 1px 0px rgb(0 0 0 / 14%),  
-                  0px 1px 3px 0px rgb(0 0 0 / 12%);
-      transform: scale(1.03);
-}
-    :active {
-      box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 
-      0px 1px 1px 0px rgb(0 0 0 / 14%), 
-      0px 1px 3px 0px rgb(0 0 0 / 12%);
-      transform: scale(0.98);
-}
-`
-
 function CustomerBilling() {
     const [account, setAccount] = React.useState(null);
     const [transactions, setTransactions] = React.useState([]);
@@ -117,8 +73,8 @@ function CustomerBilling() {
 
     return (
         <DashboardLayout>
-            <DashboardNavbar absolute isMini />
-            <MDBox mt={8}>
+            <DashboardNavbar />
+            <MDBox mt={3}>
                 <MDBox mb={3}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} lg={7}>
@@ -127,11 +83,11 @@ function CustomerBilling() {
                                     {
                                         account?.paymentMethod ?
                                             <MasterCard
-                                                number={`************${account?.paymentMethod.card.last4}`}
+                                                number={`************${account?.paymentMethod.card?.last4}`}
                                                 holder={account?.name}
                                                 expires={`
-                                                    ${account?.paymentMethod.card.exp_month}/
-                                                    ${account?.paymentMethod.card.exp_year}
+                                                    ${account?.paymentMethod.card?.exp_month}/
+                                                    ${account?.paymentMethod.card?.exp_year}
                                                 `}
                                             />
                                             : null
@@ -323,7 +279,7 @@ function PaymentMethod({account}) {
     const { darkMode } = controller;
 
     return (
-        <Card id="delete-account">
+        <Card>
             <MDBox
                 pt={2}
                 px={2}
@@ -334,7 +290,7 @@ function PaymentMethod({account}) {
                 <MDTypography variant="h6" fontWeight="medium">
                     Moyen de paiement
                 </MDTypography>
-                <MDButton variant="gradient" color="dark">
+                <MDButton disabled variant="gradient" color="dark">
                     <Icon sx={{ fontWeight: "bold" }}>add</Icon>
                     &nbsp;ajouter carte
                 </MDButton>
@@ -436,7 +392,7 @@ function Transactions({transactions}) {
                         </Icon>
                     </MDBox>
                     <MDTypography variant="button" color="text" fontWeight="regular">
-                        23 - 30 March 2020
+                        Janvier - Février 2023
                     </MDTypography>
                 </MDBox>
             </MDBox>
@@ -470,3 +426,33 @@ function Transactions({transactions}) {
 Transactions.propTypes = {
     transactions: PropTypes.array,
 };
+
+const Button = styled.button`
+  height: 13.5rem;
+  background-color: #fff;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  color: #344767;
+  font-weight: 700;
+  letter-spacing: 0.0075em;
+  opacity: 1;
+  text-transform: none;
+  border: 0;
+  outline: 0;
+  padding: 1.5rem 2rem;
+  transition: all 0.3s;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  border-bottom: 4px solid #d9d9d9;
+    :hover {
+      box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 
+                  0px 1px 1px 0px rgb(0 0 0 / 14%),  
+                  0px 1px 3px 0px rgb(0 0 0 / 12%);
+      transform: scale(1.03);
+}
+    :active {
+      box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 
+      0px 1px 1px 0px rgb(0 0 0 / 14%), 
+      0px 1px 3px 0px rgb(0 0 0 / 12%);
+      transform: scale(0.98);
+}
+`

@@ -15,13 +15,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AuthController extends BaseController
 {
-    private $maiiler;
+    private $mailer;
 
     public function __construct(SendEmail $mailer) {
         $this->mailer = $mailer;
     }
 
-    #[Route('/api/users', methods: ['POST'])]
+    #[Route('/api/signup', methods: ['POST'])]
     public function signup(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         $response = [

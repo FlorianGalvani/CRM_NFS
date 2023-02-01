@@ -24,12 +24,18 @@ class AuthController extends BaseController
         $this->userRepo = $userRepo;
     }
 
-    #[Route('/api/users', methods: ['GET'])]
+    #[Route('/api/all-users', methods: ['GET'])]
     public function index(): Response
     {
         $users = $this->userRepo->findAll();
+        $usersData = [];
+
+        foreach($users as $user) {
+            array_push($usersData, $user->getInfos());
+        }
+
         try {
-            return $this->json($users);
+            return $this->json($usersData);
         } catch(Error $e) {
             return $this->json(['error' => $e->getMessage()]);
         }

@@ -347,7 +347,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     {
         return [
             'id' => $this->getId(),
-            'account' => $this->getAccount(),
+//            'account' => $this->getAccount(),
+            'accountType' => $this->getAccount()->getType(),
             'phone' => $this->getPhone(),
             'email' => $this->getEmail(),
             'firstname' => $this->getFirstname(),

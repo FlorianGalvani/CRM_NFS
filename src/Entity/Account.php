@@ -259,6 +259,7 @@ class Account implements DatedInterface, IdInterface
             'customers' => $this->getCustomers(),
             'commercial' => $this->getCommercial(),
             'user' => $this->getUser(),
+            'events' => $this->getEvents(),
             'createdAt' => $this->getCreatedAt(),
             'updatedAt' => $this->getUpdatedAt()
         ];

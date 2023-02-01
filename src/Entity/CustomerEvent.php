@@ -81,4 +81,16 @@ class CustomerEvent implements DatedInterface, IdInterface
 
         return $this;
     }
+
+    public function getInfos(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'customer' => $this->getCustomer(),
+            'events' => $this->getEvents(),
+            'prospect' => $this->getProspect(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt()
+        ];
+    }
 }

@@ -18,6 +18,7 @@ Coded by www.creative-tim.com
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Cookie } from "utils/index";
+// import { Users } from "utils/index";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -31,9 +32,6 @@ import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 
 export default function Data() {
-
-
-
   const [users, setUsers] = useState('');
 
   const getAllUsers = () => {
@@ -42,13 +40,15 @@ export default function Data() {
     axios.get(`http://localhost:8000/api/users`, {
       headers: {
         Authorization: `Bearer ${token}`,
+        'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
       },
     })
       .then((response) => {
         const allUsers = response.data;
-        setUsers(allUsers);
+
+        setUsers(allUsers)
       })
-      .catch(error => console.error(`Error: ${error}`));
+      .catch(error => console.error(`Error: ${error}`))
   }
 
   useEffect(() => {
@@ -56,25 +56,6 @@ export default function Data() {
   }, []);
 
   console.log(users)
-
-
-  // const [users, setUsers] = useState([]);
-  // const [error, setError] = useState(null);
-
-
-  // useEffect(() => {
-  //   // Récupération du jeton à partir du stockage local
-  //   const token = Cookie.getCookie("token");
-  //   axios
-  //     .get("http://localhost:8000/api/users", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`, 
-  //       },
-  //     })
-  //     .then((res) => setUsers(res.data))
-  //     .catch((err) => setError(err));
-
-  // }, []);
 
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>

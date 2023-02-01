@@ -25,13 +25,14 @@ import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import MDBadge from "components/MDBadge";
 
+
 // Images
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 
 export default function Data() {
-  const [users, setUsers] = useState('');
+  const [users, setUsers] = useState([]);
 
   const getAllUsers = () => {
     const token = Cookie.getCookie("token");
@@ -91,7 +92,8 @@ export default function Data() {
     {
       author: (
         <Author
-          image={team2}
+        //random image team for each user
+        image={[team2, team3, team4][Math.floor(Math.random() * 3)]}
           name={user.firstname + " " + user.lastname} 
           email={user.email}
         />

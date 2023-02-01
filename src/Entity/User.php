@@ -121,6 +121,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
      */
     private $emailVerificationToken_at = null;
 
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Groups({"users_read"})
+     */
+    private $company = null;
+
     public function __construct() {
         $this->createdAt = new \DateTime();
         $this->emailVerified = false;
@@ -134,6 +140,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getCompany(): ?string
+    {
+        return $this->company;
+    }
+
+    public function setCompany(string $company): self
+    {
+        $this->company = $company;
 
         return $this;
     }
@@ -351,6 +369,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
             'accountType' => $this->getAccount()->getType(),
             'phone' => $this->getPhone(),
             'email' => $this->getEmail(),
+            'company' => $this->company,
             'firstname' => $this->getFirstname(),
             'lastname' => $this->getLastname(),
             'createdAt' => $this->getCreatedAt(),

@@ -26,8 +26,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post"={
  *              "name"="signup",
                 "uriTemplate"="/api/signup",
-                "controller"=AuthController::class
- *          }, "get"
+                "controller"=CustomerController::class
+ *          }, "get"={
+                "name"="index",
+ *              "uriTemplate"="/api/users",
+ *              "controller"=AuthController::class
+*           }
  *     }
  * )
  * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")
@@ -90,7 +94,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
      */
     private $password = null;
 

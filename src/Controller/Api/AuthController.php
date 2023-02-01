@@ -6,6 +6,7 @@ use App\Controller\BaseController;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
+use App\Repository\UserRepository;
 use App\Service\Emails\SendEmail;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,9 +17,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class AuthController extends BaseController
 {
     private $mailer;
+    private $userRepo;
 
-    public function __construct(SendEmail $mailer) {
+    public function __construct(SendEmail $mailer, UserRepository $userRepo) {
         $this->mailer = $mailer;
+        $this->userRepo = $userRepo;
+    }
+
+    #[Route('/api/users', methods: ['GET'])]
+    public function index(): Response
+    {
+        $users = $this->userRepo->findAll();
+        try {
+            return $this->json($users);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
     }
 
     #[Route('/api/signup', methods: ['POST'])]

@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Controller\BaseController;
 use App\Entity\Prospect;
 use App\Event\CreateProspectEvent;
+use App\Repository\ProspectRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +13,28 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProspectController extends BaseController
 {
+    private $prospectRepo;
+
+    public function __construct(ProspectRepository $prospectRepo) {
+        $this->prospectRepo = $prospectRepo;
+    }
+    #[Route('/api/all-prospects', methods: ['GET'])]
+    public function getAllProspects()
+    {
+        $prospects = $this->prospectRepo->findAll();
+
+        $prospectsData = [];
+        foreach($prospects as $prospect) {
+            array_push($prospectsData, $prospect->getInfos());
+        }
+
+        try {
+            return $this->json($prospectsData);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
     #[Route('/api/prospects', methods: ['POST'])]
     public function create(Request $request, EventDispatcherInterface $eventDispatcher): Response
     {

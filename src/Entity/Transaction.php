@@ -27,6 +27,7 @@ class Transaction implements DatedInterface, IdInterface
 
     public const TRANSACTION_QUOTATION_REQUESTED = 'quotation_requested';
     public const TRANSACTION_QUOTATION_SENT = 'quotation_sent';
+    public const TRANSACTION_INVOICE_SENT = 'invoice_sent';
     public const TRANSACTION_STATUS_PAYMENT_INTENT = 'payment_intent';
     public const TRANSACTION_STATUS_PAYMENT_SUCCESS = 'payment_success';
     public const TRANSACTION_STATUS_PAYMENT_FAILURE = 'payment_failure';

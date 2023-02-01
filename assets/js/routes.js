@@ -42,6 +42,7 @@ import Dashboard from "./layouts/dashboard";
 import Tables from "./layouts/tables";
 import Billing from "./layouts/billing";
 import Quotes from "./layouts/quotes";
+import Payment from "./layouts/payment";
 
 // import RTL from "./layouts/rtl";
 // import Notifications from "./layouts/notifications";
@@ -108,6 +109,14 @@ const routes = [
     icon: <Icon fontSize="small">receipt</Icon>,
     route: "/devis/nouveau",
     component: <Quotes />,
+  },
+  { // todo: supp 'collapse' et coller un lien dans la pertie factures du client
+    type: "collapse",
+    name: "Paiement",
+    key: "payment",
+    icon: <Icon fontSize="small">payment</Icon>,
+    route: "/payment/1084",
+    component: <Payment />,
   },
 ];
 

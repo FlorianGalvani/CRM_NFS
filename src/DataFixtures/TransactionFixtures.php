@@ -72,6 +72,9 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
         $document->setTransaction($entity);
         $document->setFileExtension($faker->randomElement(['dot', 'pdf', 'png', 'jpg']));
         $document->setFileName('doc-'.$invoiceDate->format('d-m-Y'));
+        $document->setData(json_encode([
+            'amount' => $faker->numberBetween(200, 250)
+        ]));
 
         return $document;
     }
@@ -93,11 +96,22 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
                 'paymentStatus' => Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS,
                 'stripePaymentIntentId' => 'pi_'.$stipePaymentId,
                 'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
-                'label' => 'Règlement de la facture du '. $invoiceDate->format('d/m/Y'),
+                'label' => 'Règlement d\'une facture',
                 'createdAt' => $createdAt,
                 'updatedAt' => $createdAt,
             ];
         }
+
+        yield [
+            'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
+            'amount' => $faker->numberBetween(200, 250),
+            'paymentStatus' => Transaction::TRANSACTION_INVOICE_SENT,
+            'stripePaymentIntentId' => null,
+            'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
+            'label' => 'Envoie d\'une facture',
+            'createdAt' => $createdAt,
+            'updatedAt' => $createdAt,
+        ];
 
         // autres fake customers
         for ($i = 0; $i < 30; ++$i) {
@@ -108,7 +122,7 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
                 'paymentStatus' => Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS,
                 'stripePaymentIntentId' => 'pi_'.$stipePaymentId,
                 'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
-                'label' => 'Règlement de la facture du '. $invoiceDate->format('d/m/Y'),
+                'label' => 'Règlement d\'une facture ',
                 'createdAt' => $createdAt,
                 'updatedAt' => $createdAt,
             ];

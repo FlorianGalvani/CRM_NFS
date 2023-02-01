@@ -171,8 +171,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         returnValue = null;
       }
 
+      if (Cookie.getCookie("token") !== undefined && key === "profil") {
+        returnValue = null;
+      }
+
       if (
-        token?.roles.find((role) => role) !== "ROLE_ADMIN" &&
+        token?.account === 'customer' &&
         key === "compte"
       ) {
         returnValue = null;
@@ -186,12 +190,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       }
 
       if (
-        token?.roles.find((role) => role) === "ROLE_ADMIN" &&
-        key === "profil"
-      ) {
-        returnValue = null;
-      } else if (
-        token?.roles.find((role) => role) === "ROLE_USER" &&
+        token?.account === 'customer' &&
         key === "utilisateurs"
       ) {
         returnValue = null;

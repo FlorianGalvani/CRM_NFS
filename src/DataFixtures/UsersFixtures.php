@@ -125,6 +125,7 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
             $lastname = $faker->lastname();
             $phone = $faker->phoneNumber();
             $address = $faker->address();
+            $company = $faker->company();
 
             $email = '';
             $email .= $slugger->slug($firstname);
@@ -148,6 +149,7 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
                 'email' => $email,
                 'phone' => $phone,
                 'address' => $address,
+                'company' => $company,
                 'roles' => ['ROLE_USER'],
             ];
             yield $data;

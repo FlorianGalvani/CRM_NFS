@@ -40,9 +40,7 @@ export const initialInvoice = {
       description: 'Site E-Commerce',
       quantity: '2',
       rate: '100.00',
-    },
-    { ...initialProductLine },
-    { ...initialProductLine },
+    }
   ],
   subTotalLabel: 'Sous-total',
   taxLabel: 'TVA (19.6%)',

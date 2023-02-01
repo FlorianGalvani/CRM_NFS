@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Enum\Account\AccountType;
-Use App\Repository\UserRepository;
+use App\Repository\UserRepository;
 use App\Entity\Common\DatedInterface;
 use App\Entity\Common\DatedTrait;
 use App\Entity\Common\IdInterface;
@@ -22,12 +22,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
  *      normalizationContext={"groups"={"users_read"}},
- *     itemOperations={
+ *      collectionOperations={
  *          "post"={
  *              "name"="signup",
- *               "uriTemplate"="/api/signup",
- *                "controller"=AuthController::class
- *          }
+ *              "uriTemplate"="/api/signup",
+ *              "controller"=CustomerController::class
+ *          }, "get"={
+ *             "name"="index",
+ *              "uriTemplate"="/api/users",
+ *              "controller"=AuthController::class
+ *           }
  *     }
  * )
  * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")
@@ -90,7 +94,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
      */
     private $password = null;
 
@@ -118,7 +121,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
      */
     private $emailVerificationToken_at = null;
 
-    public function __construct() {
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Groups({"users_read"})
+     */
+    private $company = null;
+
+    public function __construct()
+    {
         $this->createdAt = new \DateTime();
         $this->emailVerified = false;
     }
@@ -131,6 +141,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getCompany(): ?string
+    {
+        return $this->company;
+    }
+
+    public function setCompany(string $company): self
+    {
+        $this->company = $company;
 
         return $this;
     }
@@ -308,7 +330,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
         $this->emailVerificationToken = $emailVerificationToken;
     }
 
-        /**
+    /**
      * @return string|null
      */
     public function getEmailVerificationTokenAt(): ?DateTimeImmutable
@@ -340,6 +362,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
         $this->emailVerified = $emailVerified;
     }
 
-
-
+    public function getInfos(): array
+    {
+        return [
+            'id' => $this->getId(),
+            //            'account' => $this->getAccount(),
+            'accountType' => $this->getAccount()->getType(),
+            'phone' => $this->getPhone(),
+            'email' => $this->getEmail(),
+            'company' => $this->company,
+            'firstname' => $this->getFirstname(),
+            'lastname' => $this->getLastname(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt()
+        ];
+    }
 }

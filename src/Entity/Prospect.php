@@ -19,11 +19,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=ProspectRepository::class)
  * @ApiResource(
  *      normalizationContext={"groups"={"prospect_read"}},
- *     itemOperations={
+ *     collectionOperations={
  *          "post"={
  *              "name"="create",
  *              "controller"=ProspectController::class
- *          }
+ *          }, "get"
  *     }
  * )
  * @UniqueEntity(fields = {"email"},message ="Un prospect ayant cette adresse email existe déjà")
@@ -145,5 +145,19 @@ class Prospect implements DatedInterface, IdInterface
         $this->phone = $phone;
 
         return $this;
+    }
+
+    public function getInfos(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'commercial' => $this->getCommercial()->getUser(),
+            'phone' => $this->getPhone(),
+            'email' => $this->getEmail(),
+            'firstname' => $this->getFirstname(),
+            'lastname' => $this->getLastname(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt()
+        ];
     }
 }

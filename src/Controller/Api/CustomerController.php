@@ -3,6 +3,8 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\AccountRepository;
+use App\Repository\UserRepository;
 use App\Service\Emails\SendEmail;
 use App\Form\Commercial\NewCustomerType;
 use App\Controller\BaseController;
@@ -13,17 +15,21 @@ use Symfony\Component\Routing\Annotation\Route;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 
 class CustomerController extends BaseController
 {
-
     private $jwtManager = null;
     private $tokenStorageInterface = null;
+    private $userRepo;
+    private $accountRepo;
 
-    public function __construct(TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager)
+    public function __construct(TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager,UserRepository $userRepo, AccountRepository $accountRepo)
     {
         $this->jwtManager = $jwtManager;
         $this->tokenStorageInterface = $tokenStorageInterface;
+        $this->userRepo = $userRepo;
+        $this->accountRepo = $accountRepo;
     }
 
     #[Route('/api/commercial/new/customer', name: 'app_api_commercial_crud')]
@@ -90,4 +96,7 @@ class CustomerController extends BaseController
         $response['success'] = true;
         return $this->json($response,Response::HTTP_OK);
     }
+
+   
+    
 }

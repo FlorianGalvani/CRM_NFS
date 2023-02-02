@@ -46,7 +46,7 @@ class CustomerEvent implements DatedInterface, IdInterface
         $this->createdAt = new \DateTime();
     }
 
-    public function getCustomer(): Account
+    public function getCustomer(): ?Account
     {
         return $this->customer;
     }

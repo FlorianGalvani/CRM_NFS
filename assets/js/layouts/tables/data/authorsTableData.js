@@ -88,7 +88,7 @@ export default function Data() {
 
   return {
     columns: [
-      { Header: "Client", accessor: "author", width: "45%", align: "left" },
+      { Header: "Nom", accessor: "author", width: "45%", align: "left" },
       { Header: "Entreprise", accessor: "function", align: "left" },
       { Header: "Action", accessor: "action", align: "center" },
     ],

@@ -118,8 +118,13 @@ class QuotesController extends BaseController
 
         if ($this->currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::COMMERCIAL) {
             $findBy = ['commercial' => $currentUserAccountID];
-        } else {
+        } else if ($this->currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::CUSTOMER){
             $findBy = ['customer' => $currentUserAccountID];
+        } else if ($this->currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::ADMIN) {
+            $findBy = ['type' => \App\Enum\Document\DocumentType::QUOTE];
+        }
+        else {
+            return $this->json($response, Response::HTTP_UNAUTHORIZED);
         }
 
         $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy($findBy, [

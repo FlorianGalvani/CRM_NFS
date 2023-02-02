@@ -55,7 +55,6 @@ function Projects() {
     decodedToken();
   }, []);
 
-  console.log(token);
   const renderMenu = (
     <Menu
       id="simple-menu"

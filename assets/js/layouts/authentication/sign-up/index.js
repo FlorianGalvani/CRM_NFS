@@ -18,21 +18,14 @@ import jwt_decode from "jwt-decode";
 import { Cookie } from "utils/index";
 import axios from "axios";
 
-// react-router-dom components
-import { Link } from "react-router-dom";
-
 // @mui material components
 import Card from "@mui/material/Card";
-import Checkbox from "@mui/material/Checkbox";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import NativeSelect from '@mui/material/NativeSelect';
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -54,61 +47,6 @@ function Cover() {
   useEffect(() => {
     decodedToken();
   }, []);
-
-  // const [state, setState] = useState({
-  //   nom: '',
-  //   prenom: '',
-  //   email: '',
-  //   telephone: '',
-  //   adresse: '',
-  //   account: ''
-  // });
-
-  // const handleChange = (event) => {
-  //   const value = event.target.value;
-  //   setState({
-  //     ...state,
-  //     [event.target.name]: value,
-  //   });
-  //   console.log(state)
-  // };
-
-  // const handleSubmit = (event) => {
-  //   event.preventDefault();
-
-  //   const token = Cookie.getCookie("token");
-
-  //   const data = new FormData(event.currentTarget);
-  //   const roles = data.get('type');
-
-  //   const user = {
-  //     roles: roles,
-  //     lastname: state.nom,
-  //     firstname: state.prenom,
-  //     email: state.email,
-  //     phone: state.telephone,
-  //     address: state.adresse,
-  //     account: state.account
-  //   };
-
-  //   const url = `http://localhost:8000/api/users`;
-
-  //   const config = {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //       'X-Requested-With': 'XMLHttpRequest'
-  //     }
-  //   }
-
-  //   console.log(url, user, config)
-
-  //   axios.post(url, user, config)
-  //     .then(res => {
-  //       console.log(res);
-  //     }, (error) => {
-  //       console.log(error);
-  //     })
-  // };
 
   return (
     <DashboardLayout>
@@ -178,47 +116,11 @@ function Cover() {
                           console.log(response);
                         }, (error) => {
                           console.log(error);
-                          console.log(token)
                         });
                     }
                   }}>
-                  {/* <MDBox mb={2}>
-                    <FormControl fullWidth>
-                      <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                        Type
-                      </InputLabel>
-                      <NativeSelect
-                        defaultValue={'commercial'}
-                        inputProps={{
-                          name: 'type',
-                          id: 'uncontrolled-native',
-                        }}
-                      >
-                        {token?.account === "admin" && (
-                          <option value={'commercial'}>Commercial</option>
-                        )}
-                        {token?.account !== "admin" && (
-                          <>
-                            <option value={'client'}>Client</option>
-                            <option value={'prospect'}>Prospect</option>
-                          </>
-                        )}
-                      </NativeSelect>
-                    </FormControl>
-                  </MDBox> */}
-                  {/* <MDBox mb={2}>
-                    <MDInput
-                      // // onChange={handleChange}
-                      type="text"
-                      name="account"
-                      label="account"
-                      variant="standard"
-                      fullWidth
-                    />
-                  </MDBox> */}
                   <MDBox mb={2}>
                     <MDInput
-                      // // onChange={handleChange}
                       type="text"
                       label="Nom"
                       name="nom"
@@ -228,7 +130,6 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      // onChange={handleChange}
                       type="text"
                       name="prenom"
                       label="Prénom"
@@ -238,7 +139,6 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      // onChange={handleChange}
                       type="email"
                       name="email"
                       label="Email"
@@ -248,7 +148,6 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      // onChange={handleChange}
                       type="tel"
                       name="telephone"
                       label="Téléphone"
@@ -258,7 +157,6 @@ function Cover() {
                   </MDBox>
                   <MDBox mb={2}>
                     <MDInput
-                      // onChange={handleChange}
                       type="text"
                       name="adresse"
                       label="Adresse"
@@ -266,27 +164,6 @@ function Cover() {
                       fullWidth
                     />
                   </MDBox>
-                  {/* <MDBox mb={2}>
-                    <MDInput
-                      type="textarea"
-                      name="description"
-                      multiline
-                      rows={5}
-                      label="Description"
-                      variant="standard"
-                      fullWidth
-                    />
-                  </MDBox> */}
-                  {/* <MDBox mb={8}>
-                    <MDInput
-                      // onChange={handleChange}
-                      type="password"
-                      name="password"
-                      label="Mot de passe"
-                      variant="standard"
-                      fullWidth
-                    />
-                  </MDBox> */}
                   <MDBox mt={4} mb={1}>
                     <MDButton type="submit" variant="gradient" color="info" fullWidth>
                       Ajouter le compte

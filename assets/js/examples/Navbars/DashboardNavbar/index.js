@@ -122,7 +122,7 @@ useEffect(() => {
 }, []);
 
 let account = token?.account;
-console.log(account);
+
 
 let displayName;
 
@@ -136,7 +136,6 @@ if (account === 'admin') {
   displayName = '';
 }
 
-console.log(displayName);
 
 
 

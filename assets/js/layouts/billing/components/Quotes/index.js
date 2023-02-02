@@ -20,13 +20,16 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
+import Icon from "@mui/material/Icon";
 
 // Billing page components
 import Quote from "layouts/billing/components/Quote";
+import Invoice from "layouts/billing/components/Invoice";
 import { Link, redirect } from "react-router-dom";
 import axios from 'axios'
 function Quotes() {
     const [quotes, setQuotes] = React.useState(null);
+    const [latestQuotes, setlatestQuotes] = React.useState(null);
     const token = document.cookie.split("=")[1];
     const [formData, setFormData] = React.useState(null);
 
@@ -54,8 +57,19 @@ function Quotes() {
                 setFormData(response.data.formData);
             }
         )
+        axios.get('/api/quotes/list/latest', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        }).then(
+            (response) => {
+                setIsLoading(false);
+                setlatestQuotes(response.data);
+            }
+        )
 
     }, [])
+    console.log(latestQuotes)
 
     return (
         <Card sx={{ height: "100%" }}>
@@ -65,16 +79,22 @@ function Quotes() {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
+                flexDirection="column"
             >
                 <MDTypography variant="h6" fontWeight="medium">
                     Devis
                 </MDTypography>
-                <Link to={'/devis/nouveau'} variant="outlined" color="info" size="small">
-                    Nouveau devis
-                </Link>
-                <Link to={'/devis'} variant="outlined" color="info" size="small">
-                    voir tout
-                </Link>
+                <MDButton variant="gradient" color="dark">
+                    <Icon sx={{ fontWeight: "bold" }} size="small">add</Icon>
+                    <Link to={'/devis/nouveau'} size="small">
+                    &nbsp; Nouveau devis
+                    </Link>
+                 </MDButton>
+                 <MDButton variant="outlined" color="info" size="small"  sx={{ marginTop: 2 }}>
+                    <Link to={'/devis'}size="small">
+                        voir tout
+                    </Link>
+                </MDButton>
             </MDBox>
             <MDBox p={2}>
                 <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
@@ -84,6 +104,9 @@ function Quotes() {
                         ))
                     }
                 </MDBox>
+            <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
+                <Invoice date="March, 01, 2020" id="#MS-415646" price="$180" />
+        </MDBox>
             </MDBox>
         </Card>
     );

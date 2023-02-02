@@ -24,12 +24,10 @@ import Icon from "@mui/material/Icon";
 
 // Billing page components
 import Quote from "layouts/billing/components/Quote";
-import Invoice from "layouts/billing/components/Invoice";
 import { Link, redirect } from "react-router-dom";
 import axios from 'axios'
 function Quotes() {
     const [quotes, setQuotes] = React.useState(null);
-    const [latestQuotes, setlatestQuotes] = React.useState(null);
     const token = document.cookie.split("=")[1];
     const [formData, setFormData] = React.useState(null);
 
@@ -57,19 +55,8 @@ function Quotes() {
                 setFormData(response.data.formData);
             }
         )
-        axios.get('/api/quotes/list/latest', {
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        }).then(
-            (response) => {
-                setIsLoading(false);
-                setlatestQuotes(response.data);
-            }
-        )
 
     }, [])
-    console.log(latestQuotes)
 
     return (
         <Card sx={{ height: "100%" }}>
@@ -104,9 +91,6 @@ function Quotes() {
                         ))
                     }
                 </MDBox>
-            <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-                <Invoice date="March, 01, 2020" id="#MS-415646" price="$180" />
-        </MDBox>
             </MDBox>
         </Card>
     );

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Account;
 use App\Entity\Prospect;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,17 @@ class ProspectRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findProspectsByCommercial(Account $account)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.commercial = :account')
+            ->setParameter('account', $account)
+            ->orderBy('p.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
 //    /**

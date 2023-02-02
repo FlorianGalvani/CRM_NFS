@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Controller\BaseController;
 use App\Entity\Prospect;
+use App\Entity\User;
 use App\Event\CreateProspectEvent;
 use App\Repository\ProspectRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -22,6 +23,27 @@ class ProspectController extends BaseController
     public function getAllProspects()
     {
         $prospects = $this->prospectRepo->findAll();
+
+        $prospectsData = [];
+        foreach($prospects as $prospect) {
+            array_push($prospectsData, $prospect->getInfos());
+        }
+
+        try {
+            return $this->json($prospectsData);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/commercial-prospects', methods: ['GET'])]
+    public function commercialProspects()
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $prospects = $this->prospectRepo->findProspectsByCommercial($currentAccount);
 
         $prospectsData = [];
         foreach($prospects as $prospect) {

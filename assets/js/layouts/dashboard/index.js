@@ -55,7 +55,7 @@ function Dashboard() {
   useEffect(() => {
     decodedToken();
   }, []);
-  console.log(token);
+
   const { sales, tasks } = reportsLineChartData;
 
   return (

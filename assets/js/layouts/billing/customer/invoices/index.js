@@ -10,7 +10,6 @@ import MDTypography from "components/MDTypography";
 import Icon from "@mui/material/Icon";
 import PropTypes from "prop-types";
 import {Alert} from "@mui/material";
-import invoice from "layouts/billing/components/Invoice";
 
 const CustomerInvoices = () => {
     const [invoices, setInvoices] = React.useState([]);
@@ -20,35 +19,38 @@ const CustomerInvoices = () => {
 
             const response = await Axios.get('/customer-invoices');
 
-            if(response.error) {
+            if (response.error) {
                 console.log(response.data)
             } else {
                 setInvoices(response.data)
             }
         }
         getInvoices();
-    },  [])
+    }, [])
 
     const invoiceDetailLink = (invoice) => {
-        return invoice?.transaction?.paymentStatus === 'payment_success' ? '/transactions/'+invoice?.id : '/transactions/paiement/'+invoice?.transaction?.id
+        return invoice?.transaction?.paymentStatus === 'payment_success'
+            || invoice?.transaction?.paymentStatus === 'quotation_sent' ?
+                '/transactions/mes-factures/' + invoice?.id
+                : '/transactions/mes-factures/paiement/' + invoice?.transaction?.id
     }
 
     return (
         <DashboardLayout>
-            <DashboardNavbar absolute isMini />
+            <DashboardNavbar/>
             <MDBox mt={8}>
                 <MDBox mb={3}>
                     <Grid container spacing={3}>
                         {
                             invoices ? invoices.map((invoice, index) => (
                                 <Grid item xs={12} key={index}>
-                                    <Card sx={{ height: "100%" }}>
+                                    <Card sx={{height: "100%"}}>
                                         <MDBox p={2}>
                                             <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
                                                 <Invoice
                                                     date={Formatter.formatDate(invoice?.createdAt)}
-                                                    id={'#'+invoice?.fileName}
-                                                    price={invoice?.data.amount+' €'}
+                                                    id={'#' + invoice?.fileName}
+                                                    price={invoice?.data.amount + ' €'}
                                                     status={invoice?.transaction.paymentStatus}
                                                 />
                                                 <Link to={invoiceDetailLink(invoice)}>
@@ -69,15 +71,18 @@ const CustomerInvoices = () => {
 
 export default CustomerInvoices;
 
-export function Invoice({ date, id, price, noGutter, status }) {
+export function Invoice({date, id, price, noGutter, status}) {
     const invoiceStatus = () => {
         let paymentStatus = {};
-        switch(status) {
+        switch (status) {
             case 'invoice_sent':
                 paymentStatus = {severity: 'warning', label: 'En attente de paiement'};
                 break;
             case 'payment_intent':
                 paymentStatus = {severity: 'warning', label: 'En attente de paiement'};
+                break;
+            case 'payment_failure':
+                paymentStatus = {severity: 'error', label: 'Echec de paiement'};
                 break;
             default:
                 paymentStatus = {severity: '', label: ''};
@@ -112,7 +117,7 @@ export function Invoice({ date, id, price, noGutter, status }) {
                     alignItems="center"
                     lineHeight={1}
                     ml={3}
-                    sx={{ cursor: "pointer" }}
+                    sx={{cursor: "pointer"}}
                 >
                     <Icon fontSize="small">picture_as_pdf</Icon>
                     <MDTypography variant="button" fontWeight="bold">

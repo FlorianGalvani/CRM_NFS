@@ -10,6 +10,7 @@ use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function Symfony\Component\Translation\t;
 
 class TransactionController extends BaseController
 {
@@ -36,7 +37,12 @@ class TransactionController extends BaseController
         $transaction = $this->transactionRepository->findLastOneByAccountAndStatus(
             $id,
             $currentAccount,
-            [Transaction::TRANSACTION_INVOICE_SENT, Transaction::TRANSACTION_STATUS_PAYMENT_INTENT]
+            [
+                Transaction::TRANSACTION_INVOICE_SENT,
+                Transaction::TRANSACTION_STATUS_PAYMENT_INTENT,
+                Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE,
+                Transaction::TRANSACTION_STATUS_PAYMENT_ABANDONED
+            ]
         );
 
         if (null === $transaction) {
@@ -107,7 +113,8 @@ class TransactionController extends BaseController
         }
 
         try {
-            $invoiceData = $transaction->getTransactionInvoice()->getData();
+            $invoice = $transaction->getTransactionInvoice();
+            $invoiceData = json_decode($transaction->getTransactionInvoice()->getData(), true);
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS);
             $transaction->setLabel('Règlement d\'une facture');
 
@@ -127,8 +134,10 @@ class TransactionController extends BaseController
                 ]
             ];
 
-            $invoiceData['status'] = $transaction->getPaymentStatus();
             $user->getAccount()->setPaymentMethod(json_encode($userPaymentMethod));
+            $invoiceData['status'] = $transaction->getPaymentStatus();
+            $invoiceData['payment_method'] = $userPaymentMethod;
+            $invoice->setData(json_encode($invoiceData));
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
@@ -151,19 +160,29 @@ class TransactionController extends BaseController
         $currentAccount = $user->getAccount();
 
         $transactions = $this->transactionRepository->findAllBilledTransactionByAccount($currentAccount);
-        $lastInvoice = $this->documentRepository->findLastOneInvoiceByAccount($currentAccount);
+        $lastInvoices = $this->documentRepository->findLastInvoicesByAccountAndStatus($currentAccount, [
+            Transaction::TRANSACTION_INVOICE_SENT,
+            Transaction::TRANSACTION_STATUS_PAYMENT_INTENT,
+            Transaction::TRANSACTION_STATUS_PAYMENT_ABANDONED,
+            Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE
+        ]);
         $lastThreeQuotes = $this->documentRepository->findLastQuotesByAccount($currentAccount);
 
         $quotesData = [];
+        $invoicesData = [];
 
         foreach($lastThreeQuotes as $_quotes) {
             array_push($quotesData, $_quotes->getInfos());
         }
 
+        foreach($lastInvoices as $_invoices) {
+            array_push($invoicesData, $_invoices->getInfos());
+        }
+
         try {
             return $this->json([
                 'transactions' => $transactions,
-                'lastInvoice' => $lastInvoice->getInfos(),
+                'lastInvoice' => $invoicesData,
                 'lastThreeQuotes' => $quotesData
             ]);
         } catch(Error $e) {

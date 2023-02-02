@@ -52,16 +52,47 @@ class DocumentRepository extends ServiceEntityRepository
             ;
     }
 
-    public function findLastOneInvoiceByAccount(Account $account): ?Document
+    public function findLastOneCurrentInvoiceByAccount(Account $account, array $statuses): ?Document
     {
         return $this->createQueryBuilder('d')
+            ->select('d, t')
+            ->innerJoin('d.transaction', 't')
             ->where('d.customer = :account')
+            ->andWhere('t.paymentStatus IN (:statuses)')
             ->andWhere('d.type = :type')
-            ->setParameters(['account' => $account, 'type' => 'facture'])
+            ->setParameters(['account' => $account, 'type' => 'facture', 'statuses' => $statuses])
             ->orderBy('d.id', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function findLastInvoicesByAccountAndStatus(Account $account, array $statuses): array
+    {
+        return $this->createQueryBuilder('d')
+            ->select('d, t')
+            ->innerJoin('d.transaction', 't')
+            ->where('d.customer = :account')
+            ->andWhere('t.paymentStatus IN (:statuses)')
+            ->andWhere('d.type = :type')
+            ->setParameters(['account' => $account, 'type' => 'facture', 'statuses' => $statuses])
+            ->orderBy('d.id', 'DESC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+        ;
+    }
+
+    public function findAllQuotesByAccount(Account $account): array
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.customer = :account')
+            ->andWhere('d.type = :type')
+            ->setParameters(['account' => $account, 'type' => 'devis'])
+            ->orderBy('d.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     public function findLastQuotesByAccount(Account $account): array{

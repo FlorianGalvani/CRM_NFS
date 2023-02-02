@@ -39,7 +39,7 @@ import {Invoice} from "layouts/billing/customer/invoices";
 function CustomerBilling() {
     const [account, setAccount] = React.useState(null);
     const [transactions, setTransactions] = React.useState([]);
-    const [lastInvoice, setLastInvoince] = React.useState(null);
+    const [lastInvoices, setLastInvoinces] = React.useState([]);
     const [lastThreeQuotes, setLastThreeQuotes] = React.useState([]);
 
     const getAccount = () => {
@@ -60,7 +60,7 @@ function CustomerBilling() {
                 console.log(response.data)
             } else {
                 setTransactions(response.data.transactions)
-                setLastInvoince(response.data.lastInvoice)
+                setLastInvoinces(response.data.lastInvoice)
                 setLastThreeQuotes(response.data.lastThreeQuotes)
             }
         }
@@ -112,7 +112,7 @@ function CustomerBilling() {
                                     alignItems="center"
                                 >
                                     <MDTypography variant="h6" fontWeight="medium">
-                                        Factures
+                                        Factures en cours
                                     </MDTypography>
                                     <Link to={'/transactions/mes-factures'}>
                                         <MDButton variant="outlined" color="info" size="small">
@@ -122,9 +122,13 @@ function CustomerBilling() {
                                 </MDBox>
                                 <MDBox p={2}>
                                     <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-                                        <Link to={invoiceDetailLink(lastInvoice)}>
-                                            <Invoice date={Formatter.formatDate(lastInvoice?.createdAt)} id={'#'+lastInvoice?.fileName} price={lastInvoice?.data.amount+' €'} />
-                                        </Link>
+                                        {
+                                            lastInvoices.map((lastInvoice, index) => (
+                                                <Link key={index} to={invoiceDetailLink(lastInvoice)}>
+                                                    <Invoice date={Formatter.formatDate(lastInvoice?.createdAt)} id={'#'+lastInvoice?.fileName} price={lastInvoice?.data.amount+' €'} />
+                                                </Link>
+                                            ))
+                                        }
                                     </MDBox>
                                 </MDBox>
                             </Card>
@@ -292,7 +296,7 @@ function PaymentMethod({account}) {
                 </MDTypography>
                 <MDButton disabled variant="gradient" color="dark">
                     <Icon sx={{ fontWeight: "bold" }}>add</Icon>
-                    &nbsp;ajouter carte
+                    &nbsp;changer de carte
                 </MDButton>
             </MDBox>
             <MDBox p={2}>

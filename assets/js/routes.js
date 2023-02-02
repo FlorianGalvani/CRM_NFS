@@ -56,6 +56,8 @@ import CustomerBilling from "layouts/billing/customer";
 import CustomerInvoice from "layouts/billing/customer/invoices/show";
 import CustomerInvoices from "layouts/billing/customer/invoices";
 import Home from "./Pages/Home";
+import CustomerQuote from "layouts/billing/customer/quotes/show";
+import CustomerQuotes from "layouts/billing/customer/quotes";
 
 const routes = [
   {
@@ -128,15 +130,24 @@ const routes = [
     key: "mes-factures",
     route: "/transactions/mes-factures",
     component: <CustomerInvoices />
+  },{
+    key: "mes-devis",
+    route: "/transactions/mes-devis",
+    component: <CustomerQuotes />
+  },
+  {
+    key: "devis",
+    route: "/transactions/mes-devis/:id",
+    component: <CustomerQuote />,
   },
   {
     key: "facture",
-    route: "transactions/:id",
+    route: "/transactions/mes-factures/:id",
     component: <CustomerInvoice />,
   },
   {
     key: "paiement",
-    route: "transactions/paiement/:id",
+    route: "/transactions/mes-factures/paiement/:id",
     component: <Payment />,
   },
 ];

@@ -20,16 +20,12 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class CustomerController extends BaseController
 {
-    private $jwtManager = null;
-    private $tokenStorageInterface = null;
     private $userRepo;
     private $accountRepo;
     private $documentRepository;
 
-    public function __construct(TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager,UserRepository $userRepo, AccountRepository $accountRepo, DocumentRepository $documentRepository)
+    public function __construct(UserRepository $userRepo, AccountRepository $accountRepo, DocumentRepository $documentRepository)
     {
-        $this->jwtManager = $jwtManager;
-        $this->tokenStorageInterface = $tokenStorageInterface;
         $this->userRepo = $userRepo;
         $this->accountRepo = $accountRepo;
         $this->documentRepository = $documentRepository;
@@ -157,8 +153,61 @@ class CustomerController extends BaseController
             'customer' => $currentAccount
         ]);
 
+        if($invoice === null) {
+            throw $this->createNotFoundException();
+        }
+
         try {
             return $this->json($invoice->getInfos());
+        } catch(Error $e) {
+            http_response_code(500);
+
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/customer-quotes', methods: ['GET'])]
+    public function quotes(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $quotes = $this->documentRepository->findAllQuotesByAccount($currentAccount);
+
+        $quotesData = [];
+
+        foreach($quotes as $_quotes) {
+            array_push($quotesData, $_quotes->getInfos());
+        }
+
+        try {
+            return $this->json($quotesData);
+        } catch(Error $e) {
+            http_response_code(500);
+
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/customer-quotes/{id}', methods: ['GET'])]
+    public function quoteShow($id): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $quote = $this->documentRepository->findOneBy([
+            'id' => $id,
+            'customer' => $currentAccount
+        ]);
+
+        if($quote === null) {
+            throw $this->createNotFoundException();
+        }
+
+        try {
+            return $this->json($quote->getInfos());
         } catch(Error $e) {
             http_response_code(500);
 

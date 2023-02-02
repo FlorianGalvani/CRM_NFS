@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Account;
 use App\Entity\Transaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,37 @@ class TransactionRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findLastOneByAccountAndStatus($id, Account $account, $statuses): ?Transaction
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.id = :id')
+            ->andWhere('t.customer = :account')
+            ->andWhere('t.paymentStatus IN (:statuses)')
+            ->setParameters(['id' => $id, 'account' => $account, 'statuses' => $statuses])
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findAllBilledTransactionByAccount(Account $account): array
+    {
+        $statuses = [
+            Transaction::TRANSACTION_QUOTATION_SENT,
+            Transaction::TRANSACTION_QUOTATION_REQUESTED,
+            Transaction::TRANSACTION_INVOICE_SENT,
+            Transaction::TRANSACTION_STATUS_PAYMENT_INTENT
+        ];
+
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.customer = :account')
+            ->andWhere('t.paymentStatus NOT IN (:statuses)')
+            ->setParameters(['account' => $account, 'statuses' => $statuses])
+            ->orderBy('t.id', 'DESC')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

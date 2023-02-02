@@ -3,8 +3,10 @@
 namespace App\DataFixtures;
 
 use App\Entity\Prospect;
+use App\Event\CreateProspectEvent;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -12,10 +14,12 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 final class ProspectFixtures extends Fixture implements DependentFixtureInterface
 {
     private $fakerFactory;
+    private $eventDispatcher;
 
-    public function __construct()
+    public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->fakerFactory = \Faker\Factory::create('fr_FR');
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function getDependencies(): array
@@ -33,13 +37,14 @@ final class ProspectFixtures extends Fixture implements DependentFixtureInterfac
             $manager->persist($entity);
             $commercial = $this->getReference(AccountFixtures::getAccountCommercialReference((string) $i));
             $entity->setCommercial($commercial);
+            $this->eventDispatcher->dispatch(new CreateProspectEvent($entity), CreateProspectEvent::NAME);
             ++$i;
         }
 
         $manager->flush();
     }
 
-    private function createProspect(array $data): Prospect
+    public function createProspect(array $data): Prospect
     {
         $entity = new Prospect();
 
@@ -52,7 +57,6 @@ final class ProspectFixtures extends Fixture implements DependentFixtureInterfac
                 $propertyAccessor->setValue($entity, $key, $value);
             }
         }
-
         return $entity;
     }
 

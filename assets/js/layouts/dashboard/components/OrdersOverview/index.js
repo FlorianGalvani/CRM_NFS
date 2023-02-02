@@ -31,57 +31,70 @@ function OrdersOverview() {
     <Card sx={{ height: "100%" }}>
       <MDBox pt={3} px={3}>
         <MDTypography variant="h6" fontWeight="medium">
-          Orders overview
+          Résumé action
         </MDTypography>
-        <MDBox mt={0} mb={2}>
-          <MDTypography variant="button" color="text" fontWeight="regular">
-            <MDTypography
-              display="inline"
-              variant="body2"
-              verticalAlign="middle"
-            >
-              <Icon sx={{ color: ({ palette: { success } }) => success.main }}>
-                arrow_upward
-              </Icon>
-            </MDTypography>
-            &nbsp;
-            <MDTypography variant="button" color="text" fontWeight="medium">
-              24%
-            </MDTypography>{" "}
-            this month
-          </MDTypography>
-        </MDBox>
       </MDBox>
       <MDBox p={2}>
         <TimelineItem
           color="success"
           icon="notifications"
-          title="$2400, Design changes"
-          dateTime="22 DEC 7:20 PM"
+          title="2400€, devis #1832405"
+          dateTime="27 DEC 9:34"
         />
         <TimelineItem
           color="error"
           icon="inventory_2"
-          title="New order #1832412"
-          dateTime="21 DEC 11 PM"
+          title="Nouveau devis #1832412"
+          dateTime="21 DEC 15:34"
         />
         <TimelineItem
           color="info"
           icon="shopping_cart"
-          title="Server payments for April"
-          dateTime="21 DEC 9:34 PM"
+          title="Nouveaux produits ajoutés pour le devis #1832405"
+          dateTime="21 DEC 19:23"
         />
         <TimelineItem
           color="warning"
           icon="payment"
-          title="New card added for order #4395133"
-          dateTime="20 DEC 2:20 AM"
+          title="Nouvelle facture #1832405"
+          dateTime="20 DEC 2:20"
+        />
+        <TimelineItem
+          color="success"
+          icon="notifications"
+          title="25000€, devis #1832400"
+          dateTime="18 DEC 9:54"
         />
         <TimelineItem
           color="primary"
           icon="vpn_key"
-          title="New card added for order #4395133"
-          dateTime="18 DEC 4:54 AM"
+          title="Nouveau client"
+          dateTime="18 DEC 4:54"
+          lastItem
+        />
+        <TimelineItem
+          color="error"
+          icon="inventory_2"
+          title="Nouveau devis #1832400"
+          dateTime="17 DEC 20:54"
+        />
+        <TimelineItem
+          color="info"
+          icon="shopping_cart"
+          title="Nouveaux produits ajoutés pour le devis #1832400"
+          dateTime="17 DEC 19:54"
+        />
+        <TimelineItem
+          color="info"
+          icon="shopping_cart"
+          title="Nouveaux produits ajoutés pour le devis #1832400"
+          dateTime="17 DEC 19:54"
+        />
+        <TimelineItem
+          color="primary"
+          icon="vpn_key"
+          title="Nouveau client"
+          dateTime="17 DEC 14:20"
           lastItem
         />
       </MDBox>

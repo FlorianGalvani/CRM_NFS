@@ -10,13 +10,23 @@ use App\Entity\Common\IdTrait;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Controller\Api\ProspectController;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table("`prospect`")
  * @ORM\Entity(repositoryClass=ProspectRepository::class)
  * @ApiResource(
- *      normalizationContext={"groups"={"prospect_read"}}
+ *      normalizationContext={"groups"={"prospect_read"}},
+ *     collectionOperations={
+ *          "post"={
+ *              "name"="create",
+ *              "controller"=ProspectController::class
+ *          }, "get"
+ *     }
  * )
+ * @UniqueEntity(fields = {"email"},message ="Un prospect ayant cette adresse email existe déjà")
  */
 class Prospect implements DatedInterface, IdInterface
 {
@@ -33,18 +43,32 @@ class Prospect implements DatedInterface, IdInterface
     /**
      * @ORM\Column(length=255)
      * @Groups({"prospect_read"})
+     * @Assert\NotBlank(message="Le prénom du prospect est obligatoire")
+     * @Assert\Length(
+     *  allowEmptyString =true,
+     *  min=3, minMessage="Le prénom doit faire entre 3 et 255 caractères",
+     *  max=255, maxMessage="Le prénom doit faire entre 3 et 255 caractères"
+     * )
      */
     private $firstname = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"prospect_read"})
+     * @Assert\NotBlank(message="Le nom du prospect est obligatoire")
+     * @Assert\Length(
+     *  allowEmptyString =true,
+     *  min=3, minMessage="Le nom doit faire entre 3 et 255 caractères",
+     *  max=255, maxMessage="Le nom doit faire entre 3 et 255 caractères"
+     * )
      */
     private $lastname = null;
 
     /**
      * @ORM\Column(length=255)
      * @Groups({"prospect_read"})
+     * @Assert\NotBlank(message="L'adresse email du prospect est obligatoire")
+     * @Assert\Email(message="Le format de l'adresse email doit être valide")
      */
     private $email = null;
 
@@ -121,5 +145,19 @@ class Prospect implements DatedInterface, IdInterface
         $this->phone = $phone;
 
         return $this;
+    }
+
+    public function getInfos(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'commercial' => $this->getCommercial()->getUser(),
+            'phone' => $this->getPhone(),
+            'email' => $this->getEmail(),
+            'firstname' => $this->getFirstname(),
+            'lastname' => $this->getLastname(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt()
+        ];
     }
 }

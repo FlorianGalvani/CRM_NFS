@@ -27,14 +27,20 @@ class Document implements DatedInterface, IdInterface
     const TRANSACTION_DOCUMENT_INVOICE = 'facture';
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */
-    private $account = null;
+    private $customer = null;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"document_read"})
+     */
+    private $commercial = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Transaction", fetch="EAGER", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Transaction", fetch="EAGER")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */
@@ -58,18 +64,36 @@ class Document implements DatedInterface, IdInterface
      */
     private $fileExtension = null;
 
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     * @Groups({"document_read"})
+     */
+    private $data = null;
+
     public function __construct() {
         $this->createdAt = new \DateTime();
     }
 
-    public function getAccount(): ?Account
+    public function getCustomer(): ?Account
     {
-        return $this->account;
+        return $this->customer;
     }
 
-    public function setAccount(?Account $account): self
+    public function setCustomer(?Account $account): self
     {
-        $this->account = $account;
+        $this->customer = $account;
+
+        return $this;
+    }
+
+    public function getCommercial(): ?Account
+    {
+        return $this->commercial;
+    }
+
+    public function setCommercial(?Account $account): self
+    {
+        $this->commercial = $account;
 
         return $this;
     }
@@ -121,4 +145,33 @@ class Document implements DatedInterface, IdInterface
 
         return $this;
     }
+
+    public function getData(): ?string
+    {
+        return $this->data;
+    }
+
+    public function setData(string $data): self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    public function getInfos(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'customer' => $this->getCustomer(),
+            'type' => $this->getType(),
+            'data' => json_decode($this->getData()),
+            'fileName' => $this->getFileName(),
+            'fileExtension' => $this->getFileExtension(),
+            'transaction' => $this->getTransaction(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt(),
+        ];
+
+    }
+
 }

@@ -13,7 +13,8 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
 
 // react-router-dom components
 import { useLocation, NavLink } from "react-router-dom";
@@ -30,7 +31,7 @@ import Icon from "@mui/material/Icon";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
+// import MDButton from "components/MDButton";
 
 // Material Dashboard 2 React example components
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
@@ -46,16 +47,13 @@ import {
   setTransparentSidenav,
   setWhiteSidenav,
 } from "context";
+// Utils
+import { Cookie } from "utils/index";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
-  const {
-    miniSidenav,
-    transparentSidenav,
-    whiteSidenav,
-    darkMode,
-    sidenavColor,
-  } = controller;
+  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode } =
+    controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
 
@@ -68,6 +66,19 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
+
+  const [token, setDecodedToken] = useState();
+  
+  const decodedToken = () => {
+    if (Cookie.getCookie("token") !== undefined) {
+      const jwtToken = jwt_decode(Cookie.getCookie("token"));
+      setDecodedToken(jwtToken);
+    }
+  };
+
+  useEffect(() => {
+    decodedToken();
+  }, []);
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -95,11 +106,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
-  // Render all the routes from the routes.js (All the visible items on the Sidenav)
+  // Render all the routes from the routes.js (All the visible items on the Sidenav), if user is connect don't show sign in
   const renderRoutes = routes.map(
     ({ type, name, icon, title, noCollapse, key, href, route }) => {
       let returnValue;
-
       if (type === "collapse") {
         returnValue = href ? (
           <Link
@@ -154,6 +164,27 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         );
       }
 
+      if (Cookie.getCookie("token") !== undefined && key === "connexion") {
+        returnValue = null;
+      }
+
+      const managerRoutesKeys = ['utilisateurs', 'compte', 'devis', 'factures', 'devisform', 'devistemp'];
+
+      if(token?.account === 'customer' && managerRoutesKeys.includes(key)) {
+          returnValue = null;
+      }
+
+      if(token?.account === 'admin' && key === "devisform" || key === "factures") {
+          returnValue = null;
+      }
+
+      const managerRoles = ['admin', 'commercial'];
+      const customerRoutesKeys = ['profil', 'paiement', 'facture', 'mes-factures'];
+
+      if (managerRoles.includes(token?.account) && customerRoutesKeys.includes(key)) {
+        returnValue = null;
+      }
+
       return returnValue;
     }
   );
@@ -204,19 +235,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         }
       />
       <List>{renderRoutes}</List>
-      <MDBox p={2} mt="auto">
-        <MDButton
-          component="a"
-          href="https://www.creative-tim.com/product/material-dashboard-pro-react"
-          target="_blank"
-          rel="noreferrer"
-          variant="gradient"
-          color={sidenavColor}
-          fullWidth
-        >
-          upgrade to pro
-        </MDButton>
-      </MDBox>
     </SidenavRoot>
   );
 }

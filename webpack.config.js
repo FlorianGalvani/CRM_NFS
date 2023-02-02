@@ -31,6 +31,7 @@ Encore
         'context': path.resolve(__dirname, 'assets/js/context'),
         'examples': path.resolve(__dirname, 'assets/js/examples'),
         'routes': path.resolve(__dirname, 'assets/js/routes.js'),
+        'utils': path.resolve(__dirname, 'assets/js/utils'),
     })
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
@@ -69,15 +70,14 @@ Encore
     })
 
     // enables Sass/SCSS support
-    //.enableSassLoader()
+    .enableSassLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
 
     // uncomment if you use React
     .enableReactPreset()
-    
-
+    .enablePostCssLoader()
     // uncomment to get integrity="..." attributes on your script & link tags
     // requires WebpackEncoreBundle 1.4 or higher
     //.enableIntegrityHashes(Encore.isProduction())

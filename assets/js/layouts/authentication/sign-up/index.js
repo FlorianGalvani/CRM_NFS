@@ -12,14 +12,14 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import React from "react";
-
-// react-router-dom components
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
+// Utils
+import { Cookie } from "utils/index";
+import axios from "axios";
 
 // @mui material components
 import Card from "@mui/material/Card";
-import Checkbox from "@mui/material/Checkbox";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -27,100 +27,165 @@ import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 
-// Authentication layout components
-import CoverLayout from "layouts/authentication/components/CoverLayout";
+// @mui material components
+import Grid from "@mui/material/Grid";
 
-// Images
-import bgImage from "assets/images/bg-sign-up-cover.jpeg";
+// Material Dashboard 2 React example components
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import {Alert} from "@mui/material";
 
 function Cover() {
+  const [token, setDecodedToken] = useState();
+  const [error, setError] = useState(null);
+
+  const decodedToken = () => {
+    if (Cookie.getCookie("token") !== undefined) {
+      const jwtToken = jwt_decode(Cookie.getCookie("token"));
+      setDecodedToken(jwtToken);
+    }
+  };
+
+  useEffect(() => {
+    decodedToken();
+  }, []);
+
   return (
-    <CoverLayout image={bgImage}>
-      <Card>
-        <MDBox
-          variant="gradient"
-          bgColor="info"
-          borderRadius="lg"
-          coloredShadow="success"
-          mx={2}
-          mt={-3}
-          p={3}
-          mb={1}
-          textAlign="center"
-        >
-          <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Join us today
-          </MDTypography>
-          <MDTypography display="block" variant="button" color="white" my={1}>
-            Enter your email and password to register
-          </MDTypography>
-        </MDBox>
-        <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
-            <MDBox mb={2}>
-              <MDInput type="text" label="Name" variant="standard" fullWidth />
-            </MDBox>
-            <MDBox mb={2}>
-              <MDInput
-                type="email"
-                label="Email"
-                variant="standard"
-                fullWidth
-              />
-            </MDBox>
-            <MDBox mb={2}>
-              <MDInput
-                type="password"
-                label="Password"
-                variant="standard"
-                fullWidth
-              />
-            </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
-              <Checkbox />
-              <MDTypography
-                variant="button"
-                fontWeight="regular"
-                color="text"
-                sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
+    <DashboardLayout>
+      <DashboardNavbar />
+      <MDBox mt={10}>
+        <Grid container spacing={1} justifyContent="center">
+          <Grid item>
+            <Card>
+              <MDBox
+                variant="gradient"
+                bgColor="info"
+                borderRadius="lg"
+                coloredShadow="success"
+                mx={2}
+                mt={-3}
+                p={3}
+                mb={1}
+                textAlign="center"
               >
-                &nbsp;&nbsp;I agree the&nbsp;
-              </MDTypography>
-              <MDTypography
-                component="a"
-                href="#"
-                variant="button"
-                fontWeight="bold"
-                color="info"
-                textGradient
-              >
-                Terms and Conditions
-              </MDTypography>
-            </MDBox>
-            <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
-                sign in
-              </MDButton>
-            </MDBox>
-            <MDBox mt={3} mb={1} textAlign="center">
-              <MDTypography variant="button" color="text">
-                Already have an account?{" "}
                 <MDTypography
-                  component={Link}
-                  to="/authentication/sign-in"
-                  variant="button"
-                  color="info"
+                  variant="h4"
                   fontWeight="medium"
-                  textGradient
+                  color="white"
+                  mt={1}
                 >
-                  Sign In
+                  Enregistrer un nouveau compte
                 </MDTypography>
-              </MDTypography>
-            </MDBox>
-          </MDBox>
-        </MDBox>
-      </Card>
-    </CoverLayout>
+                <MDTypography
+                  display="block"
+                  variant="button"
+                  color="white"
+                  my={1}
+                >
+                  Ajouter les coordonnées du nouveau compte
+                </MDTypography>
+              </MDBox>
+              <MDBox pt={4} pb={3} px={3}>
+                
+                <MDBox component="form" role="form" {...{
+                    onSubmit: (e) => {
+                      e.preventDefault()
+                      const data = new FormData(e.currentTarget)
+
+                      const token = Cookie.getCookie("token")
+
+                      const user = {
+                        firstname: data.get('prenom'),
+                        lastname: data.get('nom'),
+                        email: data.get('email'),
+                        phone: data.get('telephone'),
+                        address: data.get('adresse'),
+                        account: data.get('account')
+                      }
+
+                      const config = {
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                          'X-Requested-With': 'XMLHttpRequest'
+                        }
+                      }
+
+                      const url = 'http://localhost:8000/api/signup';
+
+                      console.log(url, user, config)
+
+                      axios.post(url, user, config)
+                        .then((response) => {
+                          console.log(response);
+                        }, (error) => {
+                          console.log(error);
+                          setError(error.response.data.message);
+                        });
+                    }
+                  }}>
+                  {
+                    error ?
+                        <Alert severity={'error'}> {error} </Alert>
+                        : null
+                  }
+                  <MDBox mb={2}>
+                    <input type={'hidden'} name={'account'} value={token?.account === 'admin' ? 'commercial' : 'customer'}/>
+                    <MDInput
+                      type="text"
+                      label="Nom"
+                      name="nom"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="text"
+                      name="prenom"
+                      label="Prénom"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="email"
+                      name="email"
+                      label="Email"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="tel"
+                      name="telephone"
+                      label="Téléphone"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mb={2}>
+                    <MDInput
+                      type="text"
+                      name="adresse"
+                      label="Adresse"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </MDBox>
+                  <MDBox mt={4} mb={1}>
+                    <MDButton type="submit" variant="gradient" color="info" fullWidth>
+                      Ajouter le compte
+                    </MDButton>
+                  </MDBox>
+                </MDBox>
+              </MDBox>
+            </Card>
+          </Grid>
+        </Grid>
+      </MDBox>
+    </DashboardLayout>
   );
 }
 

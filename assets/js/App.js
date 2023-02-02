@@ -12,11 +12,13 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import "regenerator-runtime";
 import React, { useState, useEffect, useMemo } from "react";
-
+import "regenerator-runtime";
+import axios from 'axios'
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+
+// import "./tailwind.css";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -54,8 +56,11 @@ import {
 } from "context";
 
 // Images
-import brandWhite from "assets/images/logo-ct.png";
-import brandDark from "assets/images/logo-ct-dark.png";
+import brandWhite from "assets/images/icon.png";
+import brandDark from "assets/images/icon.png";
+
+// Utils
+import {Axios, Cookie} from "utils/index";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -75,6 +80,7 @@ export default function App() {
 
   // Cache for the rtl
   useMemo(() => {
+
     const cacheRtl = createCache({
       key: "rtl",
       stylisPlugins: [rtlPlugin],
@@ -133,6 +139,19 @@ export default function App() {
 
       return null;
     });
+
+
+
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (Cookie.getCookie("token") === undefined) {
+      navigate("/connexion");
+    }
+  }, []);
+
+  Axios.setAuthorization(Cookie.getCookie("token"));
 
   const configsButton = (
     <MDBox
@@ -199,7 +218,7 @@ export default function App() {
                 ? brandDark
                 : brandWhite
             }
-            brandName="Material Dashboard 2"
+            brandName="CRManager"
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}

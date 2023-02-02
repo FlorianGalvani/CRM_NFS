@@ -61,7 +61,7 @@ class Account implements DatedInterface, IdInterface
     private $prospects;
 
     /**
-     * @ORM\OneToMany(mappedBy="commercial", targetEntity=Account::class, orphanRemoval=true, cascade={"persist", "remove"})
+     * @ORM\OneToMany(mappedBy="commercial", targetEntity=Account::class, orphanRemoval=true)
      * @Groups({"account_read"})
      */
     private $customers;
@@ -74,10 +74,28 @@ class Account implements DatedInterface, IdInterface
     private $commercial = null;
 
     /**
-     * @ORM\OneToMany(mappedBy="customer", targetEntity=CustomerEvent::class, orphanRemoval=true, cascade={"persist", "remove"})
+     * @ORM\Column(type="json", nullable=true)
+     * @Groups({"account_read"})
+     */
+    private $data = null;
+
+    /**
+     * @ORM\OneToMany(mappedBy="customer", targetEntity=CustomerEvent::class, orphanRemoval=true)
      * @Groups({"account_read"})
      */
     private $events;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"account_read"})
+     */
+    private $about;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     * @Groups({"customer_read"})
+     */
+    private $paymentMethod = null;
 
     public function __construct()
     {
@@ -117,6 +135,18 @@ class Account implements DatedInterface, IdInterface
     public function setName(?string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getAbout(): ?string
+    {
+        return $this->about;
+    }
+
+    public function setAbout(?string $about): self
+    {
+        $this->about = $about;
+
+        return $this;
     }
 
     public function getAccountStatus(): ?string
@@ -213,5 +243,50 @@ class Account implements DatedInterface, IdInterface
     public function getEvents(): Collection
     {
         return $this->events;
+    }
+
+    /**
+     * @return null
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param null $data
+     */
+    public function setData($data): void
+    {
+        $this->data = $data;
+    }
+
+    public function getPaymentMethod(): ?string
+    {
+        return $this->paymentMethod;
+    }
+
+    public function setPaymentMethod(string $paymentMethod): self
+    {
+        $this->paymentMethod = $paymentMethod;
+
+        return $this;
+    }
+
+    public function getInfos(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'type' => $this->getType(),
+            'paymentMethod' => json_decode($this->getPaymentMethod()),
+            'about' => $this->getAbout(),
+            'customers' => $this->getCustomers(),
+            'commercial' => $this->getCommercial(),
+            'user' => $this->getUser(),
+            'events' => $this->getEvents(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt()
+        ];
     }
 }

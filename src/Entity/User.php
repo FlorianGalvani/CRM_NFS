@@ -2,16 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Enum\Account\AccountType;
+Use App\Repository\UserRepository;
+use App\Controller\Api\CustomerController;
 use App\Entity\Common\DatedInterface;
 use App\Entity\Common\DatedTrait;
 use App\Entity\Common\IdInterface;
 use App\Entity\Common\IdTrait;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use DateTimeImmutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -81,7 +84,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
      */
     private $password = null;
 
@@ -91,8 +93,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
      */
     private $account = null;
 
-    public function __construct() {
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"users_read"})
+     */
+    private $emailVerified = null;
+
+    /**
+     * @ORM\Column(nullable=true)
+     * @Groups({"users_read"})
+     */
+    private $emailVerificationToken = null;
+
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     * @Groups({"users_read"})
+     */
+    private $emailVerificationToken_at = null;
+
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Groups({"users_read"})
+     */
+    private $company = null;
+
+    public function __construct()
+    {
         $this->createdAt = new \DateTime();
+        $this->emailVerified = false;
     }
 
     public function getEmail(): ?string
@@ -103,6 +131,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getCompany(): ?string
+    {
+        return $this->company;
+    }
+
+    public function setCompany(string $company): self
+    {
+        $this->company = $company;
 
         return $this;
     }
@@ -257,5 +297,74 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     public function setAccount(?Account $account): void
     {
         $this->account = $account;
+    }
+
+    public function getAccountStatus(): ?string
+    {
+        return $this->getAccount()->getAccountStatus();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmailVerificationToken(): ?string
+    {
+        return $this->emailVerificationToken;
+    }
+
+    /**
+     * @param string|null $address
+     */
+    public function setEmailVerificationToken(?string $emailVerificationToken): void
+    {
+        $this->emailVerificationToken = $emailVerificationToken;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmailVerificationTokenAt(): ?\DateTime
+    {
+        return $this->emailVerificationToken;
+    }
+
+    /**
+     * @param string|null $address
+     */
+    public function setEmailVerificationTokenAt(?\DateTime $emailVerificationToken_at): void
+    {
+        $this->emailVerificationToken_at = $emailVerificationToken_at;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getEmailVerified(): ?bool
+    {
+        return $this->emailVerified;
+    }
+
+    /**
+     * @param bool|null $emailVerified
+     */
+    public function setEmailVerified(?bool $emailVerified): void
+    {
+        $this->emailVerified = $emailVerified;
+    }
+
+    public function getInfos(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'account' => $this->getAccount()->getInfos(),
+            'accountType' => $this->getAccount()->getType(),
+            'phone' => $this->getPhone(),
+            'email' => $this->getEmail(),
+            'company' => $this->company,
+            'firstname' => $this->getFirstname(),
+            'lastname' => $this->getLastname(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt()
+        ];
     }
 }

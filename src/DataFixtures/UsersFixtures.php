@@ -40,6 +40,11 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
         return User::class . '_Michel_' . $email;
     }
 
+    public static function getUserCustomerMichelReference(string $email): string
+    {
+        return User::class . '_Customer_Michel_' . $email;
+    }
+
     public function load(ObjectManager $manager): void
     {
         // Michel(s)
@@ -49,19 +54,27 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
             $this->addReference(self::getUserMichelReference($entity->getEmail()), $entity);
         }
 
-        // 200 random user(s)
+        // 100 random user(s)
         $i = 0;
-        foreach ($this->getData() as $data) {
+        foreach ($this->getData(100) as $data) {
             $entity = $this->createUser($data);
             $manager->persist($entity);
             $this->addReference(self::getUserReference((string) $i), $entity);
             ++$i;
         }
 
+        $x = 100;
+        foreach($this->getData(10) as $customerData) {
+            $entity = $this->createUser($customerData);
+            $manager->persist($entity);
+            $this->addReference(self::getUserCustomerMichelReference((string) $x), $entity);
+            ++$x;
+        }
+
         $manager->flush();
     }
 
-    private function createUser(array $data): User
+    public function createUser(array $data): User
     {
         $entity = new User();
 
@@ -115,16 +128,17 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
         ];
     }
 
-    private function getData(): iterable
+    private function getData($number): iterable
     {
         $faker = $this->fakerFactory;
         $slugger = new AsciiSlugger('fr');
 
-        for ($i = 0; $i < 100; ++$i) {
+        for ($i = 0; $i < $number; ++$i) {
             $firstname = $faker->firstname();
             $lastname = $faker->lastname();
             $phone = $faker->phoneNumber();
             $address = $faker->address();
+            $company = $faker->company();
 
             $email = '';
             $email .= $slugger->slug($firstname);
@@ -148,6 +162,7 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
                 'email' => $email,
                 'phone' => $phone,
                 'address' => $address,
+                'company' => $company,
                 'roles' => ['ROLE_USER'],
             ];
             yield $data;

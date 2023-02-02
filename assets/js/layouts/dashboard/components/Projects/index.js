@@ -37,7 +37,7 @@ import jwt_decode from "jwt-decode";
 function Projects() {
   const { columns, rows } = data();
   const [menu, setMenu] = useState(null);
-  
+
 
   const openMenu = ({ currentTarget }) => setMenu(currentTarget);
   const closeMenu = () => setMenu(null);
@@ -55,7 +55,7 @@ function Projects() {
     decodedToken();
   }, []);
 
-console.log(token);
+  console.log(token);
   const renderMenu = (
     <Menu
       id="simple-menu"
@@ -87,8 +87,7 @@ console.log(token);
       >
         <MDBox>
           <MDTypography variant="h6" gutterBottom>
-
-            {token?.account === "admin" ? "Utilisateurs" : "Clients"}
+            Prospects
           </MDTypography>
           <MDBox display="flex" alignItems="center" lineHeight={0}>
           </MDBox>

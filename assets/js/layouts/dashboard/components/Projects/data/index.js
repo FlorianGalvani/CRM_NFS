@@ -14,130 +14,92 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Cookie } from "utils/index";
 
 // @mui material components
-import Tooltip from "@mui/material/Tooltip";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
-import MDProgress from "components/MDProgress";
 
 // Images
 import team1 from "assets/images/team-1.jpg";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
-
-//api
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Cookie } from "utils/index";
+import team5 from "assets/images/team-5.jpg";
 
 export default function data() {
+  const [prospects, setProspects] = useState([]);
+  const token = Cookie.getCookie("token");
 
-  const [users, setUsers] = useState([]);
-
-  const getAllUsers = () => {
-    const token = Cookie.getCookie("token");
-
-    axios.get(`http://localhost:8000/api/commercial-customers`, {
+  const getAllProspects = () => {
+    axios.get(`http://localhost:8000/api/all-prospects`, {
       headers: {
         "Authorization": `Bearer ${token}`,
       },
     })
       .then((response) => {
-        const allUsers = response.data;
-        setUsers(allUsers);
+        const allProspects = response.data;
+        setProspects(allProspects);
       })
       .catch((error) => console.log(error));
   }
 
   useEffect(() => {
-    getAllUsers()
+    getAllProspects()
   }, []);
 
-  const avatars = (members) =>
-    members.map(([image, name]) => (
-      <Tooltip key={name} title={name} placeholder="bottom">
-        <MDAvatar
-          src={image}
-          alt="name"
-          size="xs"
-          sx={{
-            border: ({ borders: { borderWidth }, palette: { white } }) =>
-              `${borderWidth[2]} solid ${white.main}`,
-            cursor: "pointer",
-            position: "relative",
-
-            "&:not(:first-of-type)": {
-              ml: -1.25,
-            },
-
-            "&:hover, &:focus": {
-              zIndex: "10",
-            },
-          }}
-        />
-      </Tooltip>
-    ));
-
-  const Company = ({ image, name, email }) => (
+  const Prospect = ({ image, name }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
-      <MDAvatar src={image} name={name} size="sm" />
-      <MDBox ml={2} lineHeight={1}>
-        <MDTypography display="block" variant="button" fontWeight="medium">
-          {name}
-        </MDTypography>
-        <MDTypography variant="caption">{email}</MDTypography>
-      </MDBox>
+      <MDAvatar src={image} name={name} size="sm" variant="rounded" />
+      <MDTypography
+        display="block"
+        variant="button"
+        fontWeight="medium"
+        ml={1}
+        lineHeight={1}
+      >
+        {name}
+      </MDTypography>
     </MDBox>
   );
 
   return {
     columns: [
-      {
-        Header: "Clients",
-        accessor: "companies",
-        width: "45%",
-        align: "left",
-      },
-      { Header: "members", accessor: "members", width: "10%", align: "left" },
-      { Header: "Montant factures", accessor: "budget", align: "center" },
-      { Header: "Total réglé", accessor: "completion", align: "center" },
+      { Header: "prospect", accessor: "prospects", width: "30%", align: "left" },
+      { Header: "téléphone", accessor: "phone", align: "left" },
+      { Header: "email", accessor: "email", align: "center" }
     ],
 
-    rows: 
-    users && users.map(user => (
-      {
-        companies: <Company image={[team2, team3, team4][Math.floor(Math.random() * 3)]}  name={user.user.firstname + " " + user.user.lastname} 
-        email={user.user.email} />,
-        members: (
-          <MDBox display="flex" py={1}>
-            {avatars([
-              [team1, "Ryan Tompson"],
-              [team2, "Romina Hadid"],
-              [team3, "Alexander Smith"],
-              [team4, "Jessica Doe"],
-            ])}
-          </MDBox>
-        ),
-        budget: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            $14,000
-          </MDTypography>
-        ),
-        completion: (
-          <MDBox width="8rem" textAlign="left">
-            <MDProgress
-              value={60}
-              color="info"
-              variant="gradient"
-              label={false}
-            />
-          </MDBox>
-        ),
-      }
-    ))
+    rows:
+      prospects.map((prospect) => (
+        {
+          prospects: <Prospect image={[team1, team2, team3, team4, team5][Math.floor(Math.random() * 5)]} name={prospect.firstname + ' ' + prospect.lastname} />,
+          phone: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="button"
+              color="text"
+              fontWeight="medium"
+            >
+              {prospect.phone}
+            </MDTypography>
+          ),
+          email: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="caption"
+              color="text"
+              fontWeight="medium"
+            >
+              {prospect.email}
+            </MDTypography>
+          ),
+        }
+      ))
   };
 }

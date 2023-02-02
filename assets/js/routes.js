@@ -58,6 +58,7 @@ import CustomerInvoices from "layouts/billing/customer/invoices";
 import Home from "./Pages/Home";
 import CustomerQuote from "layouts/billing/customer/quotes/show";
 import CustomerQuotes from "layouts/billing/customer/quotes";
+import UserProfile from "layouts/profile/user";
 
 const routes = [
   {
@@ -124,7 +125,11 @@ const routes = [
     route: "/devis/nouveau",
     component: <QuoteForm />,
   },
-
+  {
+    key: "utilisateur",
+    route: "/utilisateurs/:id",
+    component: <UserProfile />,
+  },
     // Routes client
   // {
   //   type: "collapse",

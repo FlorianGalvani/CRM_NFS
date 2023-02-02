@@ -30,6 +30,7 @@ import MDBadge from "components/MDBadge";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
+import {Link} from "react-router-dom";
 
 export default function Data() {
   const [users, setUsers] = useState([]);
@@ -149,15 +150,34 @@ export default function Data() {
             </MDTypography>
           ),
           action: (
-            <MDTypography
-              component="a"
-              href="#"
-              variant="caption"
-              color="text"
-              fontWeight="medium"
-            >
-              Edit
-            </MDTypography>
+              <MDBox
+                  pt={2}
+                  px={2}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+              >
+                  <MDTypography
+                      component="a"
+                      href="#"
+                      variant="caption"
+                      color="text"
+                      fontWeight="medium"
+                  >
+                      Edit
+                  </MDTypography>
+                  <MDTypography
+                      component="a"
+                      href="#"
+                      variant="caption"
+                      color="text"
+                      fontWeight="medium"
+                  >
+                      <Link to={'/utilisateurs/'+user?.id}>
+                          &nbsp;&nbsp;&nbsp;Détail
+                      </Link>
+                  </MDTypography>
+              </MDBox>
           ),
         }
       )),

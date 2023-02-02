@@ -54,6 +54,7 @@ import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 import {Cookie} from "utils";
 import jwt_decode from "jwt-decode";
+import UserHeader from "layouts/profile/user/header";
 
 function Overview() {
     const [token, setToken] = React.useState(null);
@@ -75,7 +76,7 @@ function Overview() {
         <DashboardLayout>
             <DashboardNavbar />
             <MDBox mb={2} />
-            <Header>
+            <UserHeader username={user?.account?.name} accountType={token?.account}>
                 <MDBox mt={5} mb={3}>
                     <Grid container spacing={1}>
                         {
@@ -213,7 +214,7 @@ function Overview() {
                         </>
                     : null
                 }
-            </Header>
+            </UserHeader>
             <Footer />
         </DashboardLayout>
     );

@@ -7,6 +7,7 @@ use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
 use App\Event\CreateCustomerEvent;
+use App\Repository\AccountRepository;
 use App\Repository\UserRepository;
 use App\Service\Emails\SendEmail;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -20,10 +21,12 @@ class AuthController extends BaseController
 {
     private $mailer;
     private $userRepo;
+    private $accountRepo;
 
-    public function __construct(SendEmail $mailer, UserRepository $userRepo) {
+    public function __construct(SendEmail $mailer, UserRepository $userRepo, AccountRepository $accountRepo) {
         $this->mailer = $mailer;
         $this->userRepo = $userRepo;
+        $this->accountRepo = $accountRepo;
     }
 
     #[Route('/api/all-users', methods: ['GET'])]
@@ -38,6 +41,22 @@ class AuthController extends BaseController
 
         try {
             return $this->json($usersData);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/user/{id}', methods: ['GET'])]
+    public function show($id): Response
+    {
+        $user = $this->accountRepo->find($id);
+
+        if($user === null) {
+            throw $this->createNotFoundException();
+        }
+
+        try {
+            return $this->json($user);
         } catch(Error $e) {
             return $this->json(['error' => $e->getMessage()]);
         }

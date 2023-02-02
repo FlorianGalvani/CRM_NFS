@@ -27,6 +27,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
+import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -55,7 +56,7 @@ import {
 
 // Utils
 import { Cookie } from "utils/index";
-
+import jwt_decode from "jwt-decode";
 
 
 function DashboardNavbar({ absolute, light, isMini }) {
@@ -105,6 +106,37 @@ function DashboardNavbar({ absolute, light, isMini }) {
     setOpenConfigurator(dispatch, !openConfigurator);
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
+
+// shwo role in navbar
+const [token, setDecodedToken] = useState();
+  
+const decodedToken = () => {
+  if (Cookie.getCookie("token") !== undefined) {
+    const jwtToken = jwt_decode(Cookie.getCookie("token"));
+    setDecodedToken(jwtToken);
+  }
+};
+
+useEffect(() => {
+  decodedToken();
+}, []);
+
+let account = token?.account;
+console.log(account);
+
+let displayName;
+
+if (account === 'admin') {
+  displayName = 'Administrateur';
+} else if (account === 'customer') {
+  displayName = 'Client';
+} else if (account === 'commercial') {
+  displayName = 'Commerciale';
+} else {
+  displayName = '';
+}
+
+console.log(displayName);
 
 
 
@@ -181,6 +213,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
         </MDBox>
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
+            <MDBox>
+              <MDTypography variant="caption" fontWeight="medium" sx={{marginRight: 1}}>
+                {displayName}
+              </MDTypography>
+            </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
               <IconButton
                 size="small"

@@ -486,6 +486,18 @@ const QuotePdf = ({ pdfMode, data, formData }) => {
               />
             </View>
           </>
+          <div className="contentConditions">
+                <span className="conditions">
+                  Conditions et modalités:
+                </span>
+                <p>
+                Le délai de réglement et de 30 jours, pas descompte pour le paiement anticipé.
+                    En cas de retard de paiement, applications des interet de retard en vigeur
+                </p>
+                <p>
+                <span className="conditions">Sarl</span> au capital de 90 120,00€ <span className="conditions">SIRET</span>6598956<span className="conditions">NII (TVA intracommunautaire)</span>FR 70 556 216 941 <span className="conditions">Code APE:</span> 735K
+                </p>
+              </div>
         </Page>
       
     </Document>

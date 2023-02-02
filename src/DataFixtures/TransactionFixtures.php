@@ -66,16 +66,57 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
         $faker = $this->fakerFactory;
         $invoiceDate = $faker->dateTimeBetween('+60 days', '+85 days');
 
+        $productLines = [];
+        for ($j = 0; $j < 3; ++$j) {
+            $productLines[] = [
+                "description" => $faker->words($faker->numberBetween(1, 10), true),
+                "quantity" => $faker->numberBetween(1, 10),
+                "rate" => $faker->numberBetween(35, 5000)
+            ];
+        }
+        
         $document = new Document();
 
+        $invoiceDate = $faker->dateTimeBetween('+60 days', '+85 days');
+        $dueInterval =  $faker->dateTimeBetween('+90 days', '+115 days');
         $document->setCustomer($entity->getCustomer());
-        $document->setCommercial($entity->getCustomer());
+        $document->setCommercial($entity->getCustomer()->getCommercial());
         $document->setTransaction($entity);
         $document->setFileExtension($faker->randomElement(['dot', 'pdf', 'png', 'jpg']));
         $document->setFileName('doc-'.$invoiceDate->format('d-m-Y'));
         $document->setData(json_encode([
-            'amount' => $faker->numberBetween(200, 250),
-            'status' => $entity->getPaymentStatus()
+            "logoWidth" => 100,
+            "title" => "Devis",
+            "companyName" => "NFS",
+            "name" => $entity->getCustomer()->getCommercial()->getName(),
+            "companyAddress" => $entity->getCustomer()->getCommercial()->getUser()->getAddress(),
+            "companyAddress2" => "Rouen,76000",
+            "companyCountry" => "United States",
+            "billTo" => "Facturé à: ",
+            "clientName" => $entity->getCustomer()->getName(),
+            "clientAddress" => "14 rue du bonheur",
+            "clientAddress2" => "Rouen,76000",
+            "clientCountry" => "France",
+            "invoiceTitleLabel" => "Devis#",
+            "invoiceTitle" => "DEV-" . $invoiceDate->format('d-m-Y') . "-" . $faker->numberBetween(100, 999),
+            "invoiceDateLabel" => "Date du devis",
+            "invoiceDate" => $invoiceDate,
+            "invoiceDueDateLabel" => "Date d'échéance",
+            "invoiceDueDate" =>  $dueInterval,
+            "productLineDescription" => "Description",
+            "productLineQuantity" => "Qté",
+            "productLineQuantityRate" => "Prix unitaire",
+            "productLineQuantityAmount" => "Montant",
+            "productLines" => $productLines,
+            "subTotalLabel" => "Sous-total",
+            "taxLabel" => "TVA (20%)",
+            "totalLabel" => "TOTAL",
+            "currency" => "€",
+            "notesLabel" => "Notes",
+            "notes" => "Merci pour votre confiance!",
+            "termLabel" => "Termes & Conditions",
+            "term" => null,
+            "status" => $entity->getPaymentStatus()
         ]));
 
         return $document;

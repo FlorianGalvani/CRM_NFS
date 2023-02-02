@@ -14,8 +14,14 @@ const Quotes = ({quotes}) => {
     }
 
     return (
-        <Card id="delete-account">
-            <MDBox pt={3} px={2}>
+        <Card id="">
+            <MDBox
+                pt={2}
+                px={2}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+            >
                 <MDTypography variant="h6" fontWeight="medium">
                     Devis
                 </MDTypography>
@@ -34,6 +40,8 @@ const Quotes = ({quotes}) => {
                                 name={quote?.fileName}
                                 company={quote?.transaction?.type}
                                 email={getQuoteCommercial(quote).email}
+                                amount={quote?.transaction?.amount}
+                                link={'/transactions/mes-devis/paiement/' + quote?.transaction?.id}
                             />
                         ))
                     }
@@ -49,7 +57,7 @@ Quotes.propTypes = {
 
 export default Quotes;
 
-export function Bill({ name, company, email, noGutter }) {
+export function Bill({ name, company, email, noGutter, link, amount }) {
     const [controller] = useMaterialUIController();
     const { darkMode } = controller;
 
@@ -90,6 +98,11 @@ export function Bill({ name, company, email, noGutter }) {
                         <MDButton variant="text" color={darkMode ? "white" : "dark"}>
                             <Icon>download</Icon>&nbsp;Télecharger
                         </MDButton>
+                        <Link to={link}>
+                            <MDButton variant="text" color={darkMode ? "white" : "dark"}>
+                                <Icon>payment</Icon>&nbsp;Paiement
+                            </MDButton>
+                        </Link>
                     </MDBox>
                 </MDBox>
                 <MDBox mb={1} lineHeight={0}>
@@ -112,6 +125,14 @@ export function Bill({ name, company, email, noGutter }) {
                         </MDTypography>
                     </MDTypography>
                 </MDBox>
+                <MDBox mb={1} lineHeight={0}>
+                    <MDTypography variant="caption" color="text">
+                        Montant :&nbsp;&nbsp;&nbsp;
+                        <MDTypography variant="caption" fontWeight="medium">
+                            {amount}
+                        </MDTypography>
+                    </MDTypography>
+                </MDBox>
             </MDBox>
         </MDBox>
     );
@@ -128,4 +149,6 @@ Bill.propTypes = {
     company: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
     noGutter: PropTypes.bool,
+    link: PropTypes.string,
+    amount: PropTypes.string | PropTypes.number
 };

@@ -43,7 +43,13 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
             }
             $manager->persist($entity);
 
-            if(in_array($entity->getPaymentStatus(), [Transaction::TRANSACTION_QUOTATION_SENT, Transaction::TRANSACTION_QUOTATION_REQUESTED])) {
+            if(in_array($entity->getPaymentStatus(), [
+                Transaction::TRANSACTION_QUOTATION_SENT,
+                Transaction::TRANSACTION_QUOTATION_REQUESTED,
+                Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE,
+                Transaction::TRANSACTION_STATUS_PAYMENT_ABANDONED,
+                Transaction::TRANSACTION_STATUS_PAYMENT_INTENT
+            ])) {
                 $quotation = $this->createDocument($entity);
                 $quotation->setType(Document::TRANSACTION_DOCUMENT_QUOTATION);
                 $manager->persist($quotation);

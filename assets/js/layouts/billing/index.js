@@ -79,7 +79,7 @@ function Billing() {
   
   const navigate = useNavigate();
   const handleQuotes = () => {
-    navigate("/factures/nouveau");
+    navigate("/devis/nouveau");
   };
   const handleStripe = () => {
     navigate("/stripe");

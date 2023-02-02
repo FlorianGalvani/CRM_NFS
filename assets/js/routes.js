@@ -43,7 +43,6 @@ import Tables from "./layouts/tables";
 import Billing from "./layouts/billing";
 import Quotes from "./layouts/quotes";
 import QuoteForm from "./layouts/quotesform";
-import InvoiceForm from "./layouts/invoiceForm";
 import Payment from "./layouts/payment";
 
 // import RTL from "./layouts/rtl";
@@ -84,13 +83,6 @@ const routes = [
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/factures",
     component: <Billing />,
-  },
-  {
-    name: "Créer une facture",
-    key: "factureform",
-    icon: <Icon fontSize="small">receipt</Icon>,
-    route: "/factures/nouveau",
-    component: <InvoiceForm />,
   },
   {
     type: "collapse",
@@ -163,7 +155,7 @@ const routes = [
   },
   {
     key: "paiement",
-    route: "/transactions/mes-factures/paiement/:id",
+    route: "/transactions/mes-devis/paiement/:id",
     component: <Payment />,
   },
 ];

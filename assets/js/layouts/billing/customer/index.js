@@ -67,10 +67,6 @@ function CustomerBilling() {
         getTransactions();
     },  [])
 
-    const invoiceDetailLink = (invoice) => {
-        return invoice?.transaction?.paymentStatus === 'payment_success' ? '/transactions/'+invoice?.id : '/transactions/paiement/'+invoice?.transaction?.id
-    }
-
     return (
         <DashboardLayout>
             <DashboardNavbar />
@@ -112,7 +108,7 @@ function CustomerBilling() {
                                     alignItems="center"
                                 >
                                     <MDTypography variant="h6" fontWeight="medium">
-                                        Factures en cours
+                                        Factures
                                     </MDTypography>
                                     <Link to={'/transactions/mes-factures'}>
                                         <MDButton variant="outlined" color="info" size="small">
@@ -124,9 +120,7 @@ function CustomerBilling() {
                                     <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
                                         {
                                             lastInvoices.map((lastInvoice, index) => (
-                                                <Link key={index} to={invoiceDetailLink(lastInvoice)}>
-                                                    <Invoice date={Formatter.formatDate(lastInvoice?.createdAt)} id={'#'+lastInvoice?.fileName} price={lastInvoice?.data.amount+' €'} />
-                                                </Link>
+                                                <Invoice date={Formatter.formatDate(lastInvoice?.createdAt)} id={'#'+lastInvoice?.fileName} price={lastInvoice?.data.amount+' €'} />
                                             ))
                                         }
                                     </MDBox>

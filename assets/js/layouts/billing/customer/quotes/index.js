@@ -36,7 +36,8 @@ const CustomerQuotes = () => {
                 <MDBox mb={3}>
                     <Grid container spacing={3}>
                         {
-                            quotes ? quotes.map((quote, index) => (
+                            quotes ? quotes.filter((quote) => quote.id !== undefined)
+                                .map((quote, index) => (
                                 <Grid item xs={12} key={index}>
                                     <Card sx={{height: "100%"}}>
                                         <MDBox p={2}>
@@ -44,12 +45,11 @@ const CustomerQuotes = () => {
                                                 <Bill
                                                     key={index}
                                                     name={quote?.fileName}
-                                                    company={quote?.transaction.type}
+                                                    company={quote?.transaction?.type}
                                                     email={getQuoteCommercial(quote).email}
+                                                    amount={quote?.transaction?.amount}
+                                                    link={'/transactions/mes-devis/paiement/' + quote?.transaction?.id}
                                                 />
-                                                <Link to={'/transactions/mes-devis/' + quote?.id}>
-                                                    Voir
-                                                </Link>
                                             </MDBox>
                                         </MDBox>
                                     </Card>

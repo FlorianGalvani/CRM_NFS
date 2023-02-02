@@ -9,7 +9,6 @@ import Card from "@mui/material/Card";
 import MDTypography from "components/MDTypography";
 import Icon from "@mui/material/Icon";
 import PropTypes from "prop-types";
-import {Alert} from "@mui/material";
 
 const CustomerInvoices = () => {
     const [invoices, setInvoices] = React.useState([]);
@@ -28,13 +27,6 @@ const CustomerInvoices = () => {
         getInvoices();
     }, [])
 
-    const invoiceDetailLink = (invoice) => {
-        return invoice?.transaction?.paymentStatus === 'payment_success'
-            || invoice?.transaction?.paymentStatus === 'quotation_sent' ?
-                '/transactions/mes-factures/' + invoice?.id
-                : '/transactions/mes-factures/paiement/' + invoice?.transaction?.id
-    }
-
     return (
         <DashboardLayout>
             <DashboardNavbar/>
@@ -51,9 +43,8 @@ const CustomerInvoices = () => {
                                                     date={Formatter.formatDate(invoice?.createdAt)}
                                                     id={'#' + invoice?.fileName}
                                                     price={invoice?.data.amount + ' €'}
-                                                    status={invoice?.transaction.paymentStatus}
                                                 />
-                                                <Link to={invoiceDetailLink(invoice)}>
+                                                <Link to={'/transactions/mes-factures/' + invoice?.id}>
                                                     Voir
                                                 </Link>
                                             </MDBox>
@@ -71,24 +62,7 @@ const CustomerInvoices = () => {
 
 export default CustomerInvoices;
 
-export function Invoice({date, id, price, noGutter, status}) {
-    const invoiceStatus = () => {
-        let paymentStatus = {};
-        switch (status) {
-            case 'invoice_sent':
-                paymentStatus = {severity: 'warning', label: 'En attente de paiement'};
-                break;
-            case 'payment_intent':
-                paymentStatus = {severity: 'warning', label: 'En attente de paiement'};
-                break;
-            case 'payment_failure':
-                paymentStatus = {severity: 'error', label: 'Echec de paiement'};
-                break;
-            default:
-                paymentStatus = {severity: '', label: ''};
-        }
-        return paymentStatus;
-    };
+export function Invoice({date, id, price, noGutter}) {
 
     return (
         <MDBox
@@ -125,11 +99,6 @@ export function Invoice({date, id, price, noGutter, status}) {
                     </MDTypography>
                 </MDBox>
             </MDBox>
-            {
-                status ? <MDBox display="flex" alignItems="center">
-                    <Alert severity={invoiceStatus().severity}>{invoiceStatus().label}</Alert>
-                </MDBox> : null
-            }
         </MDBox>
     );
 }
@@ -144,6 +113,5 @@ Invoice.propTypes = {
     date: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
     price: PropTypes.string.isRequired,
-    noGutter: PropTypes.bool,
-    status: PropTypes.string,
+    noGutter: PropTypes.bool
 }

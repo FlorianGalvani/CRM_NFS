@@ -77,7 +77,7 @@ class DocumentRepository extends ServiceEntityRepository
             ->andWhere('d.type = :type')
             ->setParameters(['account' => $account, 'type' => 'facture', 'statuses' => $statuses])
             ->orderBy('d.id', 'DESC')
-            ->setMaxResults(3)
+            ->setMaxResults(4)
             ->getQuery()
             ->getResult();
         ;

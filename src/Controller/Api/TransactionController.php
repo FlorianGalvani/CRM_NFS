@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Controller\BaseController;
+use App\Entity\Document;
 use App\Entity\User;
 use App\Entity\Transaction;
 use App\Repository\DocumentRepository;
@@ -38,7 +39,7 @@ class TransactionController extends BaseController
             $id,
             $currentAccount,
             [
-                Transaction::TRANSACTION_INVOICE_SENT,
+                Transaction::TRANSACTION_QUOTATION_SENT,
                 Transaction::TRANSACTION_STATUS_PAYMENT_INTENT,
                 Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE,
                 Transaction::TRANSACTION_STATUS_PAYMENT_ABANDONED
@@ -51,7 +52,7 @@ class TransactionController extends BaseController
 
         \Stripe\Stripe::setApiKey($this->getParameter('app.stripe.keys.private'));
         try {
-            $invoiceData = json_decode($transaction->getTransactionInvoice()->getData(), true);
+            $devisData = json_decode($transaction->getTransactionQuotation()->getData(), true);
             if (null === $transaction->getStripePaymentIntentId()) {
                 $paymentIntent = \Stripe\PaymentIntent::create([
                     'amount' => $transaction->getAmount() * 100,
@@ -69,9 +70,9 @@ class TransactionController extends BaseController
 
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_INTENT);
             $transaction->setStripePaymentIntentId($paymentIntent->id);
-            $invoiceData['status'] = $transaction->getPaymentStatus();
+            $devisData['status'] = $transaction->getPaymentStatus();
 
-            $transaction->getTransactionInvoice()->setData(json_encode($invoiceData));
+            $transaction->getTransactionQuotation()->setData(json_encode($devisData));
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
@@ -79,7 +80,7 @@ class TransactionController extends BaseController
             $output = [
                 'clientSecret' => $paymentIntent->client_secret,
                 'transaction' => $transaction,
-                'factureDate' => $transaction->getTransactionInvoice()->getCreatedAt()
+                'factureDate' => $transaction->getTransactionQuotation()->getCreatedAt()
             ];
 
             return $this->json($output);
@@ -113,8 +114,8 @@ class TransactionController extends BaseController
         }
 
         try {
-            $invoice = $transaction->getTransactionInvoice();
-            $invoiceData = json_decode($transaction->getTransactionInvoice()->getData(), true);
+            $devis = $transaction->getTransactionQuotation();
+            $devisData = json_decode($transaction->getTransactionQuotation()->getData(), true);
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS);
             $transaction->setLabel('Règlement d\'une facture');
 
@@ -135,10 +136,21 @@ class TransactionController extends BaseController
             ];
 
             $user->getAccount()->setPaymentMethod(json_encode($userPaymentMethod));
-            $invoiceData['status'] = $transaction->getPaymentStatus();
-            $invoiceData['payment_method'] = $userPaymentMethod;
-            $invoice->setData(json_encode($invoiceData));
+            $devisData['status'] = $transaction->getPaymentStatus();
+            $devisData['payment_method'] = $userPaymentMethod;
+            $devis->setData(json_encode($devisData));
 
+            $invoiceDate = new \DateTime();
+            $invoice = (new Document())
+                ->setCustomer($user->getAccount())
+                ->setData(json_encode($devisData))
+                ->setTransaction($transaction)
+                ->setType(Document::TRANSACTION_DOCUMENT_INVOICE)
+                ->setFileName('doc-' . $invoiceDate->format('d-m-Y'))
+                ->setFileExtension('pdf')
+                ->setCommercial($user->getAccount()->getCommercial());
+
+            $transaction->setTransactionInvoice($invoice);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
@@ -162,9 +174,7 @@ class TransactionController extends BaseController
         $transactions = $this->transactionRepository->findAllBilledTransactionByAccount($currentAccount);
         $lastInvoices = $this->documentRepository->findLastInvoicesByAccountAndStatus($currentAccount, [
             Transaction::TRANSACTION_INVOICE_SENT,
-            Transaction::TRANSACTION_STATUS_PAYMENT_INTENT,
-            Transaction::TRANSACTION_STATUS_PAYMENT_ABANDONED,
-            Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE
+            Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS
         ]);
         $lastThreeQuotes = $this->documentRepository->findLastQuotesByAccount($currentAccount);
 

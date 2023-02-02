@@ -11,9 +11,18 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Faker;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 final class AccountFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
 {
+    private $prospectFixtures;
+    private $fakerFactory;
+
+    public function __construct(ProspectFixtures $prospectFixtures)
+    {
+        $this->prospectFixtures = $prospectFixtures;
+        $this->fakerFactory = \Faker\Factory::create('fr_FR');
+    }
 
     public static function getGroups(): array
     {
@@ -87,6 +96,13 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             $user = $this->getReference(UsersFixtures::getUserMichelReference($data['user_id']));
             $user->setAccount($entity);
             $this->addReference(self::getAccountMichelReference($user->getEmail()), $entity);
+            if($entity->getType() === AccountType::COMMERCIAL) {
+                foreach ($this->getProspectData() as $data) {
+                    $prospect = $this->prospectFixtures->createProspect($data);
+                    $manager->persist($prospect);
+                    $prospect->setCommercial($entity);
+                }
+            }
             array_push($accounts, $entity);
             if($entity->getType() === AccountType::CUSTOMER) {
 
@@ -235,5 +251,40 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
         ];
 
         return $data;
+    }
+
+    private function getProspectData(): iterable
+    {
+        $faker = $this->fakerFactory;
+        $slugger = new AsciiSlugger('fr');
+
+        for ($i = 0; $i < 9; ++$i) {
+            $firstname = $faker->firstname();
+            $lastname = $faker->lastname();
+            $phone = $faker->phoneNumber();
+
+            $email = '';
+            $email .= $slugger->slug($firstname);
+            if ($faker->boolean(40)) {
+                $email .= '.';
+            }
+            $email .= $slugger->slug($lastname);
+            if ($faker->boolean(30)) {
+                $email .= $faker->numberBetween(10, 90);
+            }
+            if ($faker->boolean(40)) {
+                $email .= '@' . $faker->domainName();
+            } else {
+                $email .= '@' . $faker->freeEmailDomain();
+            }
+
+            $data = [
+                'firstname' => $firstname,
+                'lastname' => $lastname,
+                'email' => $email,
+                'phone' => $phone,
+            ];
+            yield $data;
+        }
     }
 }

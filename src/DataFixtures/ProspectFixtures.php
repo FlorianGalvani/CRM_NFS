@@ -39,7 +39,7 @@ final class ProspectFixtures extends Fixture implements DependentFixtureInterfac
         $manager->flush();
     }
 
-    private function createProspect(array $data): Prospect
+    public function createProspect(array $data): Prospect
     {
         $entity = new Prospect();
 

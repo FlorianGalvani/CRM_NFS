@@ -130,7 +130,7 @@ class AuthController extends BaseController
 
         $entityManager->flush();
 
-        $this->mailer->sendNewCommercialEmail($user, 'pass_1234');
+//        $this->mailer->sendNewCommercialEmail($user, 'pass_1234');
 
         $response = [
             'success' => true,

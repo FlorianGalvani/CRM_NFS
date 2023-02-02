@@ -321,11 +321,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     }
 
     /**
-     * @return string|null
+     * @return \DateTime|null
      */
     public function getEmailVerificationTokenAt(): ?\DateTime
     {
-        return $this->emailVerificationToken;
+        return $this->emailVerificationToken_at;
     }
 
     /**

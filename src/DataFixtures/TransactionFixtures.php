@@ -43,16 +43,17 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
             }
             $manager->persist($entity);
 
-            $quotation = $this->createDocument($entity);
-            $quotation->setType(Document::TRANSACTION_DOCUMENT_QUOTATION);
-            $manager->persist($quotation);
-
-            $invoice = $this->createDocument($entity);
-            $invoice->setType(Document::TRANSACTION_DOCUMENT_INVOICE);
-            $manager->persist($invoice);
-
-            $entity->setTransactionQuotation($quotation);
-            $entity->setTransactionInvoice($invoice);
+            if(in_array($entity->getPaymentStatus(), [Transaction::TRANSACTION_QUOTATION_SENT, Transaction::TRANSACTION_QUOTATION_REQUESTED])) {
+                $quotation = $this->createDocument($entity);
+                $quotation->setType(Document::TRANSACTION_DOCUMENT_QUOTATION);
+                $manager->persist($quotation);
+                $entity->setTransactionQuotation($quotation);
+            } else {
+                $invoice = $this->createDocument($entity);
+                $invoice->setType(Document::TRANSACTION_DOCUMENT_INVOICE);
+                $manager->persist($invoice);
+                $entity->setTransactionInvoice($invoice);
+            }
 
             ++$i;
         }
@@ -73,7 +74,8 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
         $document->setFileExtension($faker->randomElement(['dot', 'pdf', 'png', 'jpg']));
         $document->setFileName('doc-'.$invoiceDate->format('d-m-Y'));
         $document->setData(json_encode([
-            'amount' => $faker->numberBetween(200, 250)
+            'amount' => $faker->numberBetween(200, 250),
+            'status' => $entity->getPaymentStatus()
         ]));
 
         return $document;
@@ -86,9 +88,10 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         $stipePaymentId = substr( str_shuffle( $chars ), 0, 24 );
 
+        $createdAt = $faker->dateTimeBetween('+60 days', '+90 days');
+
         // Michel customer
         for ($i = 0; $i < 5; ++$i) {
-            $createdAt = $faker->dateTimeBetween('+60 days', '+90 days');
             $invoiceDate = $faker->dateTimeBetween('+60 days', '+85 days');
             yield [
                 'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
@@ -109,6 +112,28 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
             'stripePaymentIntentId' => null,
             'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
             'label' => 'Envoie d\'une facture',
+            'createdAt' => $createdAt,
+            'updatedAt' => $createdAt,
+        ];
+
+        yield [
+            'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
+            'amount' => $faker->numberBetween(200, 250),
+            'paymentStatus' => Transaction::TRANSACTION_QUOTATION_SENT,
+            'stripePaymentIntentId' => null,
+            'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
+            'label' => 'Envoie d\'un devis',
+            'createdAt' => $createdAt,
+            'updatedAt' => $createdAt,
+        ];
+
+        yield [
+            'customer' => $this->getReference(AccountFixtures::getAccountMichelReference(UsersFixtures::MICHEL_CUSTOMER)),
+            'amount' => $faker->numberBetween(200, 250),
+            'paymentStatus' => Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE,
+            'stripePaymentIntentId' => null,
+            'type' => 'On ne sait pas encore ce qui est vendu sur ce truc',
+            'label' => 'Echec de paiement',
             'createdAt' => $createdAt,
             'updatedAt' => $createdAt,
         ];

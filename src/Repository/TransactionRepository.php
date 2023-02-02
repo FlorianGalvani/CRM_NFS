@@ -52,6 +52,25 @@ class TransactionRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findAllBilledTransactionByAccount(Account $account): array
+    {
+        $statuses = [
+            Transaction::TRANSACTION_QUOTATION_SENT,
+            Transaction::TRANSACTION_QUOTATION_REQUESTED,
+            Transaction::TRANSACTION_INVOICE_SENT,
+            Transaction::TRANSACTION_STATUS_PAYMENT_INTENT
+        ];
+
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.customer = :account')
+            ->andWhere('t.paymentStatus NOT IN (:statuses)')
+            ->setParameters(['account' => $account, 'statuses' => $statuses])
+            ->orderBy('t.id', 'DESC')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Transaction[] Returns an array of Transaction objects
 //     */

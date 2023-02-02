@@ -171,28 +171,20 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         returnValue = null;
       }
 
-      if (Cookie.getCookie("token") !== undefined && key === "profil") {
-        returnValue = null;
+      // if (Cookie.getCookie("token") !== undefined && key === "profil") {
+      //   returnValue = null;
+      // }
+
+      const managerRoutesKeys = ['utilisateurs', 'compte', 'devis', 'factures'];
+
+      if(token?.account === 'customer' && managerRoutesKeys.includes(key)) {
+          returnValue = null;
       }
 
-      if (
-        token?.account === 'customer' &&
-        key === "compte"
-      ) {
-        returnValue = null;
-      }
+      const managerRoles = ['admin', 'commercial'];
+      const customerRoutesKeys = ['profil', 'paiement', 'facture', 'mes-factures'];
 
-      if (
-        token?.roles.find((role) => role) !== "ROLE_ADMIN" &&
-        key === "devis"
-      ) {
-        returnValue = null;
-      }
-
-      if (
-        token?.account === 'customer' &&
-        key === "utilisateurs"
-      ) {
+      if (managerRoles.includes(token?.account) && customerRoutesKeys.includes(key)) {
         returnValue = null;
       }
 

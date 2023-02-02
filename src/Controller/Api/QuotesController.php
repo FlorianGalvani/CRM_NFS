@@ -2,13 +2,13 @@
 
 namespace App\Controller\Api;
 
+use App\Controller\BaseController;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Service\Emails\SendEmail;
 use App\Service\FileUploader;
 use Doctrine\Persistence\ManagerRegistry;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,21 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class QuotesController extends AbstractController
+class QuotesController extends BaseController
 {
-    private $currentUser = null;
-
-    private $jwtManager = null;
-    private $tokenStorageInterface = null;
-
-    function __construct(ManagerRegistry $managerRegistry,TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager)
-    {
-        $this->jwtManager = $jwtManager;
-        $this->tokenStorageInterface = $tokenStorageInterface;
-        $decodedToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
-        $this->currentUser = $managerRegistry->getRepository(User::class)->findOneBy(['email' => $decodedToken['username']]);
-    }
-
     #[Route('/api/commercial/quotes/formdata')]
     function getFormData(Request $request, ManagerRegistry $managerRegistry)
     {
@@ -38,15 +25,17 @@ class QuotesController extends AbstractController
             'success' => false
         ];
 
+        $currentUser = $this->getUser();
+
         $formData = [
             'commercial' => [
-                'firstname' => $this->currentUser->getFirstname(),
-                'lastname' => $this->currentUser->getLastname(),
+                'firstname' => $currentUser->getFirstname(),
+                'lastname' => $currentUser->getLastname(),
             ],
-            'company' => json_decode($this->currentUser->getAccount()->getData(),true),
+            'company' => json_decode($currentUser->getAccount()->getData(),true),
         ];
 
-        $customers = $managerRegistry->getRepository(Account::class)->findBy(['commercial' => $this->currentUser->getAccount()]);
+        $customers = $managerRegistry->getRepository(Account::class)->findBy(['commercial' => $currentUser->getAccount()]);
         $customersData = [];
         $customersLabels = [];
         foreach ($customers as $customer)  {
@@ -85,11 +74,9 @@ class QuotesController extends AbstractController
         $formData = json_decode($request->getContent(), true);
         unset($formData['invoice']['logo']);
        
-
-            $decodedToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
-            $currentUser = $managerRegistry->getRepository(User::class)->findOneBy(['email' => $decodedToken['username']]);
+            $currentUser = $this->getUser();
             $customer = $managerRegistry->getRepository(\App\Entity\Account::class)->find($formData['customer']);
-            $commercial = $managerRegistry->getRepository(\App\Entity\Account::class)->find($currentUser->getAccount()->getId());
+            $commercial = $currentUser->getAccount();
 
             $document = new \App\Entity\Document();
             $document->setType(\App\Enum\Document\DocumentType::QUOTE);
@@ -121,7 +108,9 @@ class QuotesController extends AbstractController
             return $this->json($response,Response::HTTP_UNAUTHORIZED);
         }
 
-        $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy(['commercial' => $this->currentUser->getAccount()->getId(), 'type' => \App\Enum\Document\DocumentType::QUOTE]);
+        $currentUser = $this->getUser();
+
+        $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy(['commercial' => $currentUser->getAccount()->getId(), 'type' => \App\Enum\Document\DocumentType::QUOTE]);
         return $this->json($quotes,Response::HTTP_OK);
 
         $i = 0;

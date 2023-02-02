@@ -40,6 +40,7 @@ export default function Data() {
     const urlAdmin = `all-users/`;
     const urlCommercial = `commercial-customers/`;
     const endpoint = token.account === "admin" ? urlAdmin : urlCommercial;
+    
 
     axios.get( url + endpoint, {
       headers: {
@@ -49,6 +50,7 @@ export default function Data() {
       .then((response) => {
         const allUsers = response.data;
         setUsers(allUsers);
+        console.log(response.data);
       })
       .catch((error) => console.log(error));
   }

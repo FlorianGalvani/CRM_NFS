@@ -130,8 +130,14 @@ class QuotesController extends BaseController
         $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy($findBy, [
             'createdAt' => 'DESC'
         ]);
+
+        $quotesData = [];
+
+        foreach($quotes as $_quote) {
+            array_push($quotesData, $_quote->getInfos());
+        }
    
-        return $this->json($quotes, Response::HTTP_OK);
+        return $this->json($quotesData, Response::HTTP_OK);
     }
 
     #[Route('/api/quotes/list/latest', name: 'app_api_quotes_list_latest')]
@@ -157,7 +163,13 @@ class QuotesController extends BaseController
         $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy($findBy, [
             'createdAt' => 'DESC'
         ], 5);
+
+        $quotesData = [];
+
+        foreach($quotes as $_quote) {
+            array_push($quotesData, $_quote->getInfos());
+        }
         
-        return $this->json($quotes, Response::HTTP_OK);
+        return $this->json($quotesData, Response::HTTP_OK);
     }
 }

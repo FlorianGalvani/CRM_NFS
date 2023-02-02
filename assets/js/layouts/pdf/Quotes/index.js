@@ -32,16 +32,25 @@ const QuotePdf = ({ pdfMode, data, formData }) => {
   const [saleTax, setSaleTax] = useState(null);
   const dateFormat = "MMM dd, yyyy";
   const invoiceDate =
-    invoice.invoiceDate !== "" ? new Date(invoice.invoiceDate) : new Date();
+    invoice.invoiceDate !== "" ? new Date(invoice.invoiceDate.date) : new Date();
   const invoiceDueDate =
     invoice.invoiceDueDate !== ""
-      ? new Date(invoice.invoiceDueDate)
+      ? new Date(invoice.invoiceDueDate.date)
       : new Date(invoiceDate.valueOf());
 
 
   if (invoice.invoiceDueDate === "") {
     invoiceDueDate.setDate(invoiceDueDate.getDate() + 30);
   }
+  
+  const calculateAmount = (quantity, rate) => {
+    const quantityNumber = parseFloat(quantity);
+    const rateNumber = parseFloat(rate);
+    const amount =
+      quantityNumber && rateNumber ? quantityNumber * rateNumber : 0;
+
+    return amount.toFixed(2);
+  };
 
   const handleChange = (name, value) => {
     if (name !== "productLines") {
@@ -121,14 +130,14 @@ const QuotePdf = ({ pdfMode, data, formData }) => {
                 <EditableInput
                   className="fs-20 bold"
                   placeholder="Dev Studio"
-                  value={data.companyName}
+                  value={invoice.companyName}
                   onChange={(value) => handleChange("companyName", value)}
                   pdfMode={pdfMode}
                 />
                 <EditableInput
 
                   placeholder="Nom Commercial"
-                  value={data.name}
+                  value={invoice.name}
                   onChange={(value) => handleChange("name", value)}
                   pdfMode={pdfMode}
                   disable
@@ -136,14 +145,14 @@ const QuotePdf = ({ pdfMode, data, formData }) => {
                 <EditableInput
 
                   placeholder="77 Rue Rambuteau"
-                  value={data.companyAddress}
+                  value={invoice.companyAddress}
                   onChange={(value) => handleChange("companyAddress", value)}
                   pdfMode={pdfMode}
                 />
                 <EditableInput
 
                   placeholder="Paris, 75001"
-                  value={data.companyAddress2}
+                  value={invoice.companyAddress2}
                   onChange={(value) => handleChange("companyAddress2", value)}
                   pdfMode={pdfMode}
                   disabled
@@ -152,7 +161,7 @@ const QuotePdf = ({ pdfMode, data, formData }) => {
                 <EditableSelect
 
                   options={countryList}
-                  value={data.companyCountry}
+                  value={invoice.companyCountry}
                   onChange={(value) => handleChange("companyCountry", value)}
                   pdfMode={pdfMode}
 

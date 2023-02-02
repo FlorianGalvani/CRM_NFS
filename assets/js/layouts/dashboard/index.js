@@ -13,7 +13,10 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
+// Utils
+import { Cookie } from "utils/index";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -37,7 +40,22 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 
+
+
 function Dashboard() {
+  const [token, setDecodedToken] = useState();
+
+  const decodedToken = () => {
+    if (Cookie.getCookie("token") !== undefined) {
+      const jwtToken = jwt_decode(Cookie.getCookie("token"));
+      setDecodedToken(jwtToken);
+    }
+  };
+
+  useEffect(() => {
+    decodedToken();
+  }, []);
+  console.log(token);
   const { sales, tasks } = reportsLineChartData;
 
   return (

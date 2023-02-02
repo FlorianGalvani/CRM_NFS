@@ -23,6 +23,8 @@ import { Bar } from "react-chartjs-2";
 
 // @mui material components
 import Card from "@mui/material/Card";
+import Divider from "@mui/material/Divider";
+import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -31,7 +33,7 @@ import MDTypography from "components/MDTypography";
 // ReportsBarChart configurations
 import configs from "examples/Charts/BarCharts/ReportsBarChart/configs";
 
-function ReportsBarChart({ color, title, description, chart }) {
+function ReportsBarChart({ color, title, description, date, chart }) {
   const { data, options } = configs(chart.labels || [], chart.datasets || {});
 
   return (
@@ -66,6 +68,20 @@ function ReportsBarChart({ color, title, description, chart }) {
           >
             {description}
           </MDTypography>
+          <Divider />
+          <MDBox display="flex" alignItems="center">
+            <MDTypography
+              variant="button"
+              color="text"
+              lineHeight={1}
+              sx={{ mt: 0.15, mr: 0.5 }}
+            >
+              <Icon>schedule</Icon>
+            </MDTypography>
+            <MDTypography variant="button" color="text" fontWeight="light">
+              {date}
+            </MDTypography>
+          </MDBox>
         </MDBox>
       </MDBox>
     </Card>
@@ -91,6 +107,7 @@ ReportsBarChart.propTypes = {
   ]),
   title: PropTypes.string.isRequired,
   description: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  date: PropTypes.string.isRequired,
   chart: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.array, PropTypes.object])
   ).isRequired,

@@ -13,9 +13,13 @@
   border: 1px dotted transparent;
   transition: background 0.1s ease-in-out, border-color 0.2s ease-in-out;
 }
+.input.disabled,
+.select.disabled {
+  cursor: default;
 
-.input,
-.select {
+}
+.input:not(.disabled),
+.select:not(.disabled) {
   &:hover,
   &:focus {
     background: $color-yellow;

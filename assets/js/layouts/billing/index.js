@@ -34,6 +34,7 @@ import PaymentMethod from "layouts/billing/components/PaymentMethod";
 import Invoices from "layouts/billing/components/Invoices";
 import BillingInformation from "layouts/billing/components/BillingInformation";
 import Transactions from "layouts/billing/components/Transactions";
+import Quotes from "layouts/billing/components/Quotes";
 
 // click for quotes
 import { useNavigate } from "react-router-dom";
@@ -125,6 +126,9 @@ function Billing() {
             </Grid>
             <Grid item xs={12} lg={4}>
               <Invoices />
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <Quotes />
             </Grid>
           </Grid>
         </MDBox>

@@ -58,7 +58,7 @@ class CustomerEvent implements DatedInterface, IdInterface
         return $this;
     }
 
-    public function getProspect(): Prospect
+    public function getProspect(): ?Prospect
     {
         return $this->prospect;
     }

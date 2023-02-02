@@ -17,6 +17,7 @@ Coded by www.creative-tim.com
 //api
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 import { Cookie } from "utils/index";
 
 // Material Dashboard 2 React components
@@ -24,7 +25,6 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import MDBadge from "components/MDBadge";
-
 
 // Images
 import team2 from "assets/images/team-2.jpg";
@@ -34,15 +34,18 @@ import team4 from "assets/images/team-4.jpg";
 export default function Data() {
   const [users, setUsers] = useState([]);
 
-  const getAllUsers = () => {
-    const token = Cookie.getCookie("token");
-    const url = `http://localhost:8000/api/`;
-    const urlAdmin = `all-users/`;
-    const urlCommercial = `commercial-customers/`;
-    const endpoint = token.account === "admin" ? urlAdmin : urlCommercial;
-    
+  const token = Cookie.getCookie("token");  
+  
+  const url = `http://localhost:8000/api/commercial-customers/`;
+  
+  // const urlAdmin = `all-users/`;
+  
+  // const urlCommercial = `commercial-customers/`;
+  
+  // const endpoint = tokenDecoded && tokenDecoded.account === "admin" ? urlAdmin : urlCommercial;
 
-    axios.get( url + endpoint, {
+  const getAllUsers = () => {
+    axios.get(url, {
       headers: {
         "Authorization": `Bearer ${token}`,
       },
@@ -58,9 +61,6 @@ export default function Data() {
   useEffect(() => {
     getAllUsers()
   }, []);
-
-  console.log(users);
-
 
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
@@ -90,54 +90,76 @@ export default function Data() {
 
   return {
     columns: [
-      { Header: "Nom", accessor: "author", width: "45%", align: "left" },
-      { Header: "Entreprise", accessor: "function", align: "left" },
+      { Header: "Nom", accessor: "author", width: "30%", align: "left" },
+      { Header: "téléphone", accessor: "phone", align: "left" },
+      { Header: "email", accessor: "email", align: "center" },
+      { Header: "Entreprise", accessor: "function", align: "center" },
       { Header: "Action", accessor: "action", align: "center" },
     ],
 
-  rows:
-   users && users.map(user => (
-    {
-      author: (
-        <Author
-        //random image team for each user
-        image={[team2, team3, team4][Math.floor(Math.random() * 3)]}
-          name={user.user.firstname + " " + user.user.lastname} 
-          email={user.user.email}
-        />
-      ),
-      function: <Job title={user.user.company}  />,
-      status: (
-        <MDBox ml={-1}>
-          <MDBadge
-            color="success"
-            variant="gradient"
-            size="sm"
-          />
-        </MDBox>
-      ),
-      employed: (
-        <MDTypography
-          component="a"
-          href="#"
-          variant="caption"
-          color="text"
-          fontWeight="medium"
-        >
-        </MDTypography>
-      ),
-      action: (
-        <MDTypography
-          component="a"
-          href="#"
-          variant="caption"
-          color="text"
-          fontWeight="medium"
-        >
-          Edit
-        </MDTypography>
-      ),
-    }
-  )),
-};
+    rows:
+      users && users.map(user => (
+        {
+          author: (
+            <Author
+              image={[team2, team3, team4][Math.floor(Math.random() * 3)]}
+              name={user.user.firstname + " " + user.user.lastname}
+            />
+          ),
+          phone: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="button"
+              color="text"
+              fontWeight="medium"
+            >
+              {user.user.phone}
+            </MDTypography>
+          ),
+          email: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="caption"
+              color="text"
+              fontWeight="medium"
+            >
+              {user.user.email}
+            </MDTypography>
+          ),
+          function: <Job title={user.user.company} />,
+          status: (
+            <MDBox ml={-1}>
+              <MDBadge
+                color="success"
+                variant="gradient"
+                size="sm"
+              />
+            </MDBox>
+          ),
+          employed: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="caption"
+              color="text"
+              fontWeight="medium"
+            >
+            </MDTypography>
+          ),
+          action: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="caption"
+              color="text"
+              fontWeight="medium"
+            >
+              Edit
+            </MDTypography>
+          ),
+        }
+      )),
+  };
 }

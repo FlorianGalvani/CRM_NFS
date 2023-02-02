@@ -15,6 +15,8 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Cookie } from "utils/index";
 
 // @mui material components
 import Icon from "@mui/material/Icon";
@@ -35,7 +37,36 @@ import logoInvesion from "assets/images/small-logos/logo-invision.svg";
 
 export default function data() {
   const [prospects, setProspects] = useState([]);
+  const token = Cookie.getCookie("token");
 
+  const getAllProspects = () => {
+    axios.get(`http://localhost:8000/api/all-prospects`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        const allProspects = response.data;
+        setProspects(allProspects);
+      })
+      .catch((error) => console.log(error));
+  }
+
+  useEffect(() => {
+    getAllProspects()
+  }, []);
+
+  const deleteProspect = (id) => {
+    axios.delete(`http://localhost:8000/api/prospects/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        getAllProspects();
+      })
+      .catch((error) => console.log(error));
+  }
 
   const Project = ({ image, name }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
@@ -66,16 +97,16 @@ export default function data() {
   return {
     columns: [
       { Header: "project", accessor: "project", width: "30%", align: "left" },
-      { Header: "budget", accessor: "budget", align: "left" },
-      { Header: "status", accessor: "status", align: "center" },
-      { Header: "completion", accessor: "completion", align: "center" },
+      { Header: "téléphone", accessor: "phone", align: "left" },
+      { Header: "email", accessor: "email", align: "center" },
+      { Header: "conversion", accessor: "conversion", align: "center" },
       { Header: "action", accessor: "action", align: "center" },
     ],
 
     rows: prospects.map((prospect) => {
       return {
-        project: <Project image={LogoAsana} name={prospect.firstname + ' ' + prospect.lastname} />,
-        budget: (
+        project: <Project image={['https://source.unsplash.com/random/?profile', 'https://source.unsplash.com/random/?people', 'https://source.unsplash.com/random/?profil'][Math.floor(Math.random() * 3)]} name={prospect.firstname + ' ' + prospect.lastname} />,
+        phone: (
           <MDTypography
             component="a"
             href="#"
@@ -83,10 +114,10 @@ export default function data() {
             color="text"
             fontWeight="medium"
           >
-            {/* {prospect.budget} */}
+            {prospect.phone}
           </MDTypography>
         ),
-        status: (
+        email: (
           <MDTypography
             component="a"
             href="#"
@@ -94,50 +125,26 @@ export default function data() {
             color="text"
             fontWeight="medium"
           >
-            {/* {prospect.status} */}
+            {prospect.email}
           </MDTypography>
         ),
-        completion: <Progress color="info" value={60} />,
+        conversion: (
+          <Progress color="info" value={Math.floor(Math.random() * 100)} />
+        ),
         action: (
-          <MDTypography component="a" href="#" color="text">
-            <Icon>more_vert</Icon>
-          </MDTypography>
+          <MDBox display="flex" justifyContent="center">
+            <MDBox
+              component="a"
+              href="#"
+              color="text"
+              mr={1}
+              onClick={() => deleteProspect(prospect.id)}
+            >
+              <Icon fontSize="small">delete</Icon>
+            </MDBox>
+          </MDBox>
         ),
       }
     })
   };
 }
-
-// [
-//   {
-//     project: <Project image={LogoAsana} name="Asana" />,
-//     budget: (
-//       <MDTypography
-//         component="a"
-//         href="#"
-//         variant="button"
-//         color="text"
-//         fontWeight="medium"
-//       >
-//         $2,500
-//       </MDTypography>
-//     ),
-//     status: (
-//       <MDTypography
-//         component="a"
-//         href="#"
-//         variant="caption"
-//         color="text"
-//         fontWeight="medium"
-//       >
-//         working
-//       </MDTypography>
-//     ),
-//     completion: <Progress color="info" value={60} />,
-//     action: (
-//       <MDTypography component="a" href="#" color="text">
-//         <Icon>more_vert</Icon>
-//       </MDTypography>
-//     ),
-//   },
-// ],

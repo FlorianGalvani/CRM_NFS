@@ -17,7 +17,6 @@ Coded by www.creative-tim.com
 //api
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 import { Cookie } from "utils/index";
 
 // Material Dashboard 2 React components
@@ -38,12 +37,6 @@ export default function Data() {
   const token = Cookie.getCookie("token");  
   
   const url = `http://localhost:8000/api/commercial-customers/`;
-  
-  // const urlAdmin = `all-users/`;
-  
-  // const urlCommercial = `commercial-customers/`;
-  
-  // const endpoint = tokenDecoded && tokenDecoded.account === "admin" ? urlAdmin : urlCommercial;
 
   const getAllUsers = () => {
     axios.get(url, {
@@ -54,7 +47,6 @@ export default function Data() {
       .then((response) => {
         const allUsers = response.data;
         setUsers(allUsers);
-        console.log(response.data);
       })
       .catch((error) => console.log(error));
   }

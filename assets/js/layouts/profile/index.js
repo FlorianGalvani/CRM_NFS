@@ -52,7 +52,7 @@ import team1 from "assets/images/team-1.jpg";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
-import {Cookie} from "utils";
+import { Cookie } from "utils";
 import jwt_decode from "jwt-decode";
 import UserHeader from "layouts/profile/user/header";
 
@@ -61,7 +61,7 @@ function Overview() {
     const [user, setUser] = React.useState(null);
 
     const getUserFromCookie = () => {
-        if(Cookie.getCookie("token") !== undefined) {
+        if (Cookie.getCookie("token") !== undefined) {
             const jwtToken = jwt_decode(Cookie.getCookie("token"));
             setUser(jwtToken.user)
             setToken(jwtToken);
@@ -212,7 +212,7 @@ function Overview() {
                                 </Grid>
                             </MDBox>
                         </>
-                    : null
+                        : null
                 }
             </UserHeader>
             <Footer />

@@ -112,7 +112,7 @@ const routes = [
   {
     type: "collapse",
     name: "Devis",
-    key: "devis",
+    key: "devistemp",
     icon: <Icon fontSize="small">receipt</Icon>,
     route: "/devis",
     component: <Quotes />,
@@ -120,7 +120,7 @@ const routes = [
   {
     type: "collapse",
     name: "Créer un Devis",
-    key: "devis",
+    key: "devisform",
     icon: <Icon fontSize="small">receipt</Icon>,
     route: "/devis/nouveau",
     component: <QuoteForm />,

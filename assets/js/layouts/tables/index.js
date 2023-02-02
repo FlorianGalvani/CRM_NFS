@@ -71,7 +71,7 @@ function Tables() {
                 coloredShadow="info"
               >
                 <MDTypography variant="h6" color="white">
-                {token?.account === "admin" ? "Utilisateurs" : "Clients"}
+                {token?.account === "admin" ? "Commerciaux" : "Clients"}
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>
@@ -98,7 +98,7 @@ function Tables() {
                 coloredShadow="info"
               >
                 <MDTypography variant="h6" color="white">
-                {token?.account === "admin" ? "Commerciaux" : "Prospects"}
+                 Prospects
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>

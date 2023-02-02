@@ -106,9 +106,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
-  // const decoded = jwt_decode(Cookie.getCookie("token"));
-  // console.log(decoded.roles.find((role) => role))
-
   // Render all the routes from the routes.js (All the visible items on the Sidenav), if user is connect don't show sign in
   const renderRoutes = routes.map(
     ({ type, name, icon, title, noCollapse, key, href, route }) => {
@@ -170,10 +167,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       if (Cookie.getCookie("token") !== undefined && key === "connexion") {
         returnValue = null;
       }
-
-      // if (Cookie.getCookie("token") !== undefined && key === "profil") {
-      //   returnValue = null;
-      // }
 
       const managerRoutesKeys = ['utilisateurs', 'compte', 'devis', 'factures', 'devisform', 'devistemp'];
 

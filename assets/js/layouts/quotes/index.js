@@ -5,9 +5,7 @@ import MDBox from 'components/MDBox';
 import MDTypography from 'components/MDTypography';
 import { Grid, Card } from '@mui/material';
 import DataTable from 'examples/Tables/DataTable';
-import { Link } from 'react-router-dom';
 import quotesTableData from './data/quotesTableData';
-import Footer from "layouts/authentication/components/Footer";
 
 function Quotes() {
     const { columns, rows } = quotesTableData();
@@ -45,7 +43,6 @@ function Quotes() {
                     </Grid>
                 </Grid>
             </MDBox>
-            {/* <Footer /> */}
         </DashboardLayout>
     );
 }

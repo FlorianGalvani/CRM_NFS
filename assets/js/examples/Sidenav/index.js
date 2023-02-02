@@ -175,7 +175,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       //   returnValue = null;
       // }
 
-      const managerRoutesKeys = ['utilisateurs', 'compte', 'devis', 'factures'];
+      const managerRoutesKeys = ['utilisateurs', 'compte', 'devis', 'factures', 'devisform', 'devistemp'];
 
       if(token?.account === 'customer' && managerRoutesKeys.includes(key)) {
           returnValue = null;

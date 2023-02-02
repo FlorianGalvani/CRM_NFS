@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Account;
 use App\Entity\CustomerEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,19 @@ class CustomerEventRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findCustomerEventsByCommercial(Account $account)
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e, c')
+            ->innerJoin('e.customer', 'c')
+            ->andWhere('c.commercial = :account')
+            ->setParameter('account', $account)
+            ->orderBy('e.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
 //    /**

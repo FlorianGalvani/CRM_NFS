@@ -5,28 +5,15 @@ namespace App\Controller\Api;
 use App\Controller\BaseController;
 use App\Entity\Account;
 use App\Entity\User;
+use App\Event\CreateDocumentEvent;
 use Doctrine\Persistence\ManagerRegistry;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class QuotesController extends BaseController
 {
-    private $currentUser = null;
-
-    private $jwtManager = null;
-    private $tokenStorageInterface = null;
-
-    function __construct(ManagerRegistry $managerRegistry, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager)
-    {
-        $this->jwtManager = $jwtManager;
-        $this->tokenStorageInterface = $tokenStorageInterface;
-        $decodedToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
-        $this->currentUser = $managerRegistry->getRepository(User::class)->findOneBy(['email' => $decodedToken['username']]);
-    }
-
     #[Route('/api/commercial/quotes/formdata')]
     function getFormData( ManagerRegistry $managerRegistry)
     {
@@ -34,15 +21,17 @@ class QuotesController extends BaseController
             'success' => false
         ];
 
+        $currentUser = $this->getUser();
+
         $formData = [
             'commercial' => [
-                'firstname' => $this->currentUser->getFirstname(),
-                'lastname' => $this->currentUser->getLastname(),
+                'firstname' => $currentUser->getFirstname(),
+                'lastname' => $currentUser->getLastname(),
             ],
-            'company' => json_decode($this->currentUser->getAccount()->getData(), true),
+            'company' => json_decode($currentUser->getAccount()->getData(),true),
         ];
 
-        $customers = $managerRegistry->getRepository(Account::class)->findBy(['commercial' => $this->currentUser->getAccount()]);
+        $customers = $managerRegistry->getRepository(Account::class)->findBy(['commercial' => $currentUser->getAccount()]);
         $customersData = [];
         $customersLabels = [];
         foreach ($customers as $customer) {
@@ -68,7 +57,7 @@ class QuotesController extends BaseController
     }
 
     #[Route('/api/commercial/quotes/new', name: 'app_api_commercial_quotes_create')]
-    function createNewQuotes(Request $request, ManagerRegistry $managerRegistry)
+    function createNewQuotes (Request $request, ManagerRegistry $managerRegistry, EventDispatcherInterface $eventDispatcher)
     {
         $response = [
             'success' => false
@@ -80,24 +69,27 @@ class QuotesController extends BaseController
 
         $formData = json_decode($request->getContent(), true);
         unset($formData['invoice']['logo']);
+       
+            $currentUser = $this->getUser();
+            $customer = $managerRegistry->getRepository(\App\Entity\Account::class)->find($formData['customer']);
+            $commercial = $currentUser->getAccount();
 
-        $customer = $managerRegistry->getRepository(\App\Entity\Account::class)->find($formData['customer']);
-        $commercial = $managerRegistry->getRepository(\App\Entity\Account::class)->find($this->currentUser->getAccount()->getId());
+            $document = new \App\Entity\Document();
+            $document->setType(\App\Enum\Document\DocumentType::QUOTE);
+            $document->setFileName('Devis ');
+            $document->setFileExtension('pdf');
+            $document->setCustomer($customer);
+            $document->setCommercial($commercial);
 
-        $document = new \App\Entity\Document();
-        $document->setType(\App\Enum\Document\DocumentType::QUOTE);
-        $document->setFileName('Devis ');
-        $document->setFileExtension('pdf');
-        $document->setCustomer($customer);
-        $document->setCommercial($commercial);
+            $document->setData(json_encode($formData['invoice']));
 
-        $document->setData(json_encode($formData['invoice']));
+            $em = $managerRegistry->getManager();
+            $em->persist($document);
+            $em->flush();
 
-        $em = $managerRegistry->getManager();
-        $em->persist($document);
-        $em->flush();
+            $response['success'] = true;
 
-        $response['success'] = true;
+        $eventDispatcher->dispatch(new CreateDocumentEvent($document), CreateDocumentEvent::NAME);
 
         return $this->json($response, Response::HTTP_OK);
     }
@@ -113,19 +105,23 @@ class QuotesController extends BaseController
             return $this->json($response, Response::HTTP_UNAUTHORIZED);
         }
 
+        $currentUser = $this->getUser();
         $findBy = [];
-        $currentUserAccountID = $this->currentUser->getAccount()->getId();
 
-        if ($this->currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::COMMERCIAL) {
-            $findBy = ['commercial' => $currentUserAccountID];
+        if ($currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::COMMERCIAL) {
+            $findBy = ['commercial' => $currentUser->getAccount()];
         } else {
-            $findBy = ['customer' => $currentUserAccountID];
+            $findBy = ['customer' => $currentUser->getAccount()];
         }
 
         $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy($findBy, [
             'createdAt' => 'DESC'
         ]);
-   
+
+        $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy($findBy, [
+            'createdAt' => 'DESC'
+        ]);
+
         return $this->json($quotes, Response::HTTP_OK);
     }
 
@@ -141,18 +137,18 @@ class QuotesController extends BaseController
         }
 
         $findBy = [];
-        $currentUserAccountID = $this->currentUser->getAccount()->getId();
+        $currentUser = $this->getUser();
 
-        if ($this->currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::COMMERCIAL) {
-            $findBy = ['commercial' => $currentUserAccountID];
+        if ($currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::COMMERCIAL) {
+            $findBy = ['commercial' => $currentUser->getAccount()];
         } else {
-            $findBy = ['customer' => $currentUserAccountID];
+            $findBy = ['customer' => $currentUser->getAccount()];
         }
 
         $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy($findBy, [
             'createdAt' => 'DESC'
         ], 5);
-        
+
         return $this->json($quotes, Response::HTTP_OK);
     }
 }

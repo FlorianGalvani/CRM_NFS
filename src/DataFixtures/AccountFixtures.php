@@ -3,12 +3,16 @@
 namespace App\DataFixtures;
 
 use App\Entity\Account;
+use App\Entity\CustomerEvent;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
+use App\Enum\Customer\EventType;
+use App\Event\CreateCustomerEvent;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Faker;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -16,12 +20,20 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 final class AccountFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
 {
     private $prospectFixtures;
+    private $userFixtures;
     private $fakerFactory;
+    private $eventDispatcher;
 
-    public function __construct(ProspectFixtures $prospectFixtures)
+    public function __construct(
+        ProspectFixtures $prospectFixtures,
+        EventDispatcherInterface $eventDispatcher,
+        UsersFixtures $userFixtures
+    )
     {
         $this->prospectFixtures = $prospectFixtures;
         $this->fakerFactory = \Faker\Factory::create('fr_FR');
+        $this->eventDispatcher = $eventDispatcher;
+        $this->userFixtures = $userFixtures;
     }
 
     public static function getGroups(): array
@@ -44,6 +56,11 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
     public static function getAccountMichelReference(string $key): string
     {
         return Account::class . '_MICHEL_' . $key;
+    }
+
+    public static function getAccountMichelCustomerReference(string $key): string
+    {
+        return Account::class . '_MICHEL_CUSTOMER_' . $key;
     }
 
     public static function getAccountCommercialReference(string $key): string
@@ -96,14 +113,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             $user = $this->getReference(UsersFixtures::getUserMichelReference($data['user_id']));
             $user->setAccount($entity);
             $this->addReference(self::getAccountMichelReference($user->getEmail()), $entity);
-            if($entity->getType() === AccountType::COMMERCIAL) {
-                foreach ($this->getProspectData() as $data) {
-                    $prospect = $this->prospectFixtures->createProspect($data);
-                    $manager->persist($prospect);
-                    $prospect->setCommercial($entity);
-                }
-            }
-            array_push($accounts, $entity);
+
             if($entity->getType() === AccountType::CUSTOMER) {
 
                 foreach($accounts as $account) {
@@ -111,7 +121,43 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                         $account->addCustomer($entity);
                     }
                 }
+                $events = [];
+                $events[] = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime()];
+                $events[] = [EventType::EVENT_EMAIL_SENT => new \DateTime()];
+                $customerEvent = (new CustomerEvent())
+                    ->setEvents($events);
+
+                $customerEvent->setCustomer($entity);
+                $manager->persist($customerEvent);
             }
+
+            if($entity->getType() === AccountType::COMMERCIAL) {
+                foreach ($this->getProspectData() as $prospectData) {
+                    $prospect = $this->prospectFixtures->createProspect($prospectData);
+                    $manager->persist($prospect);
+                    $prospect->setCommercial($entity);
+                }
+                $i = 100;
+                foreach ($this->getMichelCustomerData() as $customerData)
+                {
+                    $customer = $this->createAccount($customerData);
+                    $manager->persist($customer);
+                    $user = $this->getReference(UsersFixtures::getUserCustomerMichelReference((string) $i));
+                    $user->setAccount($customer);
+                    $this->addReference(self::getAccountMichelCustomerReference((string) $i), $entity);
+                    $entity->setData(json_encode([
+                        "address" => $faker->streetAddress,
+                        "zipCode" => $faker->postcode,
+                        "city" => $faker->city,
+                        "country" => $faker->country,
+                    ]));
+                    $customer->setName($user->getFirstName() . ' ' . $user->getLastName());
+                    $entity->addCustomer($entity);
+                    $this->eventDispatcher->dispatch(new CreateCustomerEvent($customer), CreateCustomerEvent::NAME);
+                    ++$i;
+                }
+            }
+            array_push($accounts, $entity);
         }
 
         // 100
@@ -143,6 +189,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     $this->addReference(self::getAccountCustomerReference((string) $iIndividual), $entity);
                     $commercial = $this->getReference(self::getAccountCommercialReference((string) $iCommercial-1));
                     $commercial->addCustomer($entity);
+                    $this->eventDispatcher->dispatch(new CreateCustomerEvent($entity), CreateCustomerEvent::NAME);
                     ++$iIndividual;
                     break;
                 case AccountType::ADMIN:
@@ -221,6 +268,13 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             }
         }
         yield $this->getAdminData($i);
+    }
+
+    private function getMichelCustomerData(): iterable
+    {
+        for ($i = 0; $i < 10; ++$i) {
+            yield $this->getCustomerData($i);
+         }
     }
 
     private function getCommercialData(int $i): array

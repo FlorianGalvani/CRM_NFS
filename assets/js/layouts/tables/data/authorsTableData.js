@@ -53,6 +53,7 @@ export default function Data() {
       .then((response) => {
         const allUsers = response.data;
         setUsers(allUsers);
+        console.log(response.data);
       })
       .catch((error) => console.log(error));
   }

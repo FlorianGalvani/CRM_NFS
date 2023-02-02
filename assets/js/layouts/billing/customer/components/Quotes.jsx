@@ -32,7 +32,7 @@ const Quotes = ({quotes}) => {
                             <Bill
                                 key={index}
                                 name={quote?.fileName}
-                                company={quote?.transaction.type}
+                                company={quote?.transaction?.type}
                                 email={getQuoteCommercial(quote).email}
                             />
                         ))

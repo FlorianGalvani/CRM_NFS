@@ -5,8 +5,10 @@ namespace App\Controller\Api;
 use App\Controller\BaseController;
 use App\Entity\Document;
 use App\Enum\Document\DocumentType;
+use App\Event\CreateDocumentEvent;
 use App\Repository\AccountRepository;
 use App\Repository\DocumentRepository;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +26,7 @@ class DocumentController extends BaseController
     }
 
     #[Route('/commercial/invoice', methods: ['POST'])]
-    public function create(Request $request): Response
+    public function create(Request $request, EventDispatcherInterface $eventDispatcher): Response
     {
         $response = [
             'success' => false
@@ -54,6 +56,8 @@ class DocumentController extends BaseController
             $this->documentRepo->save($document, true);
 
             $response['success'] = true;
+
+            $eventDispatcher->dispatch(new CreateDocumentEvent($document), CreateDocumentEvent::NAME);
 
             return $this->json($response,Response::HTTP_OK);
         } catch(Error $e) {

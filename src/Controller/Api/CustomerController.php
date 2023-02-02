@@ -3,12 +3,15 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Event\CreateCustomerEvent;
+use App\Event\CreateDocumentEvent;
 use App\Repository\AccountRepository;
 use App\Repository\DocumentRepository;
 use App\Repository\UserRepository;
 use App\Service\Emails\SendEmail;
 use App\Form\Commercial\NewCustomerType;
 use App\Controller\BaseController;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -32,7 +35,7 @@ class CustomerController extends BaseController
     }
 
     #[Route('/api/commercial/new/customer', name: 'app_api_commercial_crud')]
-    public function createNewCustomer(Request $request, ManagerRegistry $managerRegistry, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail): Response
+    public function createNewCustomer(Request $request, ManagerRegistry $managerRegistry, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail, EventDispatcherInterface $eventDispatcher): Response
     {
 
         $em = $managerRegistry->getManager();
@@ -90,7 +93,9 @@ class CustomerController extends BaseController
         $em->persist($user);
         $em->flush();
 
-        $sendEmail->sendNewCustomerEmail($user, $password);
+        $sendEmail->sendNewCustomerEmail($user, $password); // => envoie d'email dans les event subscriber !
+
+        $eventDispatcher->dispatch(new CreateCustomerEvent($account), CreateCustomerEvent::NAME);
 
         $response['success'] = true;
         return $this->json($response,Response::HTTP_OK);

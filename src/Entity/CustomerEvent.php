@@ -88,7 +88,7 @@ class CustomerEvent implements DatedInterface, IdInterface
             'id' => $this->getId(),
             'customer' => $this->getCustomer(),
             'events' => $this->getEvents(),
-            'prospect' => $this->getProspect(),
+            'prospect' => $this->getProspect() ?? null,
             'createdAt' => $this->getCreatedAt(),
             'updatedAt' => $this->getUpdatedAt()
         ];

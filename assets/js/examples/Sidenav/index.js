@@ -181,6 +181,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           returnValue = null;
       }
 
+      if(token?.account === 'admin' && key === "devisform" || key === "factures") {
+          returnValue = null;
+      }
+
       const managerRoles = ['admin', 'commercial'];
       const customerRoutesKeys = ['profil', 'paiement', 'facture', 'mes-factures'];
 

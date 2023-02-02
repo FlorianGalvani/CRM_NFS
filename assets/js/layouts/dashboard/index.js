@@ -93,7 +93,7 @@ function Dashboard() {
                   color="dark"
                   title="Montant des factures"
                   description="Montant des factures par mois"
-                  // date="just updated"
+                  date="just updated"
                   chart={tasks}
                 />
               </MDBox>

@@ -36,8 +36,12 @@ export default function Data() {
 
   const getAllUsers = () => {
     const token = Cookie.getCookie("token");
+    const url = `http://localhost:8000/api/`;
+    const urlAdmin = `all-users/`;
+    const urlCommercial = `commercial-customers/`;
+    const endpoint = token.account === "admin" ? urlAdmin : urlCommercial;
 
-    axios.get(`http://localhost:8000/api/commercial-customers`, {
+    axios.get( url + endpoint, {
       headers: {
         "Authorization": `Bearer ${token}`,
       },
@@ -53,7 +57,7 @@ export default function Data() {
     getAllUsers()
   }, []);
 
-  
+  console.log(users);
 
 
   const Author = ({ image, name, email }) => (

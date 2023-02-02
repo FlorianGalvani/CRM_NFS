@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -30,14 +30,32 @@ import DataTable from "examples/Tables/DataTable";
 
 // Data
 import data from "layouts/dashboard/components/Projects/data";
+import { Cookie } from "utils/index";
+import jwt_decode from "jwt-decode";
+
 
 function Projects() {
   const { columns, rows } = data();
   const [menu, setMenu] = useState(null);
+  
 
   const openMenu = ({ currentTarget }) => setMenu(currentTarget);
   const closeMenu = () => setMenu(null);
 
+  const [token, setDecodedToken] = useState();
+
+  const decodedToken = () => {
+    if (Cookie.getCookie("token") !== undefined) {
+      const jwtToken = jwt_decode(Cookie.getCookie("token"));
+      setDecodedToken(jwtToken);
+    }
+  };
+
+  useEffect(() => {
+    decodedToken();
+  }, []);
+
+console.log(token);
   const renderMenu = (
     <Menu
       id="simple-menu"
@@ -69,7 +87,8 @@ function Projects() {
       >
         <MDBox>
           <MDTypography variant="h6" gutterBottom>
-            Clients
+
+            {token?.account === "admin" ? "Utilisateurs" : "Clients"}
           </MDTypography>
           <MDBox display="flex" alignItems="center" lineHeight={0}>
           </MDBox>

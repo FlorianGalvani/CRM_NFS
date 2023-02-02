@@ -55,7 +55,7 @@ function Dashboard() {
   useEffect(() => {
     decodedToken();
   }, []);
-  console.log(token);
+
   const { sales, tasks } = reportsLineChartData;
 
   return (
@@ -93,7 +93,7 @@ function Dashboard() {
                   color="dark"
                   title="Montant des factures"
                   description="Montant des factures par mois"
-                  // date="just updated"
+                  date="just updated"
                   chart={tasks}
                 />
               </MDBox>

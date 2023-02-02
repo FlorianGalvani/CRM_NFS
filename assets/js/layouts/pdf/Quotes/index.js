@@ -112,7 +112,7 @@ const QuotePdf = ({ pdfMode, data, formData }) => {
   return (
 
     <Document pdfMode={pdfMode} className="mt-[100px]">
-      {formData !== null &&
+    
         <Page className="invoice-wrapper mt-[100px]" pdfMode={pdfMode}>
 
           <>
@@ -478,7 +478,7 @@ const QuotePdf = ({ pdfMode, data, formData }) => {
             </View>
           </>
         </Page>
-      }
+      
     </Document>
   );
 };

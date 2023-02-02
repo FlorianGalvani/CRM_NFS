@@ -17,7 +17,6 @@ Coded by www.creative-tim.com
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Cookie } from "utils/index";
-import jwt_decode from "jwt-decode";
 
 // @mui material components
 import Icon from "@mui/material/Icon";
@@ -30,19 +29,7 @@ import MDProgress from "components/MDProgress";
 
 export default function data() {
   const [prospects, setProspects] = useState([]);
-
   const token = Cookie.getCookie("token");
-
-  const [tokenDecoded, setTokenDecoded] = useState();
-
-  const decodedToken = () => {
-    if (Cookie.getCookie("token") !== undefined) {
-      const jwtToken = jwt_decode(Cookie.getCookie("token"));
-      setTokenDecoded(jwtToken);
-    }
-  };
-
-  console.log(tokenDecoded)
 
   const getAllProspects = () => {
     axios.get(`http://localhost:8000/api/all-prospects`, {
@@ -59,7 +46,6 @@ export default function data() {
 
   useEffect(() => {
     getAllProspects()
-    decodedToken();
   }, []);
 
   const deleteProspect = (id) => {
@@ -100,118 +86,57 @@ export default function data() {
     </MDBox>
   );
 
-  // show prospects from commercial ID else show all prospects if admin is connected
-  if (Cookie.getCookie("account") === "admin") {
-    return {
-      columns: [
-        { Header: "project", accessor: "project", width: "30%", align: "left" },
-        { Header: "téléphone", accessor: "phone", align: "left" },
-        { Header: "email", accessor: "email", align: "center" },
-        { Header: "conversion", accessor: "conversion", align: "center" },
-        { Header: "action", accessor: "action", align: "center" },
-      ],
+  return {
+    columns: [
+      { Header: "project", accessor: "project", width: "30%", align: "left" },
+      { Header: "téléphone", accessor: "phone", align: "left" },
+      { Header: "email", accessor: "email", align: "center" },
+      { Header: "conversion", accessor: "conversion", align: "center" },
+      { Header: "action", accessor: "action", align: "center" },
+    ],
 
-      rows: prospects.map((prospect) => {
-        console.log(prospect)
-        return {
-          project: <Project image={['https://source.unsplash.com/random/?profile', 'https://source.unsplash.com/random/?people', 'https://source.unsplash.com/random/?profil'][Math.floor(Math.random() * 3)]} name={prospect.firstname + ' ' + prospect.lastname} />,
-          phone: (
-            <MDTypography
+    rows: prospects.map((prospect) => {
+      return {
+        project: <Project image={['https://source.unsplash.com/random/?profile', 'https://source.unsplash.com/random/?people', 'https://source.unsplash.com/random/?profil'][Math.floor(Math.random() * 3)]} name={prospect.firstname + ' ' + prospect.lastname} />,
+        phone: (
+          <MDTypography
+            component="a"
+            href="#"
+            variant="button"
+            color="text"
+            fontWeight="medium"
+          >
+            {prospect.phone}
+          </MDTypography>
+        ),
+        email: (
+          <MDTypography
+            component="a"
+            href="#"
+            variant="caption"
+            color="text"
+            fontWeight="medium"
+          >
+            {prospect.email}
+          </MDTypography>
+        ),
+        conversion: (
+          <Progress color="info" value={Math.floor(Math.random() * 100)} />
+        ),
+        action: (
+          <MDBox display="flex" justifyContent="center">
+            <MDBox
               component="a"
               href="#"
-              variant="button"
               color="text"
-              fontWeight="medium"
+              mr={1}
+              onClick={() => deleteProspect(prospect.id)}
             >
-              {prospect.phone}
-            </MDTypography>
-          ),
-          email: (
-            <MDTypography
-              component="a"
-              href="#"
-              variant="caption"
-              color="text"
-              fontWeight="medium"
-            >
-              {prospect.email}
-            </MDTypography>
-          ),
-          conversion: (
-            <Progress color="info" value={Math.floor(Math.random() * 100)} />
-          ),
-          action: (
-            <MDBox display="flex" justifyContent="center">
-              <MDBox
-                component="a"
-                href="#"
-                color="text"
-                mr={1}
-                onClick={() => deleteProspect(prospect.id)}
-              >
-                <Icon fontSize="small">delete</Icon>
-              </MDBox>
+              <Icon fontSize="small">delete</Icon>
             </MDBox>
-          ),
-        }
-      })
-    };
-  } else {
-    return {
-      columns: [
-        { Header: "project", accessor: "project", width: "30%", align: "left" },
-        { Header: "téléphone", accessor: "phone", align: "left" },
-        { Header: "email", accessor: "email", align: "center" },
-        { Header: "conversion", accessor: "conversion", align: "center" },
-        { Header: "action", accessor: "action", align: "center" },
-      ],
-
-      rows: prospects.map((prospect) => {
-        // if (prospect.commercial.email === tokenDecoded.username) {
-          console.log(prospect, prospect.commercial.email, tokenDecoded.username)
-          return {
-            project: <Project image={['https://source.unsplash.com/random/?profile', 'https://source.unsplash.com/random/?people', 'https://source.unsplash.com/random/?profil'][Math.floor(Math.random() * 3)]} name={prospect.firstname + ' ' + prospect.lastname} />,
-            phone: (
-              <MDTypography
-                component="a"
-                href="#"
-                variant="button"
-                color="text"
-                fontWeight="medium"
-              >
-                {prospect.phone}
-              </MDTypography>
-            ),
-            email: (
-              <MDTypography
-                component="a"
-                href="#"
-                variant="caption"
-                color="text"
-                fontWeight="medium"
-              >
-                {prospect.email}
-              </MDTypography>
-            ),
-            conversion: (
-              <Progress color="info" value={Math.floor(Math.random() * 100)} />
-            ),
-            action: (
-              <MDBox display="flex" justifyContent="center">
-                <MDBox
-                  component="a"
-                  href="#"
-                  color="text"
-                  mr={1}
-                  onClick={() => deleteProspect(prospect.id)}
-                >
-                  <Icon fontSize="small">delete</Icon>
-                </MDBox>
-              </MDBox>
-            ),
-          }
-        // }
-      })
-    };
-  }
+          </MDBox>
+        ),
+      }
+    })
+  };
 }

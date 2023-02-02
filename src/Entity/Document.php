@@ -157,5 +157,21 @@ class Document implements DatedInterface, IdInterface
 
         return $this;
     }
-    
+
+    public function getInfos(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'customer' => $this->getCustomer(),
+            'type' => $this->getType(),
+            'data' => json_decode($this->getData()),
+            'fileName' => $this->getFileName(),
+            'fileExtension' => $this->getFileExtension(),
+            'transaction' => $this->getTransaction(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt(),
+        ];
+
+    }
+
 }

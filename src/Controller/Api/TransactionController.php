@@ -5,18 +5,25 @@ namespace App\Controller\Api;
 use App\Controller\BaseController;
 use App\Entity\User;
 use App\Entity\Transaction;
+use App\Repository\DocumentRepository;
 use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function Symfony\Component\Translation\t;
 
 class TransactionController extends BaseController
 {
     private $transactionRepository;
+    private $documentRepository;
 
-    public function __construct(TransactionRepository $transactionRepository)
+    public function __construct(
+        TransactionRepository $transactionRepository,
+        DocumentRepository $documentRepository
+    )
     {
         $this->transactionRepository = $transactionRepository;
+        $this->documentRepository = $documentRepository;
     }
 
     #[Route('/api/stripe_create/{id}', methods: ['GET'])]
@@ -30,7 +37,12 @@ class TransactionController extends BaseController
         $transaction = $this->transactionRepository->findLastOneByAccountAndStatus(
             $id,
             $currentAccount,
-            [Transaction::TRANSACTION_INVOICE_SENT, Transaction::TRANSACTION_STATUS_PAYMENT_INTENT]
+            [
+                Transaction::TRANSACTION_INVOICE_SENT,
+                Transaction::TRANSACTION_STATUS_PAYMENT_INTENT,
+                Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE,
+                Transaction::TRANSACTION_STATUS_PAYMENT_ABANDONED
+            ]
         );
 
         if (null === $transaction) {
@@ -39,6 +51,7 @@ class TransactionController extends BaseController
 
         \Stripe\Stripe::setApiKey($this->getParameter('app.stripe.keys.private'));
         try {
+            $invoiceData = json_decode($transaction->getTransactionInvoice()->getData(), true);
             if (null === $transaction->getStripePaymentIntentId()) {
                 $paymentIntent = \Stripe\PaymentIntent::create([
                     'amount' => $transaction->getAmount() * 100,
@@ -56,6 +69,10 @@ class TransactionController extends BaseController
 
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_INTENT);
             $transaction->setStripePaymentIntentId($paymentIntent->id);
+            $invoiceData['status'] = $transaction->getPaymentStatus();
+
+            $transaction->getTransactionInvoice()->setData(json_encode($invoiceData));
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
@@ -97,22 +114,31 @@ class TransactionController extends BaseController
 
         try {
             $invoice = $transaction->getTransactionInvoice();
+            $invoiceData = json_decode($transaction->getTransactionInvoice()->getData(), true);
             $transaction->setPaymentStatus(Transaction::TRANSACTION_STATUS_PAYMENT_SUCCESS);
             $transaction->setLabel('Règlement d\'une facture');
 
             $payment_method = \Stripe\PaymentMethod::retrieve($payment_method_id);
 
+            $exp_month = '';
+            $exp_month .= $payment_method->card->exp_month < 10 ? '0' : '';
+            $exp_month .= $payment_method->card->exp_month;
+
             $userPaymentMethod = [
                 'card' => [
                     'brand' => $payment_method->card->brand,
                     'country' => $payment_method->card->country,
-                    "exp_month" => $payment_method->card->exp_month,
+                    "exp_month" => $exp_month,
                     "exp_year" => $payment_method->card->exp_year,
                     "last4" => $payment_method->card->last4
                 ]
             ];
 
             $user->getAccount()->setPaymentMethod(json_encode($userPaymentMethod));
+            $invoiceData['status'] = $transaction->getPaymentStatus();
+            $invoiceData['payment_method'] = $userPaymentMethod;
+            $invoice->setData(json_encode($invoiceData));
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
@@ -125,4 +151,43 @@ class TransactionController extends BaseController
             return $this->json(['error' => $e->getMessage()]);
         }
     }
+
+    #[Route('/api/customer-transactions', methods: ['GET'])]
+    public function dashboard()
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $transactions = $this->transactionRepository->findAllBilledTransactionByAccount($currentAccount);
+        $lastInvoices = $this->documentRepository->findLastInvoicesByAccountAndStatus($currentAccount, [
+            Transaction::TRANSACTION_INVOICE_SENT,
+            Transaction::TRANSACTION_STATUS_PAYMENT_INTENT,
+            Transaction::TRANSACTION_STATUS_PAYMENT_ABANDONED,
+            Transaction::TRANSACTION_STATUS_PAYMENT_FAILURE
+        ]);
+        $lastThreeQuotes = $this->documentRepository->findLastQuotesByAccount($currentAccount);
+
+        $quotesData = [];
+        $invoicesData = [];
+
+        foreach($lastThreeQuotes as $_quotes) {
+            array_push($quotesData, $_quotes->getInfos());
+        }
+
+        foreach($lastInvoices as $_invoices) {
+            array_push($invoicesData, $_invoices->getInfos());
+        }
+
+        try {
+            return $this->json([
+                'transactions' => $transactions,
+                'lastInvoice' => $invoicesData,
+                'lastThreeQuotes' => $quotesData
+            ]);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
 }

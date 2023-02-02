@@ -76,7 +76,7 @@ export const CheckoutForm = ({token, transaction}) => {
                     'Authorization': 'Bearer ' + token
                 }
             }).then((res) => {
-                navigate('/factures');
+                navigate('/dashboard');
             }).catch((err) => {
                 console.log(err)
                 setMessage({data: "Une erreur est survenue.", success: false});

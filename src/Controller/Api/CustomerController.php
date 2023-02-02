@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\User;
 use App\Repository\AccountRepository;
+use App\Repository\DocumentRepository;
 use App\Repository\UserRepository;
 use App\Service\Emails\SendEmail;
 use App\Form\Commercial\NewCustomerType;
@@ -19,17 +20,15 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class CustomerController extends BaseController
 {
-    private $jwtManager = null;
-    private $tokenStorageInterface = null;
     private $userRepo;
     private $accountRepo;
+    private $documentRepository;
 
-    public function __construct(TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager,UserRepository $userRepo, AccountRepository $accountRepo)
+    public function __construct(UserRepository $userRepo, AccountRepository $accountRepo, DocumentRepository $documentRepository)
     {
-        $this->jwtManager = $jwtManager;
-        $this->tokenStorageInterface = $tokenStorageInterface;
         $this->userRepo = $userRepo;
         $this->accountRepo = $accountRepo;
+        $this->documentRepository = $documentRepository;
     }
 
     #[Route('/api/commercial/new/customer', name: 'app_api_commercial_crud')]
@@ -97,6 +96,122 @@ class CustomerController extends BaseController
         return $this->json($response,Response::HTTP_OK);
     }
 
-   
-    
+    #[Route('/api/commercial-customers', methods: ['GET'])]
+    public function commercialCustomers()
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $customers = $this->accountRepo->findCustomersByCommercial($currentAccount);
+
+        $customersData = [];
+        foreach($customers as $customer) {
+            array_push($customersData, $customer->getInfos());
+        }
+
+        try {
+            return $this->json($customersData);
+        } catch(Error $e) {
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/customer-invoices', methods: ['GET'])]
+    public function invoices(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $invoices = $this->documentRepository->findAllInvoicesByAccount($currentAccount);
+
+        $invoicesData = [];
+
+        foreach($invoices as $_invoices) {
+            array_push($invoicesData, $_invoices->getInfos());
+        }
+
+        try {
+            return $this->json($invoicesData);
+        } catch(Error $e) {
+            http_response_code(500);
+
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/customer-invoices/{id}', methods: ['GET'])]
+    public function invoiceShow($id): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $invoice = $this->documentRepository->findOneBy([
+            'id' => $id,
+            'customer' => $currentAccount
+        ]);
+
+        if($invoice === null) {
+            throw $this->createNotFoundException();
+        }
+
+        try {
+            return $this->json($invoice->getInfos());
+        } catch(Error $e) {
+            http_response_code(500);
+
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/customer-quotes', methods: ['GET'])]
+    public function quotes(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $quotes = $this->documentRepository->findAllQuotesByAccount($currentAccount);
+
+        $quotesData = [];
+
+        foreach($quotes as $_quotes) {
+            array_push($quotesData, $_quotes->getInfos());
+        }
+
+        try {
+            return $this->json($quotesData);
+        } catch(Error $e) {
+            http_response_code(500);
+
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    #[Route('/api/customer-quotes/{id}', methods: ['GET'])]
+    public function quoteShow($id): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $quote = $this->documentRepository->findOneBy([
+            'id' => $id,
+            'customer' => $currentAccount
+        ]);
+
+        if($quote === null) {
+            throw $this->createNotFoundException();
+        }
+
+        try {
+            return $this->json($quote->getInfos());
+        } catch(Error $e) {
+            http_response_code(500);
+
+            return $this->json(['error' => $e->getMessage()]);
+        }
+    }
 }

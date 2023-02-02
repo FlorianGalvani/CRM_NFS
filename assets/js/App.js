@@ -60,7 +60,7 @@ import brandWhite from "assets/images/icon.png";
 import brandDark from "assets/images/icon.png";
 
 // Utils
-import { Cookie } from "utils/index";
+import {Axios, Cookie} from "utils/index";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -150,6 +150,8 @@ export default function App() {
       navigate("/connexion");
     }
   }, []);
+
+  Axios.setAuthorization(Cookie.getCookie("token"));
 
   const configsButton = (
     <MDBox

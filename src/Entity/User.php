@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Enum\Account\AccountType;
-use App\Repository\UserRepository;
+Use App\Repository\UserRepository;
 use App\Entity\Common\DatedInterface;
 use App\Entity\Common\DatedTrait;
 use App\Entity\Common\IdInterface;
@@ -366,7 +366,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     {
         return [
             'id' => $this->getId(),
-            //            'account' => $this->getAccount(),
+            'account' => $this->getAccount()->getInfos(),
             'accountType' => $this->getAccount()->getType(),
             'phone' => $this->getPhone(),
             'email' => $this->getEmail(),

@@ -10,6 +10,7 @@ import MDTypography from "components/MDTypography";
 import Icon from "@mui/material/Icon";
 import PropTypes from "prop-types";
 import {Alert} from "@mui/material";
+import MDButton from "components/MDButton";
 
 const CustomerInvoices = () => {
     const [invoices, setInvoices] = React.useState([]);
@@ -53,9 +54,11 @@ const CustomerInvoices = () => {
                                                     price={invoice?.data.amount + ' €'}
                                                     status={invoice?.transaction.paymentStatus}
                                                 />
+                                                <MDButton variant="outlined" color="info" size="small"  sx={{ width: '10%' }}>
                                                 <Link to={invoiceDetailLink(invoice)}>
                                                     Voir
                                                 </Link>
+                                                </MDButton>
                                             </MDBox>
                                         </MDBox>
                                     </Card>

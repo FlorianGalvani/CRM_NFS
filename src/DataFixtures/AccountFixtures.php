@@ -5,10 +5,12 @@ namespace App\DataFixtures;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
+use App\Event\CreateCustomerEvent;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Faker;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -17,11 +19,13 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
 {
     private $prospectFixtures;
     private $fakerFactory;
+    private $eventDispatcher;
 
-    public function __construct(ProspectFixtures $prospectFixtures)
+    public function __construct(ProspectFixtures $prospectFixtures, EventDispatcherInterface $eventDispatcher)
     {
         $this->prospectFixtures = $prospectFixtures;
         $this->fakerFactory = \Faker\Factory::create('fr_FR');
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public static function getGroups(): array
@@ -90,6 +94,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     "city" => "Rouen",
                     "country" => "France",
                 ]));
+                $this->eventDispatcher->dispatch(new CreateCustomerEvent($entity), CreateCustomerEvent::NAME);
             }
             $manager->persist($entity);
             /** @var User $user */
@@ -143,6 +148,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     $this->addReference(self::getAccountCustomerReference((string) $iIndividual), $entity);
                     $commercial = $this->getReference(self::getAccountCommercialReference((string) $iCommercial-1));
                     $commercial->addCustomer($entity);
+                    $this->eventDispatcher->dispatch(new CreateCustomerEvent($entity), CreateCustomerEvent::NAME);
                     ++$iIndividual;
                     break;
                 case AccountType::ADMIN:

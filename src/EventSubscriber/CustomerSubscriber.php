@@ -76,7 +76,7 @@ class CustomerSubscriber implements EventSubscriberInterface
         $events[] = [EventType::EVENT_EMAIL_SENT => new \DateTime()];
         $events[] = $_event;
 
-        $customerEvent->setEvents(json_encode($events));
+        $customerEvent->setEvents($events);
 
         $this->em->persist($transaction);
         $this->em->persist($customerEvent);
@@ -91,7 +91,7 @@ class CustomerSubscriber implements EventSubscriberInterface
         $events[] = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime()];
         $events[] = [EventType::EVENT_EMAIL_SENT => new \DateTime()];
         $customerEvent = (new CustomerEvent())
-            ->setEvents(json_encode($events));
+            ->setEvents($events);
 
         $customerEvent->setCustomer($customer);
 

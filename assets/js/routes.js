@@ -42,6 +42,7 @@ import Dashboard from "./layouts/dashboard";
 import Tables from "./layouts/tables";
 import Billing from "./layouts/billing";
 import Quotes from "./layouts/quotes";
+import QuoteForm from "./layouts/quotesform";
 import Payment from "./layouts/payment";
 
 // import RTL from "./layouts/rtl";
@@ -111,10 +112,18 @@ const routes = [
   {
     type: "collapse",
     name: "Devis",
-    key: "devis",
+    key: "devistemp",
+    icon: <Icon fontSize="small">receipt</Icon>,
+    route: "/devis",
+    component: <Quotes />,
+  },
+  {
+    type: "collapse",
+    name: "Créer un Devis",
+    key: "devisform",
     icon: <Icon fontSize="small">receipt</Icon>,
     route: "/devis/nouveau",
-    component: <Quotes />,
+    component: <QuoteForm />,
   },
 
     // Routes client

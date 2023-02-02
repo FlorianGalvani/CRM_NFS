@@ -6,22 +6,16 @@ use App\Controller\BaseController;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Event\CreateDocumentEvent;
-use App\Service\Emails\SendEmail;
-use App\Service\FileUploader;
 use Doctrine\Persistence\ManagerRegistry;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class QuotesController extends BaseController
 {
     #[Route('/api/commercial/quotes/formdata')]
-    function getFormData(Request $request, ManagerRegistry $managerRegistry)
+    function getFormData( ManagerRegistry $managerRegistry)
     {
         $response = [
             'success' => false
@@ -40,8 +34,8 @@ class QuotesController extends BaseController
         $customers = $managerRegistry->getRepository(Account::class)->findBy(['commercial' => $currentUser->getAccount()]);
         $customersData = [];
         $customersLabels = [];
-        foreach ($customers as $customer)  {
-            $customerData = json_decode($customer->getData(),true);
+        foreach ($customers as $customer) {
+            $customerData = json_decode($customer->getData(), true);
             $customersData[] = [
                 'data' => array(
                     'id' => $customer->getId(),
@@ -59,18 +53,18 @@ class QuotesController extends BaseController
         $response['formData'] = $formData;
         $response['success'] = true;
 
-        return $this->json($response,Response::HTTP_OK);
+        return $this->json($response, Response::HTTP_OK);
     }
 
     #[Route('/api/commercial/quotes/new', name: 'app_api_commercial_quotes_create')]
-    function createNewQuotes (Request $request,FileUploader $fileUploader, ManagerRegistry $managerRegistry, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail, EventDispatcherInterface $eventDispatcher)
+    function createNewQuotes (Request $request, ManagerRegistry $managerRegistry, EventDispatcherInterface $eventDispatcher)
     {
         $response = [
             'success' => false
         ];
 
-        if(!$request->isXmlHttpRequest()) {
-            return $this->json($response,Response::HTTP_UNAUTHORIZED);
+        if (!$request->isXmlHttpRequest()) {
+            return $this->json($response, Response::HTTP_UNAUTHORIZED);
         }
 
         $formData = json_decode($request->getContent(), true);
@@ -97,40 +91,64 @@ class QuotesController extends BaseController
 
         $eventDispatcher->dispatch(new CreateDocumentEvent($document), CreateDocumentEvent::NAME);
 
-        return $this->json($response,Response::HTTP_OK);
+        return $this->json($response, Response::HTTP_OK);
     }
 
-    #[Route('/api/commercial/quotes/list', name: 'app_api_commercial_quotes_list')]
-    function listQuotes (Request $request,SerializerInterface $serializer, ManagerRegistry $managerRegistry, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail)
+    #[Route('/api/quotes/list', name: 'app_api_quotes_list')]
+    function listQuotes(Request $request, ManagerRegistry $managerRegistry)
     {
         $response = [
             'success' => false
         ];
 
-        if(!$request->isXmlHttpRequest()) {
-            return $this->json($response,Response::HTTP_UNAUTHORIZED);
+        if (!$request->isXmlHttpRequest()) {
+            return $this->json($response, Response::HTTP_UNAUTHORIZED);
         }
 
         $currentUser = $this->getUser();
+        $findBy = [];
 
-        $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy(['commercial' => $currentUser->getAccount()->getId(), 'type' => \App\Enum\Document\DocumentType::QUOTE]);
-        return $this->json($quotes,Response::HTTP_OK);
-
-        $i = 0;
-        foreach ($quotes as $quote) {
-            // $newQuote = [
-            //     'id' => $quote->getId(),
-                
-            // ];
-            // unset($quote['data']);
-     
-            // return $this->json($quote,Response::HTTP_OK);
-            $response['quotes'][] = json_decode($quote->get());
+        if ($currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::COMMERCIAL) {
+            $findBy = ['commercial' => $currentUser->getAccount()];
+        } else {
+            $findBy = ['customer' => $currentUser->getAccount()];
         }
 
+        $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy($findBy, [
+            'createdAt' => 'DESC'
+        ]);
 
+        $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy($findBy, [
+            'createdAt' => 'DESC'
+        ]);
 
-        $response['success'] = true;
-        return $this->json($response,Response::HTTP_OK);
+        return $this->json($quotes, Response::HTTP_OK);
+    }
+
+    #[Route('/api/quotes/list/latest', name: 'app_api_quotes_list_latest')]
+    function listLatestQuotes(Request $request, ManagerRegistry $managerRegistry)
+    {
+        $response = [
+            'success' => false
+        ];
+
+        if (!$request->isXmlHttpRequest()) {
+            return $this->json($response, Response::HTTP_UNAUTHORIZED);
+        }
+
+        $findBy = [];
+        $currentUser = $this->getUser();
+
+        if ($currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::COMMERCIAL) {
+            $findBy = ['commercial' => $currentUser->getAccount()];
+        } else {
+            $findBy = ['customer' => $currentUser->getAccount()];
+        }
+
+        $quotes = $managerRegistry->getRepository(\App\Entity\Document::class)->findBy($findBy, [
+            'createdAt' => 'DESC'
+        ], 5);
+
+        return $this->json($quotes, Response::HTTP_OK);
     }
 }

@@ -54,6 +54,8 @@ class CustomerSubscriber implements EventSubscriberInterface
         $document = $event->getDocument();
         $documentData = json_decode($document->getData());
 
+        $customerEvent = $this->customerEventRepository->findOneBy(['prospect' => $document->getCustomer()]);
+
         $transaction = (new Transaction())
             ->setCustomer($document->getCustomer());
         if($documentData['amount']) $transaction->setAmount($documentData['amount']);
@@ -62,14 +64,22 @@ class CustomerSubscriber implements EventSubscriberInterface
         if($document->getType() === Document::TRANSACTION_DOCUMENT_QUOTATION) {
             $transaction->setPaymentStatus(Transaction::TRANSACTION_QUOTATION_SENT)
                 ->setTransactionQuotation($document);
+            $_event = [EventType::EVENT_QUOTATION_SENT => new \DateTime()];
         }
 
         if($document->getType() === Document::TRANSACTION_DOCUMENT_INVOICE) {
             $transaction->setPaymentStatus(Transaction::TRANSACTION_INVOICE_SENT)
                 ->setTransactionInvoice($document);
+            $_event = [EventType::INVOICE_SENT => new \DateTime()];
         }
+        $events = $customerEvent->getEvents();
+        $events[] = [EventType::EVENT_EMAIL_SENT => new \DateTime()];
+        $events[] = $_event;
+
+        $customerEvent->setEvents($events);
 
         $this->em->persist($transaction);
+        $this->em->persist($customerEvent);
         $this->em->flush();
     }
 
@@ -77,22 +87,12 @@ class CustomerSubscriber implements EventSubscriberInterface
     {
         $customer = $event->getCustomer();
 
-        $existingProspect = $this->prospectRepository->findOneBy(['email' => $customer->getUser()->getEmail()]);
-        $_event = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime()];
+        $events = [];
+        $events[] = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime()];
+        $events[] = [EventType::EVENT_EMAIL_SENT => new \DateTime()];
+        $customerEvent = (new CustomerEvent())
+            ->setEvents($events);
 
-        if($existingProspect !== null) {
-            $customerEvent = $this->customerEventRepository->findOneBy(['prospect' => $existingProspect]);
-
-            $events = $customerEvent->getEvents();
-            $events[] = $_event;
-
-            $customerEvent->setEvents($events);
-
-            $this->em->persist($customerEvent);
-        } else {
-            $customerEvent = (new CustomerEvent())
-                ->setEvents($_event);
-        }
         $customerEvent->setCustomer($customer);
 
         $this->em->flush();

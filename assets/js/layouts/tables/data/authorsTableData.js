@@ -53,6 +53,7 @@ export default function Data() {
     getAllUsers()
   }, []);
 
+  
 
 
   const Author = ({ image, name, email }) => (
@@ -90,7 +91,6 @@ export default function Data() {
 
   rows:
    users && users.map(user => (
-    console.log(user.user),
     {
       author: (
         <Author

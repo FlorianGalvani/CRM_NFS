@@ -6,8 +6,10 @@ use App\Controller\BaseController;
 use App\Entity\Account;
 use App\Entity\User;
 use App\Enum\Account\AccountType;
+use App\Event\CreateCustomerEvent;
 use App\Repository\UserRepository;
 use App\Service\Emails\SendEmail;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +44,7 @@ class AuthController extends BaseController
     }
 
     #[Route('/api/signup', methods: ['POST'])]
-    public function signup(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function signup(Request $request, UserPasswordHasherInterface $passwordHasher, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $response = [
             'success' => false
@@ -53,12 +55,12 @@ class AuthController extends BaseController
         $existingUser = $this->getManagerRegistry()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         
         if ($existingUser) {
-            $response['message'] = 'User already exists';
+            $response['message'] = 'Un utilisateur existe déjà avec cette adresse email';
             return $this->json($response, Response::HTTP_CONFLICT);
         }
 
         $entityManager = $this->getManagerRegistry()->getManager();
-        
+
         $user = new User();
         $user->setEmail($data['email']);
         $user->setRoles(['ROLE_USER']);
@@ -67,7 +69,7 @@ class AuthController extends BaseController
         $user->setPhone($data['phone']);
         $user->setAddress($data['address']);
         $user->setEmailVerificationToken(bin2hex(random_bytes(32)));
-        $user->setEmailVerificationTokenAt(new \DateTimeImmutable());
+        $user->setEmailVerificationTokenAt(new \DateTime());
 
         $errors = $this->validateData($user);
         if($errors !== null) {
@@ -93,6 +95,7 @@ class AuthController extends BaseController
                     $account->setType(AccountType::CUSTOMER);
                     $currentUser = $this->getUser();
                     $account->setCommercial($currentUser->getAccount());
+                    $eventDispatcher->dispatch(new CreateCustomerEvent($account), CreateCustomerEvent::NAME);
                     break;
                 case AccountType::ADMIN:
                     $account->setType(AccountType::ADMIN);
@@ -108,7 +111,7 @@ class AuthController extends BaseController
 
         $entityManager->flush();
 
-        $this->mailer->sendNewCommercialEmail($user, $data['password']);
+        $this->mailer->sendNewCommercialEmail($user, 'pass_1234');
 
         $response = [
             'success' => true,

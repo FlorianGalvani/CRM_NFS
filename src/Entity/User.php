@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\Account\AccountType;
 Use App\Repository\UserRepository;
+use App\Controller\Api\CustomerController;
 use App\Entity\Common\DatedInterface;
 use App\Entity\Common\DatedTrait;
 use App\Entity\Common\IdInterface;
@@ -21,18 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table("`user`")
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
- *      normalizationContext={"groups"={"users_read"}},
- *      collectionOperations={
- *          "post"={
- *              "name"="signup",
- *              "uriTemplate"="/api/signup",
- *              "controller"=CustomerController::class
- *          }, "get"={
- *             "name"="index",
- *              "uriTemplate"="/api/users",
- *              "controller"=AuthController::class
- *           }
- *     }
+ *      normalizationContext={"groups"={"users_read"}}
  * )
  * @UniqueEntity(fields = {"email"},message ="Un utilisateur ayant cette adresse email existe déjà")
  */
@@ -333,7 +323,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     /**
      * @return string|null
      */
-    public function getEmailVerificationTokenAt(): ?DateTimeImmutable
+    public function getEmailVerificationTokenAt(): ?\DateTime
     {
         return $this->emailVerificationToken;
     }
@@ -341,7 +331,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DatedIn
     /**
      * @param string|null $address
      */
-    public function setEmailVerificationTokenAt(?DateTimeImmutable $emailVerificationToken_at): void
+    public function setEmailVerificationTokenAt(?\DateTime $emailVerificationToken_at): void
     {
         $this->emailVerificationToken_at = $emailVerificationToken_at;
     }

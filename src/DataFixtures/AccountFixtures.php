@@ -79,7 +79,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
     }
     public function load(ObjectManager $manager): void
     {
-        $faker = Faker\Factory::create();
+        $faker = $this->fakerFactory;
         $accounts = [];
         // Michel(s)
         foreach ($this->getMichelData() as $data) {
@@ -101,12 +101,12 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                 ]));
             }
             if ($entity->getType() === AccountType::CUSTOMER) {
-                $entity->setData(json_encode([
-                    "address" => "14 rue du bonheur",
-                    "zipCode" => "76000",
-                    "city" => "Rouen",
-                    "country" => "France",
-                ]));
+//                $entity->setData(json_encode([
+//                    "address" => "14 rue du bonheur",
+//                    "zipCode" => "76000",
+//                    "city" => "Rouen",
+//                    "country" => "France",
+//                ]));
             }
             $manager->persist($entity);
             /** @var User $user */
@@ -145,12 +145,12 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     $user = $this->getReference(UsersFixtures::getUserCustomerMichelReference((string) $i));
                     $user->setAccount($customer);
                     $this->addReference(self::getAccountMichelCustomerReference((string) $i), $entity);
-                    $entity->setData(json_encode([
-                        "address" => $faker->streetAddress,
-                        "zipCode" => $faker->postcode,
-                        "city" => $faker->city,
-                        "country" => $faker->country,
-                    ]));
+//                    $entity->setData(json_encode([
+//                        "address" => $faker->streetAddress,
+//                        "zipCode" => $faker->postcode,
+//                        "city" => $faker->city,
+//                        "country" => $faker->country,
+//                    ]));
                     $customer->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $entity->addCustomer($customer);
                     $this->eventDispatcher->dispatch(new CreateCustomerEvent($customer), CreateCustomerEvent::NAME);
@@ -179,12 +179,12 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     ++$iCommercial;
                     break;
                 case AccountType::CUSTOMER:
-                    $entity->setData(json_encode([
-                        "address" => $faker->streetAddress,
-                        "zipCode" => $faker->postcode,
-                        "city" => $faker->city,
-                        "country" => $faker->country,
-                    ]));
+//                    $entity->setData(json_encode([
+//                        "address" => $faker->streetAddress,
+//                        "zipCode" => $faker->postcode,
+//                        "city" => $faker->city,
+//                        "country" => $faker->country,
+//                    ]));
                     $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $this->addReference(self::getAccountCustomerReference((string) $iIndividual), $entity);
                     $commercial = $this->getReference(self::getAccountCommercialReference((string) $iCommercial-1));
@@ -226,6 +226,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
 
     private function getMichelData(): iterable
     {
+        $faker = $this->fakerFactory;
         yield [
             'user_id' => UsersFixtures::MICHEL_ADMIN,
             'type' => AccountType::ADMIN,
@@ -250,6 +251,12 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     "exp_year" => 23,
                     "last4" => 4242
                 ]
+            ]),
+            'data' => json_encode([
+                "address" => $faker->streetAddress,
+                "zipCode" => $faker->postcode,
+                "city" => $faker->city,
+                "country" => $faker->country,
             ]),
             'createdAt' => new \DateTime('2019-03-21'),
         ];
@@ -279,9 +286,16 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
 
     private function getCommercialData(int $i): array
     {
+        $faker = $this->fakerFactory;
         $data = [
             'user_id' => $i,
             'type' => AccountType::COMMERCIAL,
+            'data' => json_encode([
+                "address" => $faker->streetAddress,
+                "zipCode" => $faker->postcode,
+                "city" => $faker->city,
+                "country" => $faker->country,
+            ]),
         ];
 
         return $data;
@@ -289,9 +303,16 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
 
     private function getCustomerData(int $i): array
     {
+        $faker = $this->fakerFactory;
         $data = [
             'user_id' => $i,
             'type' => AccountType::CUSTOMER,
+            'data' => json_encode([
+                "address" => $faker->streetAddress,
+                "zipCode" => $faker->postcode,
+                "city" => $faker->city,
+                "country" => $faker->country,
+            ]),
         ];
 
         return $data;

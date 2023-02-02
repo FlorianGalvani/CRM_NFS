@@ -40,9 +40,11 @@ import Grid from "@mui/material/Grid";
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import {Alert} from "@mui/material";
 
 function Cover() {
   const [token, setDecodedToken] = useState();
+  const [error, setError] = useState(null);
 
   const decodedToken = () => {
     if (Cookie.getCookie("token") !== undefined) {
@@ -159,7 +161,8 @@ function Cover() {
                         lastname: data.get('nom'),
                         email: data.get('email'),
                         phone: data.get('telephone'),
-                        address: data.get('adresse')
+                        address: data.get('adresse'),
+                        account: data.get('account')
                       }
 
                       const config = {
@@ -169,7 +172,7 @@ function Cover() {
                         }
                       }
 
-                      const url = 'http://localhost:8000/api/users';
+                      const url = 'http://localhost:8000/api/signup';
 
                       console.log(url, user, config)
 
@@ -178,7 +181,7 @@ function Cover() {
                           console.log(response);
                         }, (error) => {
                           console.log(error);
-                          console.log(token)
+                          setError(error.response.data.message);
                         });
                     }
                   }}>
@@ -216,7 +219,13 @@ function Cover() {
                       fullWidth
                     />
                   </MDBox> */}
+                  {
+                    error ?
+                        <Alert severity={'error'}> {error} </Alert>
+                        : null
+                  }
                   <MDBox mb={2}>
+                    <input type={'hidden'} name={'account'} value={token?.account === 'admin' ? 'commercial' : 'customer'}/>
                     <MDInput
                       // // onChange={handleChange}
                       type="text"

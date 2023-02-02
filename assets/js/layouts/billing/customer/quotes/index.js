@@ -7,6 +7,7 @@ import {Link} from "react-router-dom";
 import {Axios, Formatter} from "utils";
 import Card from "@mui/material/Card";
 import {Bill} from "layouts/billing/customer/components/Quotes";
+import MDButton from "components/MDButton";
 
 const CustomerQuotes = () => {
     const [quotes, setQuotes] = React.useState([]);
@@ -47,9 +48,11 @@ const CustomerQuotes = () => {
                                                     company={quote?.transaction.type}
                                                     email={getQuoteCommercial(quote).email}
                                                 />
+                                                <MDButton variant="outlined" color="info" size="small"  sx={{ width: '10%'}}>
                                                 <Link to={'/transactions/mes-devis/' + quote?.id}>
                                                     Voir
                                                 </Link>
+                                                </MDButton>
                                             </MDBox>
                                         </MDBox>
                                     </Card>

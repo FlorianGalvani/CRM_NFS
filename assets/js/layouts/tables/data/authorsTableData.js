@@ -17,8 +17,8 @@ Coded by www.creative-tim.com
 //api
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 import { Cookie } from "utils/index";
-import { Users } from "utils/index";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -32,20 +32,28 @@ import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 
 export default function Data() {
-  const [users, setUsers] = useState('');
+  const [users, setUsers] = useState([]);
+
+  const token = Cookie.getCookie("token");  
+  
+  const url = `http://localhost:8000/api/commercial-customers/`;
+  
+  // const urlAdmin = `all-users/`;
+  
+  // const urlCommercial = `commercial-customers/`;
+  
+  // const endpoint = tokenDecoded && tokenDecoded.account === "admin" ? urlAdmin : urlCommercial;
 
   const getAllUsers = () => {
-    const token = Cookie.getCookie("token");
-    console.log(token)
-    axios.get(`http://localhost:8000/api/users`, {
+    axios.get(url, {
       headers: {
         "Authorization": `Bearer ${token}`,
       },
     })
       .then((response) => {
         const allUsers = response.data;
-        console.log(allUsers)
         setUsers(allUsers);
+        console.log(response.data);
       })
       .catch((error) => console.log(error));
   }
@@ -53,8 +61,6 @@ export default function Data() {
   useEffect(() => {
     getAllUsers()
   }, []);
-
-  console.log(users)
 
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
@@ -84,266 +90,76 @@ export default function Data() {
 
   return {
     columns: [
-      { Header: "author", accessor: "author", width: "45%", align: "left" },
-      { Header: "function", accessor: "function", align: "left" },
-      { Header: "status", accessor: "status", align: "center" },
-      { Header: "employed", accessor: "employed", align: "center" },
-      { Header: "action", accessor: "action", align: "center" },
+      { Header: "Nom", accessor: "author", width: "30%", align: "left" },
+      { Header: "téléphone", accessor: "phone", align: "left" },
+      { Header: "email", accessor: "email", align: "center" },
+      { Header: "Entreprise", accessor: "function", align: "center" },
+      { Header: "Action", accessor: "action", align: "center" },
     ],
 
-    rows: [
-      {
-        author: (
-          <Author
-            image={team2}
-            name="John Michael"
-            email="john@creative-tim.com"
-          />
-        ),
-        function: <Job title="Manager" description="Organization" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge
-              badgeContent="online"
-              color="success"
-              variant="gradient"
-              size="sm"
+    rows:
+      users && users.map(user => (
+        {
+          author: (
+            <Author
+              image={[team2, team3, team4][Math.floor(Math.random() * 3)]}
+              name={user.user.firstname + " " + user.user.lastname}
             />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            23/04/18
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            Edit
-          </MDTypography>
-        ),
-      },
-      {
-        author: (
-          <Author
-            image={team3}
-            name="Alexa Liras"
-            email="alexa@creative-tim.com"
-          />
-        ),
-        function: <Job title="Programator" description="Developer" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge
-              badgeContent="offline"
-              color="dark"
-              variant="gradient"
-              size="sm"
-            />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            11/01/19
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            Edit
-          </MDTypography>
-        ),
-      },
-      {
-        author: (
-          <Author
-            image={team4}
-            name="Laurent Perrier"
-            email="laurent@creative-tim.com"
-          />
-        ),
-        function: <Job title="Executive" description="Projects" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge
-              badgeContent="online"
-              color="success"
-              variant="gradient"
-              size="sm"
-            />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            19/09/17
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            Edit
-          </MDTypography>
-        ),
-      },
-      {
-        author: (
-          <Author
-            image={team3}
-            name="Michael Levi"
-            email="michael@creative-tim.com"
-          />
-        ),
-        function: <Job title="Programator" description="Developer" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge
-              badgeContent="online"
-              color="success"
-              variant="gradient"
-              size="sm"
-            />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            24/12/08
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            Edit
-          </MDTypography>
-        ),
-      },
-      {
-        author: (
-          <Author
-            image={team3}
-            name="Richard Gran"
-            email="richard@creative-tim.com"
-          />
-        ),
-        function: <Job title="Manager" description="Executive" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge
-              badgeContent="offline"
-              color="dark"
-              variant="gradient"
-              size="sm"
-            />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            04/10/21
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            Edit
-          </MDTypography>
-        ),
-      },
-      {
-        author: (
-          <Author
-            image={team4}
-            name="Miriam Eric"
-            email="miriam@creative-tim.com"
-          />
-        ),
-        function: <Job title="Programator" description="Developer" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge
-              badgeContent="offline"
-              color="dark"
-              variant="gradient"
-              size="sm"
-            />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            14/09/20
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography
-            component="a"
-            href="#"
-            variant="caption"
-            color="text"
-            fontWeight="medium"
-          >
-            Edit
-          </MDTypography>
-        ),
-      },
-    ],
+          ),
+          phone: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="button"
+              color="text"
+              fontWeight="medium"
+            >
+              {user.user.phone}
+            </MDTypography>
+          ),
+          email: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="caption"
+              color="text"
+              fontWeight="medium"
+            >
+              {user.user.email}
+            </MDTypography>
+          ),
+          function: <Job title={user.user.company} />,
+          status: (
+            <MDBox ml={-1}>
+              <MDBadge
+                color="success"
+                variant="gradient"
+                size="sm"
+              />
+            </MDBox>
+          ),
+          employed: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="caption"
+              color="text"
+              fontWeight="medium"
+            >
+            </MDTypography>
+          ),
+          action: (
+            <MDTypography
+              component="a"
+              href="#"
+              variant="caption"
+              color="text"
+              fontWeight="medium"
+            >
+              Edit
+            </MDTypography>
+          ),
+        }
+      )),
   };
 }

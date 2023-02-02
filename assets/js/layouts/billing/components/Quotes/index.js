@@ -20,6 +20,7 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
+import Icon from "@mui/material/Icon";
 
 // Billing page components
 import Quote from "layouts/billing/components/Quote";
@@ -66,16 +67,22 @@ function Quotes() {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
+                flexDirection="column"
             >
                 <MDTypography variant="h6" fontWeight="medium">
                     Devis
                 </MDTypography>
-                <Link to={'/devis/nouveau'} variant="outlined" color="info" size="small">
-                    Nouveau devis
-                </Link>
-                <Link to={'/devis'} variant="outlined" color="info" size="small">
-                    voir tout
-                </Link>
+                <MDButton variant="gradient" color="dark">
+                    <Icon sx={{ fontWeight: "bold" }} size="small" style={{ color: 'white' }}>add</Icon>
+                    <Link to={'/devis/nouveau'} size="small" style={{ color: 'white' }}>
+                    &nbsp; Nouveau devis
+                    </Link>
+                 </MDButton>
+                 <MDButton variant="outlined" color="info" size="small"  sx={{ marginTop: 2 }}>
+                    <Link to={'/devis'}size="small">
+                        voir tout
+                    </Link>
+                </MDButton>
             </MDBox>
             <MDBox p={2}>
                 <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>

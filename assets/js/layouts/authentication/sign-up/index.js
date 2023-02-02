@@ -155,8 +155,6 @@ function Cover() {
                       const token = Cookie.getCookie("token")
 
                       const user = {
-                        roles: data.get('type'),
-                        account: data.get('account'),
                         firstname: data.get('prenom'),
                         lastname: data.get('nom'),
                         email: data.get('email'),
@@ -184,7 +182,7 @@ function Cover() {
                         });
                     }
                   }}>
-                  <MDBox mb={2}>
+                  {/* <MDBox mb={2}>
                     <FormControl fullWidth>
                       <InputLabel variant="standard" htmlFor="uncontrolled-native">
                         Type
@@ -207,8 +205,8 @@ function Cover() {
                         )}
                       </NativeSelect>
                     </FormControl>
-                  </MDBox>
-                  <MDBox mb={2}>
+                  </MDBox> */}
+                  {/* <MDBox mb={2}>
                     <MDInput
                       // // onChange={handleChange}
                       type="text"
@@ -217,7 +215,7 @@ function Cover() {
                       variant="standard"
                       fullWidth
                     />
-                  </MDBox>
+                  </MDBox> */}
                   <MDBox mb={2}>
                     <MDInput
                       // // onChange={handleChange}

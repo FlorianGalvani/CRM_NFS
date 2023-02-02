@@ -61,7 +61,7 @@ class Account implements DatedInterface, IdInterface
     private $prospects;
 
     /**
-     * @ORM\OneToMany(mappedBy="commercial", targetEntity=Account::class, orphanRemoval=true, cascade={"persist", "remove"})
+     * @ORM\OneToMany(mappedBy="commercial", targetEntity=Account::class, orphanRemoval=true)
      * @Groups({"account_read"})
      */
     private $customers;
@@ -80,7 +80,7 @@ class Account implements DatedInterface, IdInterface
     private $data = null;
 
     /**
-     * @ORM\OneToMany(mappedBy="customer", targetEntity=CustomerEvent::class, orphanRemoval=true, cascade={"persist", "remove"})
+     * @ORM\OneToMany(mappedBy="customer", targetEntity=CustomerEvent::class, orphanRemoval=true)
      * @Groups({"account_read"})
      */
     private $events;

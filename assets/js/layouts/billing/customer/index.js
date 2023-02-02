@@ -120,7 +120,7 @@ function CustomerBilling() {
                                     <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
                                         {
                                             lastInvoices.map((lastInvoice, index) => (
-                                                <Invoice date={Formatter.formatDate(lastInvoice?.createdAt)} id={'#'+lastInvoice?.fileName} price={lastInvoice?.data.amount+' €'} />
+                                                <Invoice key={index} date={Formatter.formatDate(lastInvoice?.createdAt)} id={'#'+lastInvoice?.fileName} price={lastInvoice?.data.amount+' €'} />
                                             ))
                                         }
                                     </MDBox>
@@ -133,7 +133,8 @@ function CustomerBilling() {
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={7}>
                             {
-                                lastThreeQuotes ? <Quotes quotes={lastThreeQuotes} /> : null
+                                lastThreeQuotes ? <Quotes quotes={lastThreeQuotes.filter((quote) => quote.transaction !== undefined)
+                                    .filter((quote) => quote.transaction !== null)} /> : null
                             }
                         </Grid>
                         <Grid item xs={12} md={5}>

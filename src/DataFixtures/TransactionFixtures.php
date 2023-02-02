@@ -52,11 +52,13 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
             ])) {
                 $quotation = $this->createDocument($entity);
                 $quotation->setType(Document::TRANSACTION_DOCUMENT_QUOTATION);
+                $quotation->setTransaction($entity);
                 $manager->persist($quotation);
                 $entity->setTransactionQuotation($quotation);
             } else {
                 $invoice = $this->createDocument($entity);
                 $invoice->setType(Document::TRANSACTION_DOCUMENT_INVOICE);
+                $invoice->setTransaction($entity);
                 $manager->persist($invoice);
                 $entity->setTransactionInvoice($invoice);
             }

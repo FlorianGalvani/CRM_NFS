@@ -152,7 +152,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                         "country" => $faker->country,
                     ]));
                     $customer->setName($user->getFirstName() . ' ' . $user->getLastName());
-                    $entity->addCustomer($entity);
+                    $entity->addCustomer($customer);
                     $this->eventDispatcher->dispatch(new CreateCustomerEvent($customer), CreateCustomerEvent::NAME);
                     ++$i;
                 }

@@ -36,7 +36,8 @@ const CustomerQuotes = () => {
                 <MDBox mb={3}>
                     <Grid container spacing={3}>
                         {
-                            quotes ? quotes.filter((quote) => quote.id !== undefined)
+                            quotes ? quotes.filter((quote) => quote.transaction !== undefined)
+                                .filter((quote) => quote.transaction !== null)
                                 .map((quote, index) => (
                                 <Grid item xs={12} key={index}>
                                     <Card sx={{height: "100%"}}>

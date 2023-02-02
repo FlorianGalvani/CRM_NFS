@@ -27,20 +27,20 @@ class Document implements DatedInterface, IdInterface
     const TRANSACTION_DOCUMENT_INVOICE = 'facture';
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */
     private $customer = null;
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Account", fetch="EAGER")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */
     private $commercial = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Transaction", fetch="EAGER", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Transaction", fetch="EAGER")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"document_read"})
      */

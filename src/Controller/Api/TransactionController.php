@@ -138,7 +138,6 @@ class TransactionController extends BaseController
             $user->getAccount()->setPaymentMethod(json_encode($userPaymentMethod));
             $devisData['status'] = $transaction->getPaymentStatus();
             $devisData['payment_method'] = $userPaymentMethod;
-            $devis->setData(json_encode($devisData));
 
             $invoiceDate = new \DateTime();
             $invoice = (new Document())
@@ -151,6 +150,7 @@ class TransactionController extends BaseController
                 ->setCommercial($user->getAccount()->getCommercial());
 
             $transaction->setTransactionInvoice($invoice);
+            $this->documentRepository->remove($devis);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 

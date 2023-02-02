@@ -32,7 +32,7 @@ function Quotes() {
     const [formData, setFormData] = React.useState(null);
 
     React.useEffect(() => {
-        axios.get('api/commercial/quotes/list/latest', {
+        axios.get('api/quotes/list/latest', {
             headers: {
                 'Authorization': 'Bearer ' + token,
                 'X-Requested-With': 'XMLHttpRequest'
@@ -51,6 +51,7 @@ function Quotes() {
             }
         }).then(
             (response) => {
+                console.log('LOOK AT ME : ',response.data)
                 setIsLoading(false);
                 setFormData(response.data.formData);
             }

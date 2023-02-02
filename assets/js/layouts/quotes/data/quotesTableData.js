@@ -36,7 +36,7 @@ export default function Data() {
             const jwtToken = jwt_decode(Cookie.getCookie("token"));
             console.log(jwtToken);
             setDecodedToken(jwtToken);
-          }
+        }
         axios.get(`http://localhost:8000/api/quotes/list`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -57,31 +57,31 @@ export default function Data() {
         getAllQuotes();
     }, []);
 
-      const User = ({ image, name, email }) => (
+    const User = ({ image, name, email }) => (
         <MDBox display="flex" alignItems="center" lineHeight={1}>
-          {/* <MDAvatar src={image} name={name} size="sm" /> */}
-          <MDBox ml={2} lineHeight={1}>
-            <MDTypography display="block" variant="button" fontWeight="medium">
-              {name}
-            </MDTypography>
-            <MDTypography variant="caption">{email}</MDTypography>
-          </MDBox>
+            {/* <MDAvatar src={image} name={name} size="sm" /> */}
+            <MDBox ml={2} lineHeight={1}>
+                <MDTypography display="block" variant="button" fontWeight="medium">
+                    {name}
+                </MDTypography>
+                <MDTypography variant="caption">{email}</MDTypography>
+            </MDBox>
         </MDBox>
-      );
+    );
 
 
-function timeConverter(UNIX_timestamp){
-  var a = new Date(UNIX_timestamp);
-  var months = ['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
-  var year = a.getFullYear();
-  var month = months[a.getMonth()];
-  var date = a.getDate();
-  var hour = a.getHours();
-  var min = a.getMinutes();
-  var sec = a.getSeconds();
-  var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
-  return time;
-}
+    function timeConverter(UNIX_timestamp) {
+        var a = new Date(UNIX_timestamp);
+        var months = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'];
+        var year = a.getFullYear();
+        var month = months[a.getMonth()];
+        var date = a.getDate();
+        var hour = a.getHours();
+        var min = a.getMinutes();
+        var sec = a.getSeconds();
+        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+        return time;
+    }
 
     return {
         columns: [
@@ -90,17 +90,17 @@ function timeConverter(UNIX_timestamp){
             { Header: "dueDate", accessor: "dueDate", align: "left" },
         ],
 
-        rows: quotes.map((quote) => {
-            console.log(quote.data.name)
+        rows: quotes.length > 0 ? quotes.map((quote) => {
+            console.log(quote)
             return {
                 user: (
                     <User
-                        name={decodedToken !== null && decodedToken.account === 'commercial' ? quote.data.clientName : quote.data.name}
+                        name={decodedToken !== null && (decodedToken.account === 'commercial' || decodedToken.account === 'admin') ? quote.data.clientName : quote.data.name}
                     />
                 ),
                 date: timeConverter(Date.parse(quote.data.invoiceDate.date)),
                 dueDate: timeConverter(Date.parse(quote.data.invoiceDueDate.date))
             }
-        })
+        }) : []
     };
 }

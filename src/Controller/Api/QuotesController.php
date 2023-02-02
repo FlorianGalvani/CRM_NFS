@@ -14,8 +14,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class QuotesController extends BaseController
 {
-<<<<<<< HEAD
-=======
     private $currentUser = null;
 
     private $jwtManager = null;
@@ -29,7 +27,6 @@ class QuotesController extends BaseController
         $this->currentUser = $managerRegistry->getRepository(User::class)->findOneBy(['email' => $decodedToken['username']]);
     }
 
->>>>>>> feature/devis-list-page
     #[Route('/api/commercial/quotes/formdata')]
     function getFormData( ManagerRegistry $managerRegistry)
     {
@@ -37,21 +34,15 @@ class QuotesController extends BaseController
             'success' => false
         ];
 
-        $currentUser = $this->getUser();
-
         $formData = [
             'commercial' => [
-                'firstname' => $currentUser->getFirstname(),
-                'lastname' => $currentUser->getLastname(),
+                'firstname' => $this->currentUser->getFirstname(),
+                'lastname' => $this->currentUser->getLastname(),
             ],
-<<<<<<< HEAD
-            'company' => json_decode($currentUser->getAccount()->getData(),true),
-=======
             'company' => json_decode($this->currentUser->getAccount()->getData(), true),
->>>>>>> feature/devis-list-page
         ];
 
-        $customers = $managerRegistry->getRepository(Account::class)->findBy(['commercial' => $currentUser->getAccount()]);
+        $customers = $managerRegistry->getRepository(Account::class)->findBy(['commercial' => $this->currentUser->getAccount()]);
         $customersData = [];
         $customersLabels = [];
         foreach ($customers as $customer) {
@@ -89,16 +80,9 @@ class QuotesController extends BaseController
 
         $formData = json_decode($request->getContent(), true);
         unset($formData['invoice']['logo']);
-<<<<<<< HEAD
-       
-            $currentUser = $this->getUser();
-            $customer = $managerRegistry->getRepository(\App\Entity\Account::class)->find($formData['customer']);
-            $commercial = $currentUser->getAccount();
-=======
 
         $customer = $managerRegistry->getRepository(\App\Entity\Account::class)->find($formData['customer']);
         $commercial = $managerRegistry->getRepository(\App\Entity\Account::class)->find($this->currentUser->getAccount()->getId());
->>>>>>> feature/devis-list-page
 
         $document = new \App\Entity\Document();
         $document->setType(\App\Enum\Document\DocumentType::QUOTE);

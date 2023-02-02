@@ -25,7 +25,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import QuotePdf from "layouts/pdf/Quotes";
-function Quote({ date, customer, price, noGutter,pdfData }) {
+function Quote({ date, customer, price, noGutter, pdfData, formData }) {
     return (
         <MDBox
             component="li"
@@ -55,15 +55,17 @@ function Quote({ date, customer, price, noGutter,pdfData }) {
                     ml={3}
                     sx={{ cursor: "pointer" }}
                 >
-
-                    <PDFDownloadLink
-                        document={<QuotePdf pdfMode={true} data={pdfData} />}
-                        fileName={`${pdfData.invoiceTitle ? pdfData.invoiceTitle.toLowerCase() : 'invoice'}.pdf`}
-                        aria-label="Save PDF"
-                    >
-                    DOWNLOAD
-                    </PDFDownloadLink>
- 
+                    {
+                        pdfData !== null &&
+                        <PDFDownloadLink
+                            document={<QuotePdf formData={formData} pdfMode={true} data={pdfData} />}
+                            fileName={`${pdfData.invoiceTitle ? pdfData.invoiceTitle.toLowerCase() : 'invoice'}.pdf`}
+                            aria-label="Save PDF"
+                        
+                        >
+                            DOWNLOAD
+                        </PDFDownloadLink>
+                    }
                 </MDBox>
             </MDBox>
         </MDBox>

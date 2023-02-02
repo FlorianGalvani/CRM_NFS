@@ -5,10 +5,12 @@ namespace App\Controller\Api;
 use App\Controller\BaseController;
 use App\Entity\Account;
 use App\Entity\User;
+use App\Event\CreateDocumentEvent;
 use App\Service\Emails\SendEmail;
 use App\Service\FileUploader;
 use Doctrine\Persistence\ManagerRegistry;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -61,7 +63,7 @@ class QuotesController extends BaseController
     }
 
     #[Route('/api/commercial/quotes/new', name: 'app_api_commercial_quotes_create')]
-    function createNewQuotes (Request $request,FileUploader $fileUploader, ManagerRegistry $managerRegistry, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail)
+    function createNewQuotes (Request $request,FileUploader $fileUploader, ManagerRegistry $managerRegistry, UserPasswordHasherInterface $passwordHasher, SendEmail $sendEmail, EventDispatcherInterface $eventDispatcher)
     {
         $response = [
             'success' => false
@@ -92,7 +94,8 @@ class QuotesController extends BaseController
             $em->flush();
 
             $response['success'] = true;
-     
+
+        $eventDispatcher->dispatch(new CreateDocumentEvent($document), CreateDocumentEvent::NAME);
 
         return $this->json($response,Response::HTTP_OK);
     }

@@ -24,13 +24,13 @@ class CustomerEvent implements DatedInterface, IdInterface
     use IdTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Account::class)
+     * @ORM\ManyToOne(targetEntity=Account::class, cascade={"persist"})
      * @Groups({"customer_events_read"})
      */
     private $customer = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Prospect::class)
+     * @ORM\ManyToOne(targetEntity=Prospect::class, cascade={"persist"})
      * @Groups({"customer_events_read"})
      */
     private $prospect = null;

@@ -19,6 +19,7 @@ import PropTypes from "prop-types";
 
 // @mui material components
 import Icon from "@mui/material/Icon";
+import DownloadIcon from '@mui/icons-material/Download';
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -63,7 +64,7 @@ function Quote({ date, customer, price, noGutter, pdfData, formData }) {
                             aria-label="Save PDF"
                         
                         >
-                            DOWNLOAD
+                          <Icon sx={{ fontWeight: "bold" , marginTop: 1 }} size="small" style={{ color: 'black' }}>download</Icon>
                         </PDFDownloadLink>
                     }
                 </MDBox>

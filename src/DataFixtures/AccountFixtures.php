@@ -113,6 +113,24 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
             $user = $this->getReference(UsersFixtures::getUserMichelReference($data['user_id']));
             $user->setAccount($entity);
             $this->addReference(self::getAccountMichelReference($user->getEmail()), $entity);
+
+            if($entity->getType() === AccountType::CUSTOMER) {
+
+                foreach($accounts as $account) {
+                    if($account->getType() === AccountType::COMMERCIAL) {
+                        $account->addCustomer($entity);
+                    }
+                }
+                $events = [];
+                $events[] = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime()];
+                $events[] = [EventType::EVENT_EMAIL_SENT => new \DateTime()];
+                $customerEvent = (new CustomerEvent())
+                    ->setEvents($events);
+
+                $customerEvent->setCustomer($entity);
+                $manager->persist($customerEvent);
+            }
+
             if($entity->getType() === AccountType::COMMERCIAL) {
                 foreach ($this->getProspectData() as $prospectData) {
                     $prospect = $this->prospectFixtures->createProspect($prospectData);
@@ -140,22 +158,6 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                 }
             }
             array_push($accounts, $entity);
-            if($entity->getType() === AccountType::CUSTOMER) {
-
-                foreach($accounts as $account) {
-                    if($account->getType() === AccountType::COMMERCIAL) {
-                        $account->addCustomer($entity);
-                    }
-                }
-                $events = [];
-                $events[] = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime()];
-                $events[] = [EventType::EVENT_EMAIL_SENT => new \DateTime()];
-                $customerEvent = (new CustomerEvent())
-                    ->setEvents($events);
-
-                $customerEvent->setCustomer($entity);
-                $manager->persist($customerEvent);
-            }
         }
 
         // 100

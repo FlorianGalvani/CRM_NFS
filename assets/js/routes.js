@@ -42,6 +42,7 @@ import Dashboard from "./layouts/dashboard";
 import Tables from "./layouts/tables";
 import Billing from "./layouts/billing";
 import Quotes from "./layouts/quotes";
+import QuoteForm from "./layouts/quotesform";
 import Payment from "./layouts/payment";
 
 // import RTL from "./layouts/rtl";
@@ -107,8 +108,16 @@ const routes = [
     name: "Devis",
     key: "devis",
     icon: <Icon fontSize="small">receipt</Icon>,
-    route: "/devis/nouveau",
+    route: "/devis",
     component: <Quotes />,
+  },
+  {
+    type: "collapse",
+    name: "Créer un Devis",
+    key: "devis",
+    icon: <Icon fontSize="small">receipt</Icon>,
+    route: "/devis/nouveau",
+    component: <QuoteForm />,
   },
   { // todo: supp 'collapse' et coller un lien dans la pertie factures du client
     type: "collapse",

@@ -23,14 +23,15 @@ import MDButton from "components/MDButton";
 
 // Billing page components
 import Quote from "layouts/billing/components/Quote";
-import {Link, redirect} from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import axios from 'axios'
 function Quotes() {
     const [quotes, setQuotes] = React.useState(null);
     const token = document.cookie.split("=")[1];
-    
+    const [formData, setFormData] = React.useState(null);
+
     React.useEffect(() => {
-        axios.get('api/commercial/quotes/list', {
+        axios.get('api/commercial/quotes/list/latest', {
             headers: {
                 'Authorization': 'Bearer ' + token,
                 'X-Requested-With': 'XMLHttpRequest'
@@ -38,11 +39,24 @@ function Quotes() {
         }).then((response) => {
             response.data.forEach(element => {
                 element.data = JSON.parse(element.data);
-            }); 
+            });
             console.log(response.data)
             setQuotes(response.data);
         })
-    },[])
+
+        axios.get('/api/commercial/quotes/formdata', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        }).then(
+            (response) => {
+                setIsLoading(false);
+                setFormData(response.data.formData);
+            }
+        )
+
+    }, [])
+
     return (
         <Card sx={{ height: "100%" }}>
             <MDBox
@@ -66,7 +80,7 @@ function Quotes() {
                 <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
                     {
                         quotes !== null && quotes.map((quote, key) => (
-                            <Quote key={'Quote_' + key} pdfData={quote.data} date="March, 01, 2020" customer={quote.data.clientName} price="$180" />
+                            <Quote key={'Quote_' + key} formData={formData} pdfData={quote.data} date="March, 01, 2020" customer={quote.data.clientName} price="$180" />
                         ))
                     }
                 </MDBox>

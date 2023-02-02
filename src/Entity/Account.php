@@ -261,9 +261,6 @@ class Account implements DatedInterface, IdInterface
         $this->data = $data;
     }
 
-
-
-
     public function getPaymentMethod(): ?string
     {
         return $this->paymentMethod;

@@ -73,8 +73,8 @@ function Quotes() {
                     Devis
                 </MDTypography>
                 <MDButton variant="gradient" color="dark">
-                    <Icon sx={{ fontWeight: "bold" }} size="small">add</Icon>
-                    <Link to={'/devis/nouveau'} size="small">
+                    <Icon sx={{ fontWeight: "bold" }} size="small" style={{ color: 'white' }}>add</Icon>
+                    <Link to={'/devis/nouveau'} size="small" style={{ color: 'white' }}>
                     &nbsp; Nouveau devis
                     </Link>
                  </MDButton>

@@ -18,8 +18,10 @@ Coded by www.creative-tim.com
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Cookie } from "utils/index";
-import { Users } from "utils/index";
 import jwt_decode from "jwt-decode";
+
+// @mui material components
+import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -29,12 +31,15 @@ import MDBadge from "components/MDBadge";
 
 export default function Data() {
     const [quotes, setQuotes] = useState([]);
+
     const [decodedToken, setDecodedToken] = useState(null);
+
+    const token = Cookie.getCookie("token");
+
     const getAllQuotes = () => {
-        const token = Cookie.getCookie("token");
         if (Cookie.getCookie("token") !== undefined) {
             const jwtToken = jwt_decode(Cookie.getCookie("token"));
-            console.log(jwtToken);
+
             setDecodedToken(jwtToken);
         }
         axios.get(`http://localhost:8000/api/quotes/list`, {
@@ -44,10 +49,6 @@ export default function Data() {
             },
         })
             .then((response) => {
-                response.data.forEach((element) => {
-                    element.data = JSON.parse(element.data);
-                });
-                console.log(response.data);
                 setQuotes(response.data);
             })
             .catch((error) => console.log(error));
@@ -56,6 +57,18 @@ export default function Data() {
     useEffect(() => {
         getAllQuotes();
     }, []);
+
+    const deleteQuotes = (id) => {
+        axios.delete(`http://localhost:8000/api/documents/${id}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                getAllQuotes();
+            })
+            .catch((error) => console.log(error));
+    }
 
     const User = ({ image, name, email }) => (
         <MDBox display="flex" alignItems="center" lineHeight={1}>
@@ -68,6 +81,15 @@ export default function Data() {
             </MDBox>
         </MDBox>
     );
+
+    const calculateAmount = (quantity, rate) => {
+        const quantityNumber = parseFloat(quantity);
+        const rateNumber = parseFloat(rate);
+        const amount =
+            quantityNumber && rateNumber ? quantityNumber * rateNumber : 0;
+
+        return amount.toFixed(2);
+    };
 
 
     function timeConverter(UNIX_timestamp) {
@@ -85,13 +107,14 @@ export default function Data() {
 
     return {
         columns: [
-            { Header: "user", accessor: "user", width: "45%", align: "left" },
-            { Header: "date", accessor: "date", align: "left" },
-            { Header: "dueDate", accessor: "dueDate", align: "left" },
+            { Header: decodedToken !== null && (decodedToken.account === 'commercial' || decodedToken.account === 'admin') ? 'clients' : 'commercials', accessor: "user", width: "30%", align: "left" },
+            { Header: "date", accessor: "date", align: "center" },
+            { Header: "prix", accessor: "price", align: "center" },
+            { Header: "échéance", accessor: "dueDate", align: "center" },
+            { Header: "Supprimer", accessor: "action", align: "center" },
         ],
 
         rows: quotes.length > 0 ? quotes.map((quote) => {
-            console.log(quote)
             return {
                 user: (
                     <User
@@ -99,7 +122,33 @@ export default function Data() {
                     />
                 ),
                 date: timeConverter(Date.parse(quote.data.invoiceDate.date)),
-                dueDate: timeConverter(Date.parse(quote.data.invoiceDueDate.date))
+                dueDate: timeConverter(Date.parse(quote.data.invoiceDueDate.date)),
+                price: (
+                    <MDTypography
+                        component="a"
+                        href="#"
+                        variant="caption"
+                        color="text"
+                        fontWeight="medium"
+                    >
+                        {quote.data.productLines.map((productLine) => {
+                            return calculateAmount(productLine.quantity, productLine.rate);
+                        })}
+                    </MDTypography>
+                ),
+                action: (
+                    <MDBox display="flex" justifyContent="center">
+                        <MDBox
+                            component="a"
+                            href="#"
+                            color="text"
+                            mr={1}
+                            onClick={() => console.log(quote)}
+                        >
+                            <Icon fontSize="small">delete</Icon>
+                        </MDBox>
+                    </MDBox>
+                )
             }
         }) : []
     };

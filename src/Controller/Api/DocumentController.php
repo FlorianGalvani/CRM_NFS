@@ -25,6 +25,48 @@ class DocumentController extends BaseController
         $this->documentRepo = $documentRepo;
     }
 
+    #[Route('/commercial/invoices/formdata')]
+    function getFormData()
+    {
+        $response = [
+            'success' => false
+        ];
+
+        $currentUser = $this->getUser();
+
+        $formData = [
+            'commercial' => [
+                'firstname' => $currentUser->getFirstname(),
+                'lastname' => $currentUser->getLastname(),
+            ],
+            'company' => json_decode($currentUser->getAccount()->getData(),true),
+        ];
+
+        $customers = $this->accountRepo->findBy(['commercial' => $currentUser->getAccount()]);
+        $customersData = [];
+        $customersLabels = [];
+        foreach ($customers as $customer) {
+            $customerData = json_decode($customer->getData(), true);
+            $customersData[] = [
+                'data' => array(
+                    'id' => $customer->getId(),
+                    'name' => $customer->getName(),
+                    'address' => $customerData['address'],
+                    'zip' => $customerData['zipCode'],
+                    'city' => $customerData['city'],
+                    'country' => $customerData['country'],
+                )
+            ];
+            $customersLabels[] = $customer->getName();
+        }
+        $formData['customers'] = $customersData;
+        $formData['customersLabels'] = $customersLabels;
+        $response['formData'] = $formData;
+        $response['success'] = true;
+
+        return $this->json($response, Response::HTTP_OK);
+    }
+
     #[Route('/commercial/invoice', methods: ['POST'])]
     public function create(Request $request, EventDispatcherInterface $eventDispatcher): Response
     {

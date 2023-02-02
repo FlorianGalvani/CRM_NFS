@@ -43,6 +43,7 @@ import Tables from "./layouts/tables";
 import Billing from "./layouts/billing";
 import Quotes from "./layouts/quotes";
 import QuoteForm from "./layouts/quotesform";
+import InvoiceForm from "./layouts/invoiceForm";
 import Payment from "./layouts/payment";
 
 // import RTL from "./layouts/rtl";
@@ -53,7 +54,6 @@ import SignUp from "./layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
-import CustomerBilling from "layouts/billing/customer";
 import CustomerInvoice from "layouts/billing/customer/invoices/show";
 import CustomerInvoices from "layouts/billing/customer/invoices";
 import Home from "./Pages/Home";
@@ -84,6 +84,13 @@ const routes = [
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/factures",
     component: <Billing />,
+  },
+  {
+    name: "Créer une facture",
+    key: "factureform",
+    icon: <Icon fontSize="small">receipt</Icon>,
+    route: "/factures/nouveau",
+    component: <InvoiceForm />,
   },
   {
     type: "collapse",

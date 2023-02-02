@@ -129,7 +129,7 @@ const EditableFileImage = ({ className, placeholder, value, width, onChangeImage
         ref={fileInput}
         tabIndex={-1}
         type="file"
-        accept="image/*"
+        accept="image/png, image/jpeg"
         className="image__file"
         onChange={handleChangeImage}
       />

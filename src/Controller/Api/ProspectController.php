@@ -44,6 +44,10 @@ class ProspectController extends BaseController
 
         $user = $this->getUser();
 
+        if($user == null) {
+            throw $this->createAccessDeniedException();
+        }
+
         $data = json_decode($request->getContent(), true);
 
         $prospect = (new Prospect())

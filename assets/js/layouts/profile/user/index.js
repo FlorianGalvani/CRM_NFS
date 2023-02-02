@@ -57,6 +57,7 @@ function UserProfile() {
             } else {
                 setAccount(response.data);
                 setUser(response.data.user);
+                console.log()
                 setCustomerEvents(response.data.events[0].events)
             }
         }
@@ -66,13 +67,13 @@ function UserProfile() {
 
     const events = [];
 
-    customerEvents.map((event) => {
-        return Object.entries((event)).map((e) => {
-            const eventDate = moment(new Date(e[1].date)).locale('fr').format('DD/MM/YYYY HH:mm')
-            console.log(eventDate)
-            events.push({value: getEventLabel(e[0]), date: eventDate})
-        })
+    Object.entries((customerEvents)).map((e) => {
+        const eventDate = moment(new Date(e[1].date)).locale('fr').format('DD/MM/YYYY HH:mm')
+        console.log(eventDate)
+        events.push({value: getEventLabel(e[0]), date: eventDate})
     })
+
+    console.log(events)
 
     return (
         <DashboardLayout>
@@ -98,34 +99,38 @@ function UserProfile() {
                             />
                             <Divider orientation="vertical" sx={{ mx: 0 }} />
                         </Grid>
-                        <Grid item xs={12} md={6}>
-                            <MDTypography
-                                variant="h6"
-                                fontWeight="medium"
-                                textTransform="capitalize"
-                            >
-                                Logs
-                            </MDTypography>
-                            <MDBox pt={2}>
-                                {
-                                    events.map((event, index) => (
-                                        <MDBox
-                                            key={index}
-                                            display="flex"
-                                            justifyContent="flex-start"
-                                            alignItems="center"
-                                        >
-                                            <MDTypography variant="button" color="text" fontWeight="light">
-                                                {event.date} : &nbsp;&nbsp;&nbsp;
-                                            </MDTypography>
-                                            <MDTypography variant="button" color="text" fontWeight="medium">
-                                                {event.value}
-                                            </MDTypography>
-                                        </MDBox>
-                                    ))
-                                }
-                            </MDBox>
-                        </Grid>
+                        {
+                            events.length > 0 ?
+                                <Grid item xs={12} md={6}>
+                                    <MDTypography
+                                        variant="h6"
+                                        fontWeight="medium"
+                                        textTransform="capitalize"
+                                    >
+                                        Logs
+                                    </MDTypography>
+                                    <MDBox pt={2}>
+                                        {
+                                            events.map((event, index) => (
+                                                <MDBox
+                                                    key={index}
+                                                    display="flex"
+                                                    justifyContent="flex-start"
+                                                    alignItems="center"
+                                                >
+                                                    <MDTypography variant="button" color="text" fontWeight="light">
+                                                        {event.date} : &nbsp;&nbsp;&nbsp;
+                                                    </MDTypography>
+                                                    <MDTypography variant="button" color="text" fontWeight="medium">
+                                                        {event.value}
+                                                    </MDTypography>
+                                                </MDBox>
+                                            ))
+                                        }
+                                    </MDBox>
+                                </Grid>
+                                : null
+                        }
                     </Grid>
                 </MDBox>
             </UserHeader>

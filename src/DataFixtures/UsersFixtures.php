@@ -99,6 +99,7 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
 
     private function getMichelData(): iterable
     {
+        $faker = $this->fakerFactory;
         yield [
             'email' => self::MICHEL_ADMIN,
             'plainPassword' => self::MICHEL_ADMIN,
@@ -106,7 +107,8 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
             'lastname' => "Admin",
             'roles' => ['ROLE_ADMIN'],
             'phone' => '0000000000',
-            'address' => '10 Rue du Général Sarrail, 76000 Rouen'
+            'address' => '10 Rue du Général Sarrail, 76000 Rouen',
+            'company' => $faker->company()
         ];
         yield [
             'email' => self::MICHEL_COMMERCIAL,
@@ -115,7 +117,8 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
             'lastname' => "Commercial",
             'roles' => ['ROLE_USER'],
             'phone' => '0000000000',
-            'address' => '10 Rue du Général Sarrail, 76000 Rouen'
+            'address' => '10 Rue du Général Sarrail, 76000 Rouen',
+            'company' => $faker->company()
         ];
         yield [
             'email' => self::MICHEL_CUSTOMER,
@@ -124,7 +127,8 @@ final class UsersFixtures extends Fixture implements FixtureGroupInterface
             'lastname' => "Customer",
             'roles' => ['ROLE_USER'],
             'phone' => '0000000000',
-            'address' => '10 Rue du Général Sarrail, 76000 Rouen'
+            'address' => '10 Rue du Général Sarrail, 76000 Rouen',
+            'company' => $faker->company()
         ];
     }
 

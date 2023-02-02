@@ -113,16 +113,7 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                         $account->addCustomer($entity);
                     }
                 }
-                $events = [];
-                $events[] = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime('-1 month')];
-                $events[] = [EventType::EVENT_MEETiNG_COMMERCIAL_REQUESTED => new \DateTime('+3 days')];
-                $events[] = [EventType::EVENT_QUOTATION_SENT => new \DateTime('+10 days')];
-                $events[] = [EventType::EVENT_MEETING => new \DateTime('+20 days')];
-                $events[] = [EventType::EVENT_EMAIL_SENT => new \DateTime()];
-                $customerEvent = (new CustomerEvent())
-                    ->setEvents($events);
-
-                $customerEvent->setCustomer($entity);
+                $customerEvent = $this->createCustomerEventData($entity);
                 $manager->persist($customerEvent);
             }
 
@@ -142,6 +133,8 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     $this->addReference(self::getAccountMichelCustomerReference((string) $i), $entity);
                     $customer->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $entity->addCustomer($customer);
+                    $customerEvent = $this->createCustomerEventData($customer);
+                    $manager->persist($customerEvent);
                     $this->eventDispatcher->dispatch(new CreateCustomerEvent($customer), CreateCustomerEvent::NAME);
                     ++$i;
                 }
@@ -172,6 +165,8 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     $this->addReference(self::getAccountCustomerReference((string) $iIndividual), $entity);
                     $commercial = $this->getReference(self::getAccountCommercialReference((string) $iCommercial-1));
                     $commercial->addCustomer($entity);
+                    $customerEvent = $this->createCustomerEventData($entity);
+                    $manager->persist($customerEvent);
                     $this->eventDispatcher->dispatch(new CreateCustomerEvent($entity), CreateCustomerEvent::NAME);
                     ++$iIndividual;
                     break;
@@ -187,6 +182,23 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
         }
 
         $manager->flush();
+    }
+
+    private function createCustomerEventData($customer)
+    {
+        $events = [
+            EventType::EVENT_CUSTOMER_CREATED => new \DateTime('-1 month'),
+            EventType::EVENT_MEETiNG_COMMERCIAL_REQUESTED => new \DateTime('+3 days'),
+            EventType::EVENT_QUOTATION_SENT => new \DateTime('+10 days'),
+            EventType::EVENT_MEETING => new \DateTime('+20 days'),
+            EventType::EVENT_EMAIL_SENT => new \DateTime()
+        ];
+        $customerEvent = (new CustomerEvent())
+            ->setEvents($events);
+
+        $customerEvent->setCustomer($customer);
+
+        return $customerEvent;
     }
 
     private function createAccount(array $data): Account

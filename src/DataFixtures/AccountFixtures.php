@@ -100,14 +100,6 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     ]
                 ]));
             }
-            if ($entity->getType() === AccountType::CUSTOMER) {
-//                $entity->setData(json_encode([
-//                    "address" => "14 rue du bonheur",
-//                    "zipCode" => "76000",
-//                    "city" => "Rouen",
-//                    "country" => "France",
-//                ]));
-            }
             $manager->persist($entity);
             /** @var User $user */
             $user = $this->getReference(UsersFixtures::getUserMichelReference($data['user_id']));
@@ -122,7 +114,10 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     }
                 }
                 $events = [];
-                $events[] = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime()];
+                $events[] = [EventType::EVENT_CUSTOMER_CREATED => new \DateTime('-1 month')];
+                $events[] = [EventType::EVENT_MEETiNG_COMMERCIAL_REQUESTED => new \DateTime('+3 days')];
+                $events[] = [EventType::EVENT_QUOTATION_SENT => new \DateTime('+10 days')];
+                $events[] = [EventType::EVENT_MEETING => new \DateTime('+20 days')];
                 $events[] = [EventType::EVENT_EMAIL_SENT => new \DateTime()];
                 $customerEvent = (new CustomerEvent())
                     ->setEvents($events);
@@ -145,12 +140,6 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     $user = $this->getReference(UsersFixtures::getUserCustomerMichelReference((string) $i));
                     $user->setAccount($customer);
                     $this->addReference(self::getAccountMichelCustomerReference((string) $i), $entity);
-//                    $entity->setData(json_encode([
-//                        "address" => $faker->streetAddress,
-//                        "zipCode" => $faker->postcode,
-//                        "city" => $faker->city,
-//                        "country" => $faker->country,
-//                    ]));
                     $customer->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $entity->addCustomer($customer);
                     $this->eventDispatcher->dispatch(new CreateCustomerEvent($customer), CreateCustomerEvent::NAME);
@@ -179,12 +168,6 @@ final class AccountFixtures extends Fixture implements DependentFixtureInterface
                     ++$iCommercial;
                     break;
                 case AccountType::CUSTOMER:
-//                    $entity->setData(json_encode([
-//                        "address" => $faker->streetAddress,
-//                        "zipCode" => $faker->postcode,
-//                        "city" => $faker->city,
-//                        "country" => $faker->country,
-//                    ]));
                     $entity->setName($user->getFirstName() . ' ' . $user->getLastName());
                     $this->addReference(self::getAccountCustomerReference((string) $iIndividual), $entity);
                     $commercial = $this->getReference(self::getAccountCommercialReference((string) $iCommercial-1));

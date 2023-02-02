@@ -115,7 +115,7 @@ function ProfileInfoCard({ title, description, info, social, action, shadow }) {
           color="secondary"
         >
           <Tooltip title={action.tooltip} placement="top">
-            <Icon>edit</Icon>
+            <Icon>{action.icon}</Icon>
           </Tooltip>
         </MDTypography>
       </MDBox>
@@ -149,6 +149,11 @@ function ProfileInfoCard({ title, description, info, social, action, shadow }) {
 // Setting default props for the ProfileInfoCard
 ProfileInfoCard.defaultProps = {
   shadow: true,
+  action: {
+    route: '',
+    tooltip: 'edit',
+    icon: 'edit'
+  }
 };
 
 // Typechecking props for the ProfileInfoCard
@@ -160,6 +165,7 @@ ProfileInfoCard.propTypes = {
   action: PropTypes.shape({
     route: PropTypes.string.isRequired,
     tooltip: PropTypes.string.isRequired,
+    icon: PropTypes.string,
   }).isRequired,
   shadow: PropTypes.bool,
 };

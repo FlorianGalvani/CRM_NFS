@@ -97,7 +97,7 @@ function Overview() {
                                     location: "France",
                                 }}
                                 social={[]}
-                                action={{ route: "", tooltip: "Edit Profile" }}
+                                action={{ route: "", tooltip: "Edit Profile", icon: 'edit' }}
                                 shadow={false}
                             />
                             <Divider orientation="vertical" sx={{ mx: 0 }} />

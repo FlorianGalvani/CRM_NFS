@@ -44,7 +44,7 @@ const CustomerInvoices = () => {
                                                 <Invoice
                                                     date={Formatter.formatDate(invoice?.createdAt)}
                                                     id={'#' + invoice?.fileName}
-                                                    price={invoice?.data.amount + ' €'}
+                                                    price={invoice?.transaction?.amount + ' €'}
                                                 />
                                                 <MDButton variant="outlined" color="info" size="small"  sx={{ width: '10%' }}>
                                                 <Link to={'/transactions/mes-factures/' + invoice?.id}>

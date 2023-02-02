@@ -64,7 +64,7 @@ export default function CustomerInvoice() {
                 <Card sx={{px: 2, py: 4}}>
                     {
                         isLoading ? 'loading...'
-                            : <Invoice date={Formatter.formatDate(invoice?.createdAt)} id={'#'+invoice?.fileName} price={invoice?.data.amount+' €'} />
+                            : <Invoice date={Formatter.formatDate(invoice?.createdAt)} id={'#'+invoice?.fileName} price={invoice?.transaction?.amount+' €'} />
                     }
                 </Card>
             </MDBox>

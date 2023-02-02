@@ -64,6 +64,16 @@ function UserProfile() {
         getUser();
     },  [])
 
+    const events = [];
+
+    customerEvents.map((event) => {
+        return Object.entries((event)).map((e) => {
+            const eventDate = moment(new Date(e[1].date)).locale('fr').format('DD/MM/YYYY HH:mm')
+            console.log(eventDate)
+            events.push({value: getEventLabel(e[0]), date: eventDate})
+        })
+    })
+
     return (
         <DashboardLayout>
             <DashboardNavbar />
@@ -83,7 +93,7 @@ function UserProfile() {
                                     location: "France",
                                 }}
                                 social={[]}
-                                action={{ route: "", tooltip: "Edit Profile" }}
+                                action={{ route: "", tooltip: "email", icon: "email" }}
                                 shadow={false}
                             />
                             <Divider orientation="vertical" sx={{ mx: 0 }} />
@@ -96,40 +106,24 @@ function UserProfile() {
                             >
                                 Logs
                             </MDTypography>
-                            <MDBox>
+                            <MDBox pt={2}>
                                 {
-                                    customerEvents.map((event, index) => {
-                                        return Object.entries((event)).map((e) => (
-                                            <MDBox
-                                                key={index}
-                                                pt={2}
-                                                px={2}
-                                                display="flex"
-                                                justifyContent="flex-start"
-                                                alignItems="center"
-                                            >
-                                                <MDTypography
-                                                    component="a"
-                                                    href="#"
-                                                    variant="caption"
-                                                    color="text"
-                                                >
-                                                    {getEventLabel(e[0])} : &nbsp;&nbsp;&nbsp;
-                                                </MDTypography>
-                                                <MDTypography
-                                                    component="a"
-                                                    href="#"
-                                                    variant="caption"
-                                                    color="text"
-                                                >
-                                                    {/*{moment(e[1]).format('MMMM Do YYYY, h:mm:ss a')} : &nbsp;&nbsp;&nbsp;*/}
-                                                </MDTypography>
-                                            </MDBox>
-                                        ))
-                                    })
+                                    events.map((event, index) => (
+                                        <MDBox
+                                            key={index}
+                                            display="flex"
+                                            justifyContent="flex-start"
+                                            alignItems="center"
+                                        >
+                                            <MDTypography variant="button" color="text" fontWeight="light">
+                                                {event.date} : &nbsp;&nbsp;&nbsp;
+                                            </MDTypography>
+                                            <MDTypography variant="button" color="text" fontWeight="medium">
+                                                {event.value}
+                                            </MDTypography>
+                                        </MDBox>
+                                    ))
                                 }
-                                {/*console.log(getEventLabel(e[0]))*/}
-                                {/*console.log(e[1])*/}
                             </MDBox>
                         </Grid>
                     </Grid>
@@ -148,7 +142,7 @@ const getEventLabel = (e) => {
             label = 'Création de prospect';
             break;
         case 'customer_created':
-            label = 'Conversion en client';
+            label = 'Inscription';
             break;
         case 'email_sent':
             label = 'Email envoyé';

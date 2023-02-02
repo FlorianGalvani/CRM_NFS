@@ -120,7 +120,7 @@ function CustomerBilling() {
                                     <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
                                         {
                                             lastInvoices.map((lastInvoice, index) => (
-                                                <Invoice key={index} date={Formatter.formatDate(lastInvoice?.createdAt)} id={'#'+lastInvoice?.fileName} price={lastInvoice?.data.amount+' €'} />
+                                                <Invoice key={index} date={Formatter.formatDate(lastInvoice?.createdAt)} id={'#'+lastInvoice?.fileName} price={lastInvoice?.transaction?.amount+' €'} />
                                             ))
                                         }
                                     </MDBox>

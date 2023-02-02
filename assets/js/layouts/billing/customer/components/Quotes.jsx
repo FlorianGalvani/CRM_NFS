@@ -129,7 +129,7 @@ export function Bill({ name, company, email, noGutter, link, amount }) {
                     <MDTypography variant="caption" color="text">
                         Montant :&nbsp;&nbsp;&nbsp;
                         <MDTypography variant="caption" fontWeight="medium">
-                            {amount}
+                            {amount} €
                         </MDTypography>
                     </MDTypography>
                 </MDBox>

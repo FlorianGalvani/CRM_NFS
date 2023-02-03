@@ -34,10 +34,13 @@ import Grid from "@mui/material/Grid";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import {Alert} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
 function Cover() {
   const [token, setDecodedToken] = useState();
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   const decodedToken = () => {
     if (Cookie.getCookie("token") !== undefined) {
@@ -117,6 +120,7 @@ function Cover() {
                       axios.post(url, user, config)
                         .then((response) => {
                           console.log(response);
+                          navigate('/utilisateurs')
                         }, (error) => {
                           console.log(error);
                           setError(error.response.data.message);

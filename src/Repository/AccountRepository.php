@@ -44,7 +44,7 @@ class AccountRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('a')
             ->andWhere('a.commercial = :account')
             ->setParameter('account', $account)
-            ->orderBy('a.id', 'DESC')
+            ->orderBy('a.id', 'ASC')
             ->getQuery()
             ->getResult()
         ;

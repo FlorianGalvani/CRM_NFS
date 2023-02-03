@@ -32,7 +32,7 @@ class AuthController extends BaseController
     #[Route('/api/all-users', methods: ['GET'])]
     public function index(): Response
     {
-        $users = $this->userRepo->findAll();
+        $users = $this->userRepo->findAllUsers();
         $usersData = [];
 
         foreach($users as $user) {

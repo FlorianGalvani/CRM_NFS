@@ -73,8 +73,6 @@ function UserProfile() {
         events.push({value: getEventLabel(e[0]), date: eventDate})
     })
 
-    console.log(events)
-
     return (
         <DashboardLayout>
             <DashboardNavbar />

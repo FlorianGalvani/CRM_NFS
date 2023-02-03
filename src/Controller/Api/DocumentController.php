@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Controller\BaseController;
 use App\Entity\Document;
+use App\Entity\User;
 use App\Enum\Document\DocumentType;
 use App\Event\CreateDocumentEvent;
 use App\Repository\AccountRepository;
@@ -24,6 +25,8 @@ class DocumentController extends BaseController
         $this->accountRepo = $accountRepo;
         $this->documentRepo = $documentRepo;
     }
+
+
 
     #[Route('/commercial/invoices/formdata')]
     function getFormData()
@@ -104,6 +107,30 @@ class DocumentController extends BaseController
             return $this->json($response,Response::HTTP_OK);
         } catch(Error $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/commercial-invoices')]
+    public function commercialInvoices()
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentAccount = $user->getAccount();
+
+        $invoices = $this->documentRepo->findLastInvoicesByAccount($currentAccount);
+
+        $invoicesData = [];
+
+        foreach($invoices as $_invoices) {
+            array_push($invoicesData, $_invoices->getInfos());
+        }
+
+        try {
+            return $this->json($invoicesData);
+        } catch(Error $e) {
+            http_response_code(500);
+
+            return $this->json(['error' => $e->getMessage()]);
         }
     }
 }

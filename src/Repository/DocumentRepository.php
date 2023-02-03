@@ -107,6 +107,18 @@ class DocumentRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findLastInvoicesByAccount(Account $account): array
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.commercial = :account')
+            ->setParameter('account', $account)
+            ->orderBy('d.id', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Document[] Returns an array of Document objects
 //     */

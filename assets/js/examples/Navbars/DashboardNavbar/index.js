@@ -131,7 +131,7 @@ if (account === 'admin') {
 } else if (account === 'customer') {
   displayName = 'Client';
 } else if (account === 'commercial') {
-  displayName = 'Commerciale';
+  displayName = 'Commercial';
 } else {
   displayName = '';
 }

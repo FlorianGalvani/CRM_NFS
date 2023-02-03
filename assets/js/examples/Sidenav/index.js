@@ -174,7 +174,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           returnValue = null;
       }
 
-      if(token?.account === 'admin' && key === "devisform" || key === "factures") {
+      if(token?.account === 'admin' && key === "devisform") {
+          returnValue = null;
+      }
+
+      if(token?.account !== 'commercial' && key === "factures") {
           returnValue = null;
       }
 

@@ -2,8 +2,11 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\CustomerEvent;
 use App\Entity\Document;
 use App\Entity\Account;
+use App\Entity\Transaction;
+use App\Enum\Customer\EventType;
 use DateInterval;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -90,6 +93,24 @@ class DocumentFixtures extends Fixture implements DependentFixtureInterface
                 "term" => null
             ]));
             $manager->persist($document);
+
+            $customerEvent = $manager->getRepository(CustomerEvent::class)->findOneBy(['customer' => $document->getCustomer()]);
+            $transaction = (new Transaction())
+                ->setCustomer($document->getCustomer())
+                ->setPaymentStatus(Transaction::TRANSACTION_QUOTATION_SENT)
+                ->setTransactionQuotation($document)
+                ->setLabel('Envoie d\'un devis ')
+                ->setType('')
+                ->setAmount($faker->numberBetween(200, 2500));
+            $_event = [EventType::EVENT_QUOTATION_SENT => new \DateTime()];
+
+            $events = $customerEvent->getEvents();
+            $events[] = $_event;
+            $customerEvent->setEvents($events);
+
+            $manager->persist($transaction);
+            $document->setTransaction($transaction);
+            $manager->persist($customerEvent);
         }
         $manager->flush();
     }

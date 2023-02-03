@@ -124,9 +124,11 @@ class Transaction implements DatedInterface, IdInterface
     /**
      * @param string|null $label
      */
-    public function setLabel(?string $label): void
+    public function setLabel(?string $label): self
     {
         $this->label = $label;
+
+        return $this;
     }
 
 
@@ -177,9 +179,11 @@ class Transaction implements DatedInterface, IdInterface
     /**
      * @param Document|null $transactionQuotation
      */
-    public function setTransactionQuotation(?Document $transactionQuotation): void
+    public function setTransactionQuotation(?Document $transactionQuotation): self
     {
         $this->transactionQuotation = $transactionQuotation;
+
+        return $this;
     }
 
     /**
@@ -193,9 +197,11 @@ class Transaction implements DatedInterface, IdInterface
     /**
      * @param Document|null $transactionInvoice
      */
-    public function setTransactionInvoice(?Document $transactionInvoice): void
+    public function setTransactionInvoice(?Document $transactionInvoice): self
     {
         $this->transactionInvoice = $transactionInvoice;
+
+        return $this;
     }
 
 }

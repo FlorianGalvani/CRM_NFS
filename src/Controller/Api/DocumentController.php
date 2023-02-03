@@ -19,8 +19,8 @@ class DocumentController extends BaseController
 {
     private $accountRepo;
     private $documentRepo;
-    
-    public function __construct(AccountRepository $accountRepo, DocumentRepository $documentRepo) 
+
+    public function __construct(AccountRepository $accountRepo, DocumentRepository $documentRepo)
     {
         $this->accountRepo = $accountRepo;
         $this->documentRepo = $documentRepo;

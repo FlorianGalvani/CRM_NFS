@@ -26,6 +26,7 @@ import Icon from "@mui/material/Icon";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import moment from "moment/moment";
 
 export default function Data() {
     const [quotes, setQuotes] = useState([]);
@@ -91,6 +92,7 @@ export default function Data() {
 
 
     function timeConverter(UNIX_timestamp) {
+        console.log(UNIX_timestamp)
         var a = new Date(UNIX_timestamp);
         var months = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'];
         var year = a.getFullYear();
@@ -101,6 +103,10 @@ export default function Data() {
         var sec = a.getSeconds();
         var time = (date > 9 ? date : '0' + date) + ' ' + month + ' ' + year + ' ' + (hour > 9 ? hour : '0' + hour) + ':' + (min > 9 ? min : '0' + min) + ':' + (sec > 9 ? sec : '0' + sec);
         return time;
+    }
+
+    function momentConvert(date) {
+        return moment(new Date(date)).locale('fr').format('LLL')
     }
 
     return {
@@ -119,8 +125,10 @@ export default function Data() {
                         name={decodedToken !== null && (decodedToken.account === 'commercial' || decodedToken.account === 'admin') ? quote.data.clientName : quote.data.name}
                     />
                 ),
-                date: timeConverter(Date.parse(quote.data.invoiceDate.date)),
-                dueDate: timeConverter(Date.parse(quote.data.invoiceDueDate.date)),
+                // date: timeConverter(Date.parse(quote.data.invoiceDate.date)),
+                date: momentConvert(quote.data.invoiceDate.date ?? quote.data.invoiceDate),
+                // dueDate: timeConverter(Date.parse(quote.data.invoiceDueDate.date)),
+                dueDate: momentConvert(quote.data.invoiceDueDate.date ?? quote.data.invoiceDueDate),
                 price: (
                     <MDTypography
                         component="a"
@@ -129,9 +137,10 @@ export default function Data() {
                         color="text"
                         fontWeight="medium"
                     >
-                        {quote.data.productLines.map((productLine) => {
-                            return calculateAmount(productLine.quantity, productLine.rate);
-                        })}
+                        {quote.transaction?.amount} € HT
+                        {/*{quote.data.productLines.map((productLine) => {*/}
+                        {/*    return calculateAmount(productLine.quantity, productLine.rate);*/}
+                        {/*})}*/}
                     </MDTypography>
                 ),
                 action: (

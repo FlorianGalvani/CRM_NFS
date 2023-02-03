@@ -4,7 +4,10 @@ namespace App\Controller\Api;
 
 use App\Controller\BaseController;
 use App\Entity\Account;
+use App\Entity\CustomerEvent;
+use App\Entity\Transaction;
 use App\Entity\User;
+use App\Enum\Customer\EventType;
 use Doctrine\Persistence\ManagerRegistry;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -95,6 +98,23 @@ class QuotesController extends BaseController
 
         $em = $managerRegistry->getManager();
         $em->persist($document);
+        $customerEvent = $em->getRepository(CustomerEvent::class)->findOneBy(['customer' => $document->getCustomer()]);
+        $transaction = (new Transaction())
+            ->setCustomer($document->getCustomer())
+            ->setPaymentStatus(Transaction::TRANSACTION_QUOTATION_SENT)
+            ->setTransactionQuotation($document)
+            ->setLabel('Envoie d\'un devis ')
+            ->setType('')
+            ->setAmount($formData['subTotal']);
+        $_event = [EventType::EVENT_QUOTATION_SENT => new \DateTime()];
+
+        $events = $customerEvent->getEvents();
+        $events[] = $_event;
+        $customerEvent->setEvents($events);
+
+        $em->persist($transaction);
+        $document->setTransaction($transaction);
+        $em->persist($customerEvent);
         $em->flush();
 
         $response['success'] = true;
@@ -117,9 +137,11 @@ class QuotesController extends BaseController
         $currentUserAccountID = $this->currentUser->getAccount()->getId();
 
         if ($this->currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::COMMERCIAL) {
-            $findBy = ['commercial' => $currentUserAccountID];
+            $findBy = ['commercial' => $currentUserAccountID,
+                'type' => \App\Enum\Document\DocumentType::QUOTE];
         } else if ($this->currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::CUSTOMER){
-            $findBy = ['customer' => $currentUserAccountID];
+            $findBy = ['customer' => $currentUserAccountID,
+                'type' => \App\Enum\Document\DocumentType::QUOTE];
         } else if ($this->currentUser->getAccount()->getType() === \App\Enum\Account\AccountType::ADMIN) {
             $findBy = ['type' => \App\Enum\Document\DocumentType::QUOTE];
         }

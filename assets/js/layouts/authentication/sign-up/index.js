@@ -109,7 +109,6 @@ function Cover() {
                       const config = {
                         headers: {
                           'Authorization': `Bearer ${token}`,
-                          'X-Requested-With': 'XMLHttpRequest'
                         }
                       }
 

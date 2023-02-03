@@ -20,6 +20,7 @@ import DashboardNavbar from "../../examples/Navbars/DashboardNavbar";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 Font.register({
   family: "Nunito",
@@ -181,6 +182,8 @@ const QuotesFormPage = ({ pdfMode }) => {
     }
   }, [onInvoiceUpdated, invoice]);
 
+  const navigate = useNavigate();
+
   const handleCustomerSelectChange = (event, value) => {
     formData.customers.forEach((customer) => {
       if (customer.data.name === value) {
@@ -219,6 +222,7 @@ const QuotesFormPage = ({ pdfMode }) => {
     } ).then(
         (response) => {
           console.log(response);
+          navigate('/devis')
         }
     )
   };

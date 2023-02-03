@@ -13,7 +13,8 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import React,{ useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
 
 // react-router-dom components
 import { useLocation, NavLink } from "react-router-dom";
@@ -30,7 +31,7 @@ import Icon from "@mui/material/Icon";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
+// import MDButton from "components/MDButton";
 
 // Material Dashboard 2 React example components
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
@@ -46,10 +47,13 @@ import {
   setTransparentSidenav,
   setWhiteSidenav,
 } from "context";
+// Utils
+import { Cookie } from "utils/index";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
-  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
+  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode } =
+    controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
 
@@ -63,12 +67,31 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
+  const [token, setDecodedToken] = useState();
+  
+  const decodedToken = () => {
+    if (Cookie.getCookie("token") !== undefined) {
+      const jwtToken = jwt_decode(Cookie.getCookie("token"));
+      setDecodedToken(jwtToken);
+    }
+  };
+
+  useEffect(() => {
+    decodedToken();
+  }, []);
+
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
     function handleMiniSidenav() {
       setMiniSidenav(dispatch, window.innerWidth < 1200);
-      setTransparentSidenav(dispatch, window.innerWidth < 1200 ? false : transparentSidenav);
-      setWhiteSidenav(dispatch, window.innerWidth < 1200 ? false : whiteSidenav);
+      setTransparentSidenav(
+        dispatch,
+        window.innerWidth < 1200 ? false : transparentSidenav
+      );
+      setWhiteSidenav(
+        dispatch,
+        window.innerWidth < 1200 ? false : whiteSidenav
+      );
     }
 
     /** 
@@ -83,62 +106,92 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
-  // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
-    let returnValue;
-
-    if (type === "collapse") {
-      returnValue = href ? (
-        <Link
-          href={href}
-          key={key}
-          target="_blank"
-          rel="noreferrer"
-          sx={{ textDecoration: "none" }}
-        >
-          <SidenavCollapse
-            name={name}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
+  // Render all the routes from the routes.js (All the visible items on the Sidenav), if user is connect don't show sign in
+  const renderRoutes = routes.map(
+    ({ type, name, icon, title, noCollapse, key, href, route }) => {
+      let returnValue;
+      if (type === "collapse") {
+        returnValue = href ? (
+          <Link
+            href={href}
+            key={key}
+            target="_blank"
+            rel="noreferrer"
+            sx={{ textDecoration: "none" }}
+          >
+            <SidenavCollapse
+              name={name}
+              icon={icon}
+              active={key === collapseName}
+              noCollapse={noCollapse}
+            />
+          </Link>
+        ) : (
+          <NavLink key={key} to={route}>
+            <SidenavCollapse
+              name={name}
+              icon={icon}
+              active={key === collapseName}
+            />
+          </NavLink>
+        );
+      } else if (type === "title") {
+        returnValue = (
+          <MDTypography
+            key={key}
+            color={textColor}
+            display="block"
+            variant="caption"
+            fontWeight="bold"
+            textTransform="uppercase"
+            pl={3}
+            mt={2}
+            mb={1}
+            ml={1}
+          >
+            {title}
+          </MDTypography>
+        );
+      } else if (type === "divider") {
+        returnValue = (
+          <Divider
+            key={key}
+            light={
+              (!darkMode && !whiteSidenav && !transparentSidenav) ||
+              (darkMode && !transparentSidenav && whiteSidenav)
+            }
           />
-        </Link>
-      ) : (
-        <NavLink key={key} to={route}>
-          <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
-        </NavLink>
-      );
-    } else if (type === "title") {
-      returnValue = (
-        <MDTypography
-          key={key}
-          color={textColor}
-          display="block"
-          variant="caption"
-          fontWeight="bold"
-          textTransform="uppercase"
-          pl={3}
-          mt={2}
-          mb={1}
-          ml={1}
-        >
-          {title}
-        </MDTypography>
-      );
-    } else if (type === "divider") {
-      returnValue = (
-        <Divider
-          key={key}
-          light={
-            (!darkMode && !whiteSidenav && !transparentSidenav) ||
-            (darkMode && !transparentSidenav && whiteSidenav)
-          }
-        />
-      );
-    }
+        );
+      }
 
-    return returnValue;
-  });
+      if (Cookie.getCookie("token") !== undefined && key === "connexion") {
+        returnValue = null;
+      }
+
+      const managerRoutesKeys = ['utilisateurs', 'compte', 'devis', 'factures', 'devisform', 'devistemp'];
+
+      if(token?.account === 'customer' && managerRoutesKeys.includes(key)) {
+          returnValue = null;
+      }
+
+      if(token?.account === 'admin' && key === "devisform") {
+          returnValue = null;
+      }
+
+      if(token?.account !== 'commercial' && key === "factures") {
+          returnValue = null;
+      }
+
+      const managerRoles = ['admin', 'commercial'];
+      const customerRoutesKeys = ['profil', 'paiement', 'facture', 'mes-factures'];
+
+      if (managerRoles.includes(token?.account) && customerRoutesKeys.includes(key)) {
+        returnValue = null;
+      }
+
+      return returnValue;
+    }
+  );
 
   return (
     <SidenavRoot
@@ -161,12 +214,19 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           </MDTypography>
         </MDBox>
         <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="2rem" />}
+          {brand && (
+            <MDBox component="img" src={brand} alt="Brand" width="2rem" />
+          )}
           <MDBox
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
-            <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
+            <MDTypography
+              component="h6"
+              variant="button"
+              fontWeight="medium"
+              color={textColor}
+            >
               {brandName}
             </MDTypography>
           </MDBox>
@@ -179,19 +239,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         }
       />
       <List>{renderRoutes}</List>
-      <MDBox p={2} mt="auto">
-        <MDButton
-          component="a"
-          href="https://www.creative-tim.com/product/material-dashboard-pro-react"
-          target="_blank"
-          rel="noreferrer"
-          variant="gradient"
-          color={sidenavColor}
-          fullWidth
-        >
-          upgrade to pro
-        </MDButton>
-      </MDBox>
     </SidenavRoot>
   );
 }
@@ -204,7 +251,15 @@ Sidenav.defaultProps = {
 
 // Typechecking props for the Sidenav
 Sidenav.propTypes = {
-  color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
+  color: PropTypes.oneOf([
+    "primary",
+    "secondary",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "dark",
+  ]),
   brand: PropTypes.string,
   brandName: PropTypes.string.isRequired,
   routes: PropTypes.arrayOf(PropTypes.object).isRequired,

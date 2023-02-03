@@ -12,11 +12,13 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import "regenerator-runtime"
 import React, { useState, useEffect, useMemo } from "react";
-
+import "regenerator-runtime";
+import axios from 'axios'
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+
+// import "./tailwind.css";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -47,11 +49,18 @@ import createCache from "@emotion/cache";
 import routes from "routes";
 
 // Material Dashboard 2 React contexts
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import {
+  useMaterialUIController,
+  setMiniSidenav,
+  setOpenConfigurator,
+} from "context";
 
 // Images
-import brandWhite from "assets/images/logo-ct.png";
-import brandDark from "assets/images/logo-ct-dark.png";
+import brandWhite from "assets/images/icon.png";
+import brandDark from "assets/images/icon.png";
+
+// Utils
+import {Axios, Cookie} from "utils/index";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -71,6 +80,7 @@ export default function App() {
 
   // Cache for the rtl
   useMemo(() => {
+
     const cacheRtl = createCache({
       key: "rtl",
       stylisPlugins: [rtlPlugin],
@@ -96,7 +106,8 @@ export default function App() {
   };
 
   // Change the openConfigurator state
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
+  const handleConfiguratorOpen = () =>
+    setOpenConfigurator(dispatch, !openConfigurator);
 
   // Setting the dir attribute for the body element
   useEffect(() => {
@@ -116,11 +127,31 @@ export default function App() {
       }
 
       if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+        return (
+          <Route
+            exact
+            path={route.route}
+            element={route.component}
+            key={route.key}
+          />
+        );
       }
 
       return null;
     });
+
+
+
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (Cookie.getCookie("token") === undefined) {
+      navigate("/connexion");
+    }
+  }, []);
+
+  Axios.setAuthorization(Cookie.getCookie("token"));
 
   const configsButton = (
     <MDBox
@@ -154,7 +185,11 @@ export default function App() {
           <>
             <Sidenav
               color={sidenavColor}
-              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+              brand={
+                (transparentSidenav && !darkMode) || whiteSidenav
+                  ? brandDark
+                  : brandWhite
+              }
               brandName="Material Dashboard 2"
               routes={routes}
               onMouseEnter={handleOnMouseEnter}
@@ -178,8 +213,12 @@ export default function App() {
         <>
           <Sidenav
             color={sidenavColor}
-            brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-            brandName="Material Dashboard 2"
+            brand={
+              (transparentSidenav && !darkMode) || whiteSidenav
+                ? brandDark
+                : brandWhite
+            }
+            brandName="CRManager"
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}

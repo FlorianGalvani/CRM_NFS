@@ -18,7 +18,7 @@ Coded by www.creative-tim.com
   This file is used for controlling the dark and light state of the TimelineList and TimelineItem.
 */
 
-import React,{ createContext, useContext } from "react";
+import React, { createContext, useContext } from "react";
 
 // The Timeline main context
 const Timeline = createContext();

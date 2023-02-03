@@ -34,7 +34,16 @@ import MDSnackbarIconRoot from "components/MDSnackbar/MDSnackbarIconRoot";
 // Material Dashboard 2 React context
 import { useMaterialUIController } from "context";
 
-function MDSnackbar({ color, icon, title, dateTime, content, close, bgWhite, ...rest }) {
+function MDSnackbar({
+  color,
+  icon,
+  title,
+  dateTime,
+  content,
+  close,
+  bgWhite,
+  ...rest
+}) {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
 
@@ -66,7 +75,12 @@ function MDSnackbar({ color, icon, title, dateTime, content, close, bgWhite, ...
       }}
       {...rest}
       action={
-        <IconButton size="small" aria-label="close" color="inherit" onClick={close}>
+        <IconButton
+          size="small"
+          aria-label="close"
+          color="inherit"
+          onClick={close}
+        >
           <Icon fontSize="small">close</Icon>
         </IconButton>
       }
@@ -81,7 +95,9 @@ function MDSnackbar({ color, icon, title, dateTime, content, close, bgWhite, ...
         p={1}
         sx={{
           backgroundColor: ({ palette }) =>
-            darkMode ? palette.background.card : palette[color] || palette.white.main,
+            darkMode
+              ? palette.background.card
+              : palette[color] || palette.white.main,
         }}
       >
         <MDBox
@@ -92,7 +108,10 @@ function MDSnackbar({ color, icon, title, dateTime, content, close, bgWhite, ...
           p={1.5}
         >
           <MDBox display="flex" alignItems="center" lineHeight={0}>
-            <MDSnackbarIconRoot fontSize="small" ownerState={{ color, bgWhite }}>
+            <MDSnackbarIconRoot
+              fontSize="small"
+              ownerState={{ color, bgWhite }}
+            >
               {icon}
             </MDSnackbarIconRoot>
             <MDTypography
@@ -111,8 +130,11 @@ function MDSnackbar({ color, icon, title, dateTime, content, close, bgWhite, ...
             <Icon
               sx={{
                 color: ({ palette: { dark, white } }) =>
-                  (bgWhite && !darkMode) || color === "light" ? dark.main : white.main,
-                fontWeight: ({ typography: { fontWeightBold } }) => fontWeightBold,
+                  (bgWhite && !darkMode) || color === "light"
+                    ? dark.main
+                    : white.main,
+                fontWeight: ({ typography: { fontWeightBold } }) =>
+                  fontWeightBold,
                 cursor: "pointer",
                 marginLeft: 2,
                 transform: "translateY(-1px)",
@@ -129,7 +151,8 @@ function MDSnackbar({ color, icon, title, dateTime, content, close, bgWhite, ...
           sx={{
             fontSize: ({ typography: { size } }) => size.sm,
             color: ({ palette: { white, text } }) => {
-              let colorValue = bgWhite || color === "light" ? text.main : white.main;
+              let colorValue =
+                bgWhite || color === "light" ? text.main : white.main;
 
               if (darkMode) {
                 colorValue = color === "light" ? "inherit" : white.main;

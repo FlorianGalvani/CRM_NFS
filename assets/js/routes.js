@@ -37,84 +37,131 @@ Coded by www.creative-tim.com
 
 import React from "react";
 
-
 // Material Dashboard 2 React layouts
 import Dashboard from "./layouts/dashboard";
 import Tables from "./layouts/tables";
 import Billing from "./layouts/billing";
-import RTL from "./layouts/rtl";
-import Notifications from "./layouts/notifications";
+import Quotes from "./layouts/quotes";
+import QuoteForm from "./layouts/quotesform";
+import Payment from "./layouts/payment";
+
+// import RTL from "./layouts/rtl";
+// import Notifications from "./layouts/notifications";
 import Profile from "./layouts/profile";
 import SignIn from "./layouts/authentication/sign-in";
 import SignUp from "./layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import CustomerInvoice from "layouts/billing/customer/invoices/show";
+import CustomerInvoices from "layouts/billing/customer/invoices";
+import Home from "./Pages/Home";
+import CustomerQuote from "layouts/billing/customer/quotes/show";
+import CustomerQuotes from "layouts/billing/customer/quotes";
+import UserProfile from "layouts/profile/user";
 
 const routes = [
   {
     type: "collapse",
-    name: "Dashboard",
+    name: "Tableau de bord",
     key: "dashboard",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
-    component: <Dashboard />,
+    component: <Home/>,
   },
   {
     type: "collapse",
-    name: "Tables",
-    key: "tables",
-    icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
+    name: "Tableau des utilisateurs",
+    key: "utilisateurs",
+    icon: <Icon fontSize="small">group</Icon>,
+    route: "/utilisateurs",
     component: <Tables />,
   },
   {
     type: "collapse",
-    name: "Billing",
-    key: "billing",
+    name: "Factures",
+    key: "factures",
     icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/billing",
+    route: "/factures",
     component: <Billing />,
   },
   {
     type: "collapse",
-    name: "RTL",
-    key: "rtl",
-    icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
-    route: "/rtl",
-    component: <RTL />,
-  },
-  {
-    type: "collapse",
-    name: "Notifications",
-    key: "notifications",
-    icon: <Icon fontSize="small">notifications</Icon>,
-    route: "/notifications",
-    component: <Notifications />,
-  },
-  {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
+    name: "Profil",
+    key: "profil",
     icon: <Icon fontSize="small">person</Icon>,
-    route: "/profile",
+    route: "/profil",
     component: <Profile />,
   },
   {
     type: "collapse",
-    name: "Sign In",
-    key: "sign-in",
+    name: "Connexion",
+    key: "connexion",
     icon: <Icon fontSize="small">login</Icon>,
-    route: "/authentication/sign-in",
+    route: "/connexion",
     component: <SignIn />,
   },
   {
     type: "collapse",
-    name: "Sign Up",
-    key: "sign-up",
-    icon: <Icon fontSize="small">assignment</Icon>,
-    route: "/authentication/sign-up",
+    name: "Créer un compte",
+    key: "compte",
+    icon: <Icon fontSize="small">person_add</Icon>,
+    route: "/compte",
     component: <SignUp />,
+  },
+  {
+    type: "collapse",
+    name: "Devis",
+    key: "devistemp",
+    icon: <Icon fontSize="small">receipt</Icon>,
+    route: "/devis",
+    component: <Quotes />,
+  },
+  {
+    type: "collapse",
+    name: "Créer un Devis",
+    key: "devisform",
+    icon: <Icon fontSize="small">receipt</Icon>,
+    route: "/devis/nouveau",
+    component: <QuoteForm />,
+  },
+  {
+    key: "utilisateur",
+    route: "/utilisateurs/:id",
+    component: <UserProfile />,
+  },
+    // Routes client
+  // {
+  //   type: "collapse",
+  //   name: "Mes transactions",
+  //   key: "transactions",
+  //   icon: <Icon fontSize="small">receipt_long</Icon>,
+  //   route: "/transactions",
+  //   component: <CustomerBilling />,
+  // },
+  {
+    key: "mes-factures",
+    route: "/transactions/mes-factures",
+    component: <CustomerInvoices />
+  },{
+    key: "mes-devis",
+    route: "/transactions/mes-devis",
+    component: <CustomerQuotes />
+  },
+  {
+    key: "devis",
+    route: "/transactions/mes-devis/:id",
+    component: <CustomerQuote />,
+  },
+  {
+    key: "facture",
+    route: "/transactions/mes-factures/:id",
+    component: <CustomerInvoice />,
+  },
+  {
+    key: "paiement",
+    route: "/transactions/mes-devis/paiement/:id",
+    component: <Payment />,
   },
 ];
 

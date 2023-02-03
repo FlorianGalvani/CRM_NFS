@@ -12,7 +12,7 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-
+import React from "react";
 // @mui material components
 import Card from "@mui/material/Card";
 
@@ -53,7 +53,12 @@ function Cover() {
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={4}>
-              <MDInput type="email" label="Email" variant="standard" fullWidth />
+              <MDInput
+                type="email"
+                label="Email"
+                variant="standard"
+                fullWidth
+              />
             </MDBox>
             <MDBox mt={6} mb={1}>
               <MDButton variant="gradient" color="info" fullWidth>

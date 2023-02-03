@@ -69,7 +69,6 @@ function UserProfile() {
 
     Object.entries((customerEvents)).map((e) => {
         const eventDate = moment(new Date(e[1].date)).locale('fr').format('DD/MM/YYYY HH:mm')
-        console.log(eventDate)
         events.push({value: getEventLabel(e[0]), date: eventDate})
     })
 

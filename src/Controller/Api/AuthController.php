@@ -68,6 +68,7 @@ class AuthController extends BaseController
         $response = [
             'success' => false
         ];
+        $currentUser = $this->getUser();
 
         $data = json_decode($request->getContent(), true);
 
@@ -112,7 +113,6 @@ class AuthController extends BaseController
                     break;
                 case AccountType::CUSTOMER:
                     $account->setType(AccountType::CUSTOMER);
-                    $currentUser = $this->getUser();
                     $account->setCommercial($currentUser->getAccount());
                     $eventDispatcher->dispatch(new CreateCustomerEvent($account), CreateCustomerEvent::NAME);
                     break;

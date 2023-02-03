@@ -38,9 +38,10 @@ function Quotes() {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }).then((response) => {
-            response.data.forEach(element => {
-                element.data = JSON.parse(element.data);
-            });
+            console.log(response)
+            // response.data.forEach(element => {
+            //     element.data = JSON.parse(element.data);
+            // });
             console.log(response.data)
             setQuotes(response.data);
         })
